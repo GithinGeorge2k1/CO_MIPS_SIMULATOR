@@ -26,14 +26,10 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
         return;
     }
     QTextStream in(&file);
-    QString text=in.readAll();
-    MainWindow::fun(text);
-//    ui->textBrowser_2->setPlainText(text);
-
-    //Load file Display all text();
-    //means parse and store data and keep it for further stages;
-}
-
-void MainWindow::fun(QString& x){
-    ui->textBrowser_2->setPlainText(x);
+    int i=0;
+    while(!in.atEnd()){
+        QString text=in.readLine(i);
+        ui->textBrowser_2->append(text + "BLAH");
+    }
+    file.close();
 }
