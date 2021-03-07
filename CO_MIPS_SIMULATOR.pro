@@ -14,6 +14,7 @@ SOURCES += \
     mainwindow.cpp
 
 HEADERS += \
+    Data.h \
     mainwindow.h
 
 FORMS += \

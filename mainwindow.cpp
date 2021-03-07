@@ -4,6 +4,9 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QTextStream>
+#include <QStringList>
+#include "Data.h"
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -19,6 +22,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionReinitialize_and_Load_File_triggered()
 {
+    Data x;
     bool h1=false,h2=false,h3=false;
     QString path=QFileDialog::getOpenFileName(this,"title");
     QFile file(path);
@@ -49,7 +53,7 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
             h3=true;
             continue;
         }
-
+        x.addCode(text);
         ui->textBrowser_2->append(text);
     }
     file.close();
