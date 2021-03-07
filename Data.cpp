@@ -35,13 +35,70 @@ void Data::initialize(){
     instructionSize=0;
 }
 
-bool Data::addCode(QString text){
+bool Data::addCode(QString& text){
     //text.parse;;;;;;;
+    int newInstruction=0;
     QRegExp sep("(,| |, )");
     QStringList list=text.split(sep);
 //    for(int i=0;i<list.length();i++){
 //        qDebug()<< list.at(i)<<"\n";
 //    }
+    int i=0;
+
+    //checking for a label...
+    if(i<list.length() && list.at(i).indexOf(":")==list.at(i).length()-1){
+        labelMap[list.at(i).section(':',0,0)]=instructionSize;
+        i++;
+    }
+
+    if(i<list.length()){
+        //we have to create map somewhere
+        if(reg.contains(list.at(i))){
+            newInstruction=newInstruction | map[list.at(i)];
+            i++;
+        }
+        else{
+            return false;
+        }
+    }
+    if(i<list.length()){
+        //we have to create map somewhere
+        if(map.contains(list.at(i))){
+            newInstruction=newInstruction | map[list.at(i)];
+            i++;
+        }
+        else{
+            return false;
+        }
+    }
+
+    if(i<list.length()){
+        //we have to create map somewhere
+        if(map.contains(list.at(i))){
+            newInstruction=newInstruction | map[list.at(i)];
+            i++;
+        }
+        else{
+            return false;
+        }
+    }
+
+    if(i<list.length()){
+        //we have to create map somewhere
+        if(map.contains(list.at(i))){
+            newInstruction=newInstruction | map[list.at(i)];
+            i++;
+        }
+        else{
+            return false;
+        }
+    }
+
+    //cant use switch case... then use what??
+    //think a separate qmap is the best way to go(like qmap for functions and corresponding values)...in case of registers we can do bit shifting...
+
+
+//    instructionSize++;
     return true;
 }
 

@@ -2,6 +2,7 @@
 #define DATA_H
 #include <QString>
 #include <QStringList>
+#include <QMap>
 
 class Data{
     int R[31];
@@ -12,13 +13,14 @@ class Data{
     int dataSize;
     int instructions[4096];
     int instructionSize;
+    QMap<QString,int> labelMap;
 private:
     static Data* instance;
     Data();
 public:
     static Data* getInstance();
     void initialize();
-    bool addCode(QString data);
+    bool addCode(QString& data);
     QString displayRegisters();
 };
 

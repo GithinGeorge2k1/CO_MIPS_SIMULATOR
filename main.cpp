@@ -13,7 +13,6 @@ int main(int argc, char *argv[])
     a.setStyleSheet(style);
 
     MainWindow w;
-    //initialize();
     w.show();
     return a.exec();
 }
