@@ -22,14 +22,14 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::refreshRegisterPanel(){
-    Data x;
-    QString text=x.displayRegisters();
+    Data* x=Data::getInstance();
+    QString text=x->displayRegisters();
     ui->textBrowser->setPlainText(text);
 
 }
 void MainWindow::on_actionReinitialize_and_Load_File_triggered()
 {
-    Data x;
+    Data* x=Data::getInstance();
     bool h1=false,h2=false,h3=false;
     QString path=QFileDialog::getOpenFileName(this,"title");
     QFile file(path);
@@ -62,7 +62,7 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
             h3=true;
             continue;
         }
-        lineValid=x.addCode(text);
+        lineValid=x->addCode(text);
         if(lineValid){
             ui->textBrowser_2->append(text);
             MainWindow::ValidCodePresent=true;
@@ -79,13 +79,14 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
 
 void MainWindow::on_actionQuit_triggered()
 {
+    delete Data::getInstance();
     QApplication::quit();
 }
 
 void MainWindow::on_actionInitialize_triggered()
 {
-    Data x;
+    Data* x=Data::getInstance();
     ui->textBrowser_2->setPlainText("");
     ui->textBrowser_3->setPlainText("");
-    x.initialize();
+    x->initialize();
 }

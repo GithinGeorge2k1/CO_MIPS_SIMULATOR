@@ -13,13 +13,15 @@ class Data{
     int instructions[4096];
     int instructionSize;
 private:
-    static Data* Object;
+    static Data* instance;
     Data();
 public:
-    Data* getObject();
+    static Data* getInstance();
     void initialize();
     bool addCode(QString data);
     QString displayRegisters();
 };
+
+
 
 #endif // DATA_H

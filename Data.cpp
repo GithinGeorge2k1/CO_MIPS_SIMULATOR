@@ -3,13 +3,20 @@
 #include <QRegExp>
 #include <string.h>
 
-Data *Data::Object=0;
-Data* Data::getObject(){
-    if(Object==NULL){
-        Object=new Data();
+
+//Find yy this works(TutorialsPoint - singleton class)
+Data *Data::instance=0;
+//=====================================================//
+
+
+Data* Data::getInstance(){
+    if(instance==NULL){
+        instance=new Data;
     }
-    return Object;
+    return instance;
 }
+
+
 //Member initializer list && constructor implementation
 Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0)
 {
@@ -18,13 +25,13 @@ Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, 
 
 void Data::initialize(){
     //combine with mainWindow.cpp eventCall to reset textWidgets...
-    memset(R,0,31);
+    memset(R,0,sizeof (R));
     PC=0;
-    memset(Stack,0,2048);
+    memset(Stack,0,sizeof (Stack));
     SP=0;
-    memset(data,0,65536);
+    memset(data,0,sizeof (data));
     dataSize=0;
-    memset(instructions,0,4096);
+    memset(instructions,0,sizeof (instructions));
     instructionSize=0;
 }
 
@@ -35,9 +42,7 @@ bool Data::addCode(QString text){
 //    for(int i=0;i<list.length();i++){
 //        qDebug()<< list.at(i)<<"\n";
 //    }
-    return false;
-
-
+    return true;
 }
 
 QString Data::displayRegisters(){
