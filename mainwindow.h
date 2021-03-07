@@ -19,9 +19,10 @@ private slots:
     void on_actionReinitialize_and_Load_File_triggered();
 private:
     Ui::MainWindow *ui;
-
+    bool ValidCodePresent;
 //methods
 private:
     void refreshRegisterPanel();
+
 };
 #endif // MAINWINDOW_H

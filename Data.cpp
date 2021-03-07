@@ -4,14 +4,14 @@
 
 Data::Data() : R{}, PC(0), Stack{}, data{}, Text{}{}
 
-void Data::addCode(QString text){
+bool Data::addCode(QString text){
     //text.parse;;;;;;;
     QRegExp sep("(,| |, )");
     QStringList list=text.split(sep);
 //    for(int i=0;i<list.length();i++){
 //        qDebug()<< list.at(i)<<"\n";
 //    }
-
+    return false;
 
 
 }

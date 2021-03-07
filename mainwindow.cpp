@@ -6,11 +6,11 @@
 #include <QTextStream>
 #include <QStringList>
 #include "Data.h"
-
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+    , ui(new Ui::MainWindow), ValidCodePresent(false)
 {
     ui->setupUi(this);
     refreshRegisterPanel();
@@ -38,7 +38,10 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
     }
     QTextStream in(&file);
     ui->textBrowser_2->setPlainText("");
+    bool lineValid;
+    int lineNo=0;
     while(!in.atEnd()){
+        lineNo++;
         QString text=in.readLine().simplified();
         if(text[0]=='#' || text=="")
               continue;
@@ -59,8 +62,16 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
             h3=true;
             continue;
         }
-        x.addCode(text);
-        ui->textBrowser_2->append(text);
+        lineValid=x.addCode(text);
+        if(lineValid){
+            ui->textBrowser_2->append(text);
+            MainWindow::ValidCodePresent=true;
+        }
+        else{
+            QMessageBox::warning(this,"Invalid Assembly Code",QString("Syntax error found while parsing at line %1").arg(lineNo));
+            MainWindow::ValidCodePresent=false;
+            return;
+        }
     }
     file.close();
 

@@ -11,7 +11,7 @@ class Data{
     int Text[4096];
 public:
     Data();
-    void addCode(QString data);
+    bool addCode(QString data);
     QString displayRegisters();
 };
 
