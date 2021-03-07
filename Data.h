@@ -7,10 +7,14 @@ class Data{
     int R[31];
     int PC;
     int Stack[2048];
+    int SP;
     int data[65536];
-    int Text[4096];
+    int dataSize;
+    int instructions[4096];
+    int instructionSize;
 public:
     Data();
+    void initialize();
     bool addCode(QString data);
     QString displayRegisters();
 };

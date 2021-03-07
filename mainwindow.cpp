@@ -76,3 +76,8 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
     file.close();
 
 }
+
+void MainWindow::on_actionQuit_triggered()
+{
+    QApplication::quit();
+}

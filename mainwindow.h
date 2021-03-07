@@ -17,6 +17,8 @@ public:
 
 private slots:
     void on_actionReinitialize_and_Load_File_triggered();
+    void on_actionQuit_triggered();
+
 private:
     Ui::MainWindow *ui;
     bool ValidCodePresent;

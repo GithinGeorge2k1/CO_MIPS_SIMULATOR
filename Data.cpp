@@ -1,8 +1,25 @@
 #include "Data.h"
 #include <QDebug>
 #include <QRegExp>
+#include <string.h>
 
-Data::Data() : R{}, PC(0), Stack{}, data{}, Text{}{}
+//Member initializer list && constructor implementation
+Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0)
+{
+
+}
+
+void Data::initialize(){
+    //combine with mainWindow.cpp eventCall to reset textWidgets...
+    memset(R,0,31);
+    PC=0;
+    memset(Stack,0,2048);
+    SP=0;
+    memset(data,0,65536);
+    dataSize=0;
+    memset(instructions,0,4096);
+    instructionSize=0;
+}
 
 bool Data::addCode(QString text){
     //text.parse;;;;;;;
