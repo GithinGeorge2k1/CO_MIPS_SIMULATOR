@@ -1,6 +1,8 @@
 #ifndef DATA_H
 #define DATA_H
 #include <QString>
+#include <QStringList>
+
 class Data{
     int R[31];
     int PC;
@@ -10,6 +12,7 @@ class Data{
 public:
     Data();
     void addCode(QString data);
+    QString displayRegisters();
 };
 
 #endif // DATA_H

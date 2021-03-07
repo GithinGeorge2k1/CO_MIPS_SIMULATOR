@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    refreshRegisterPanel();
 }
 
 MainWindow::~MainWindow()
@@ -20,6 +21,12 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::refreshRegisterPanel(){
+    Data x;
+    QString text=x.displayRegisters();
+    ui->textBrowser->setPlainText(text);
+
+}
 void MainWindow::on_actionReinitialize_and_Load_File_triggered()
 {
     Data x;
@@ -28,9 +35,8 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
     QFile file(path);
     if(!file.open(QFile::ReadOnly | QFile::Text)){
         return;
-    } 
+    }
     QTextStream in(&file);
-//    int i=0;
     ui->textBrowser_2->setPlainText("");
     while(!in.atEnd()){
         QString text=in.readLine().simplified();
@@ -57,4 +63,5 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
         ui->textBrowser_2->append(text);
     }
     file.close();
+
 }
