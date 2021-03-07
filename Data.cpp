@@ -3,6 +3,13 @@
 #include <QRegExp>
 #include <string.h>
 
+Data *Data::Object=0;
+Data* Data::getObject(){
+    if(Object==NULL){
+        Object=new Data();
+    }
+    return Object;
+}
 //Member initializer list && constructor implementation
 Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0)
 {

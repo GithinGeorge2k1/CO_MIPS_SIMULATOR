@@ -12,8 +12,11 @@ class Data{
     int dataSize;
     int instructions[4096];
     int instructionSize;
-public:
+private:
+    static Data* Object;
     Data();
+public:
+    Data* getObject();
     void initialize();
     bool addCode(QString data);
     QString displayRegisters();

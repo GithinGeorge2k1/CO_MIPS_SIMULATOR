@@ -81,3 +81,11 @@ void MainWindow::on_actionQuit_triggered()
 {
     QApplication::quit();
 }
+
+void MainWindow::on_actionInitialize_triggered()
+{
+    Data x;
+    ui->textBrowser_2->setPlainText("");
+    ui->textBrowser_3->setPlainText("");
+    x.initialize();
+}
