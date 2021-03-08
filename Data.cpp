@@ -38,39 +38,27 @@ bool isRegisterValid(QString R)
 }
 bool isValue(QString R)
 {
-    //check for Hexadecimal
-    if(R.contains("0x"))
-        return true;
 
+    if(R.contains("0x")){
+        R=R.section("0x",1,1);
+        bool bstatus=false;
+        R.toInt(&bstatus,16);
+        return bstatus;
+    }
     else
     {
         QRegExp exp("\\d*");
         return exp.exactMatch(R);
     }
 }
-int hexCharToDec(QChar c)
-{
-    if(c>='a')
-        return 10+c.toLatin1()-'a';
-    return c.toLatin1()-'0';
-}
-int power(int base, int exp)
-{
-    if(exp==0)
-        return 1;
-    if(exp==1)
-        return base;
-    return base*power(base, exp-1);
-}
+
 int convertToInt(QString R)
 {
     if(R.contains("0x"))
     {
-        int n=0;
         R=R.section("0x", 1, 1);
-        for(int i=R.length()-1;i>=0;i--)
-            n=power(hexCharToDec(R.at(i)), R.length()-1-i);
-        return n;
+        bool bstatus=false;
+        return R.toInt(&bstatus,16);
     }
     else
         return R.toInt();
@@ -99,7 +87,7 @@ bool Data::addCode(QString& text){
         {
             case 0:
                 newInstruction=newInstruction | Maps::Commands[list.at(0)].first;
-                if(list.length()==4&&isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&isRegisterValid(list.at(i+2)))
+                if(list.length()==4  &&  isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&isRegisterValid(list.at(i+2)))
                 {
                     newInstruction=newInstruction | Maps::Registers[list.at(1)] << (5+6);
                     newInstruction=newInstruction | Maps::Registers[list.at(3)] << (5+5+6);
@@ -121,7 +109,9 @@ bool Data::addCode(QString& text){
                     return false;
                 break;
 
-            case 2:
+                case 2:{
+
+                }
 
 
         }
