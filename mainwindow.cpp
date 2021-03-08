@@ -28,7 +28,6 @@ void MainWindow::refreshRegisterPanel(){
 void MainWindow::on_actionReinitialize_and_Load_File_triggered()
 {
     Data* x=Data::getInstance();
-    Maps* mapInstance=Maps::getInstance();
     bool h1=false,h2=false,h3=false; //.text, .data, .globl main
     QString path=QFileDialog::getOpenFileName(this,"title");
     QFile file(path);
