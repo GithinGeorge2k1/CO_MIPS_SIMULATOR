@@ -2,7 +2,7 @@
 #include <QDebug>
 #include <QRegExp>
 #include <string.h>
-#include <Maps.h>
+#include "Maps.h"
 //Find yy this works(TutorialsPoint - singleton class)
 Data *Data::instance=0;
 //=====================================================//
@@ -32,11 +32,54 @@ void Data::initialize(){
     memset(instructions,0,sizeof (instructions));
     instructionSize=0;
 }
+bool isRegisterValid(QString R)
+{
+    return Maps::Registers.contains(R);
+}
+bool isValue(QString R)
+{
+    //check for Hexadecimal
+    if(R.contains("0x"))
+        return true;
 
+    else
+    {
+        QRegExp exp("\\d*");
+        return exp.exactMatch(R);
+    }
+}
+int hexCharToDec(QChar c)
+{
+    if(c>='a')
+        return 10+c.toLatin1()-'a';
+    return c.toLatin1()-'0';
+}
+int power(int base, int exp)
+{
+    if(exp==0)
+        return 1;
+    if(exp==1)
+        return base;
+    return base*power(base, exp-1);
+}
+int convertToInt(QString R)
+{
+    if(R.contains("0x"))
+    {
+        int n=0;
+        R=R.section("0x", 1, 1);
+        for(int i=R.length()-1;i>=0;i--)
+            n=power(hexCharToDec(R.at(i)), R.length()-1-i);
+        return n;
+    }
+    else
+        return R.toInt();
+}
 bool Data::addCode(QString& text){
     int newInstruction=0;
     int instructionTypeTemplate=8;
     Maps* mapInstance=Maps::getInstance();
+
     QRegExp sep("(,| |, )");
     QStringList list=text.split(sep);
     int i=0;
@@ -49,32 +92,43 @@ bool Data::addCode(QString& text){
 
 
     //Do From Here......
-    if(i<list.length()){
-        if(Maps::Commands.contains(list.at(i))){
-            newInstruction=newInstruction | Maps::Commands[list.at(i)].first;
-            instructionTypeTemplate=Maps::Commands[list.at(i)].second;
-            i++;
+    if(Maps::Commands.contains(list.at(i)))
+    {
+        instructionTypeTemplate=Maps::Commands[list.at(i)].second;
+        switch(instructionTypeTemplate)
+        {
+            case 0:
+                newInstruction=newInstruction | Maps::Commands[list.at(0)].first;
+                if(list.length()==4&&isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&isRegisterValid(list.at(i+2)))
+                {
+                    newInstruction=newInstruction | Maps::Registers[list.at(1)] << (5+6);
+                    newInstruction=newInstruction | Maps::Registers[list.at(3)] << (5+5+6);
+                    newInstruction=newInstruction | Maps::Registers[list.at(2)]<<(5+5+5+6);
+                }
+                else
+                    return false;
+                break;
+
+            case 1:
+                newInstruction=newInstruction | Maps::Commands[list.at(0)].first << (5+5+16);
+                if(list.length()==4&&isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&isValue(list.at(i+2)))
+                {
+                    newInstruction=newInstruction | Maps::Registers[list.at(1)] << (5+16);
+                    newInstruction=newInstruction | Maps::Registers[list.at(2)] << (5+5+16);
+                    newInstruction=newInstruction | convertToInt(list.at(3));
+                }
+                else
+                    return false;
+                break;
+
+            case 2:
+
+
         }
-        else{
-            return false;
-        }
+        instructionSize++;
+        return true;
     }
-    switch(instructionTypeTemplate){
-    case 0:{
-
-    }
-    case 1:{
-
-    }
-    case 2:{
-
-    }
-    }
-
-    instructionSize++;
-    return true;
 }
-
 QString Data::displayRegisters(){
     QString text="";
     text.append(QString("PC      = %1\n").arg(PC));
