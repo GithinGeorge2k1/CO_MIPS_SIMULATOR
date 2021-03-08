@@ -18,7 +18,6 @@ public:
 private slots:
     void on_actionReinitialize_and_Load_File_triggered();
     void on_actionQuit_triggered();
-
     void on_actionInitialize_triggered();
 
 private:
@@ -27,6 +26,5 @@ private:
 //methods
 private:
     void refreshRegisterPanel();
-
 };
 #endif // MAINWINDOW_H

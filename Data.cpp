@@ -3,7 +3,6 @@
 #include <QRegExp>
 #include <string.h>
 
-
 //Find yy this works(TutorialsPoint - singleton class)
 Data *Data::instance=0;
 //=====================================================//
@@ -15,7 +14,6 @@ Data* Data::getInstance(){
     }
     return instance;
 }
-
 
 //Member initializer list && constructor implementation
 Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0)
@@ -36,13 +34,9 @@ void Data::initialize(){
 }
 
 bool Data::addCode(QString& text){
-    //text.parse;;;;;;;
     int newInstruction=0;
     QRegExp sep("(,| |, )");
     QStringList list=text.split(sep);
-//    for(int i=0;i<list.length();i++){
-//        qDebug()<< list.at(i)<<"\n";
-//    }
     int i=0;
 
     //checking for a label...
@@ -50,49 +44,55 @@ bool Data::addCode(QString& text){
         labelMap[list.at(i).section(':',0,0)]=instructionSize;
         i++;
     }
+    //add
+    //0x000000000000001231
+    //opcode r1 r2 r3 shamt funct
+//    if(i<list.length()){
+//        //we have to create map somewhere
+//        if(commands.contains(list.at(i))){
+//            newInstruction=newInstruction | commands[list.at(i)];
+//            i++;
+//        }
+//        else{
+//            return false;
+//        }
+//    }
 
-    if(i<list.length()){
-        //we have to create map somewhere
-        if(reg.contains(list.at(i))){
-            newInstruction=newInstruction | map[list.at(i)];
-            i++;
-        }
-        else{
-            return false;
-        }
-    }
-    if(i<list.length()){
-        //we have to create map somewhere
-        if(map.contains(list.at(i))){
-            newInstruction=newInstruction | map[list.at(i)];
-            i++;
-        }
-        else{
-            return false;
-        }
-    }
+//    //$r1
+//    if(i<list.length()){
+//        //we have to create map somewhere
+//        if(map.contains(list.at(i))){
+//            newInstruction=newInstruction | (map[list.at(i)] >> 21);
+//            i++;
+//        }
+//        else{
+//            return false;
+//        }
+//    }
 
-    if(i<list.length()){
-        //we have to create map somewhere
-        if(map.contains(list.at(i))){
-            newInstruction=newInstruction | map[list.at(i)];
-            i++;
-        }
-        else{
-            return false;
-        }
-    }
+//    //$r2
+//    if(i<list.length()){
+//        //we have to create map somewhere
+//        if(map.contains(list.at(i))){
+//            newInstruction=newInstruction | map[list.at(i)];
+//            i++;
+//        }
+//        else{
+//            return false;
+//        }
+//    }
 
-    if(i<list.length()){
-        //we have to create map somewhere
-        if(map.contains(list.at(i))){
-            newInstruction=newInstruction | map[list.at(i)];
-            i++;
-        }
-        else{
-            return false;
-        }
-    }
+//    //$r3
+//    if(i<list.length()){
+//        //we have to create map somewhere
+//        if(map.contains(list.at(i))){
+//            newInstruction=newInstruction | map[list.at(i)];
+//            i++;
+//        }
+//        else{
+//            return false;
+//        }
+//    }
 
     //cant use switch case... then use what??
     //think a separate qmap is the best way to go(like qmap for functions and corresponding values)...in case of registers we can do bit shifting...

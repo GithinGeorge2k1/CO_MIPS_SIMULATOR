@@ -10,11 +10,13 @@ CONFIG += c++11
 
 SOURCES += \
     Data.cpp \
+    Maps.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     Data.h \
+    Maps.h \
     mainwindow.h
 
 FORMS += \

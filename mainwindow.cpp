@@ -8,9 +8,7 @@
 #include "Data.h"
 #include <QMessageBox>
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow), ValidCodePresent(false)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), ValidCodePresent(false)
 {
     ui->setupUi(this);
     refreshRegisterPanel();
@@ -20,20 +18,20 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-
 void MainWindow::refreshRegisterPanel(){
     Data* x=Data::getInstance();
     QString text=x->displayRegisters();
     ui->textBrowser->setPlainText(text);
-
 }
+
 void MainWindow::on_actionReinitialize_and_Load_File_triggered()
 {
     Data* x=Data::getInstance();
-    bool h1=false,h2=false,h3=false;
+    bool h1=false,h2=false,h3=false; //.text, .data, .globl main
     QString path=QFileDialog::getOpenFileName(this,"title");
     QFile file(path);
     if(!file.open(QFile::ReadOnly | QFile::Text)){
+        QMessageBox::warning(this,"title","File not Opened");
         return;
     }
     QTextStream in(&file);
@@ -43,8 +41,10 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
     while(!in.atEnd()){
         lineNo++;
         QString text=in.readLine().simplified();
+        //remove starting commands and empty file
         if(text[0]=='#' || text=="")
               continue;
+        //remove comments in between
         if(text.indexOf('#')!=-1){
             text=text.section('#',0,0);
         }
@@ -89,4 +89,5 @@ void MainWindow::on_actionInitialize_triggered()
     ui->textBrowser_2->setPlainText("");
     ui->textBrowser_3->setPlainText("");
     x->initialize();
+    ui->textBrowser->setPlainText(x->displayRegisters());
 }
