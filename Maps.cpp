@@ -5,7 +5,7 @@
 
 QMap<QString,uint> Maps::Commands;
 QMap<QString,uint> Maps::Registers;
-Maps* KeyValueMap=NULL;
+Maps* Maps::KeyValueMap=NULL;
 Maps::Maps()
 {
     QString path=":/MapCodes/Commands.csv";
@@ -15,7 +15,7 @@ Maps::Maps()
     {
         QString line=fin1.readLine().simplified();
         QStringList keyvaluepair=line.split(",0x");
-        Commands.insert(keyvaluepair.at(0), keyvaluepair.at(1).toInt());
+        Commands.insert(keyvaluepair.at(0), keyvaluepair.at(1).toUInt());
     }
     commands.close();
     path=":/MapCodes/Registers.csv";
@@ -24,7 +24,7 @@ Maps::Maps()
     while(!fin2.atEnd())
     {
         QString line=fin2.readLine().simplified();
-        QStringList keyvaluepair=line.split(",o=0x");
+        QStringList keyvaluepair=line.split(",0x");
         Registers.insert(keyvaluepair.at(0), keyvaluepair.at(1).toUInt());
     }
     registers.close();
