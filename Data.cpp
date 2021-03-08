@@ -2,7 +2,7 @@
 #include <QDebug>
 #include <QRegExp>
 #include <string.h>
-
+#include <Maps.h>
 //Find yy this works(TutorialsPoint - singleton class)
 Data *Data::instance=0;
 //=====================================================//
@@ -35,6 +35,8 @@ void Data::initialize(){
 
 bool Data::addCode(QString& text){
     int newInstruction=0;
+    int instructionTypeTemplate=8;
+    Maps* mapInstance=Maps::getInstance();
     QRegExp sep("(,| |, )");
     QStringList list=text.split(sep);
     int i=0;
@@ -44,61 +46,32 @@ bool Data::addCode(QString& text){
         labelMap[list.at(i).section(':',0,0)]=instructionSize;
         i++;
     }
-    //add
-    //0x000000000000001231
-    //opcode r1 r2 r3 shamt funct
-//    if(i<list.length()){
-//        //we have to create map somewhere
-//        if(commands.contains(list.at(i))){
-//            newInstruction=newInstruction | commands[list.at(i)];
-//            i++;
-//        }
-//        else{
-//            return false;
-//        }
-//    }
-
-//    //$r1
-//    if(i<list.length()){
-//        //we have to create map somewhere
-//        if(map.contains(list.at(i))){
-//            newInstruction=newInstruction | (map[list.at(i)] >> 21);
-//            i++;
-//        }
-//        else{
-//            return false;
-//        }
-//    }
-
-//    //$r2
-//    if(i<list.length()){
-//        //we have to create map somewhere
-//        if(map.contains(list.at(i))){
-//            newInstruction=newInstruction | map[list.at(i)];
-//            i++;
-//        }
-//        else{
-//            return false;
-//        }
-//    }
-
-//    //$r3
-//    if(i<list.length()){
-//        //we have to create map somewhere
-//        if(map.contains(list.at(i))){
-//            newInstruction=newInstruction | map[list.at(i)];
-//            i++;
-//        }
-//        else{
-//            return false;
-//        }
-//    }
-
-    //cant use switch case... then use what??
-    //think a separate qmap is the best way to go(like qmap for functions and corresponding values)...in case of registers we can do bit shifting...
 
 
-//    instructionSize++;
+    //Do From Here......
+    if(i<list.length()){
+        if(Maps::Commands.contains(list.at(i))){
+            newInstruction=newInstruction | Maps::Commands[list.at(i)].first;
+            instructionTypeTemplate=Maps::Commands[list.at(i)].second;
+            i++;
+        }
+        else{
+            return false;
+        }
+    }
+    switch(instructionTypeTemplate){
+    case 0:{
+
+    }
+    case 1:{
+
+    }
+    case 2:{
+
+    }
+    }
+
+    instructionSize++;
     return true;
 }
 
