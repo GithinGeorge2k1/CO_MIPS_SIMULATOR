@@ -63,7 +63,12 @@ int convertToInt(QString R)
     else
         return R.toInt();
 }
-bool Data::addCode(QString& text){
+bool isValidLabel(QString L)
+{
+    Data* D=Data::getInstance();
+    return (D->labelMap.contains(L));
+}
+bool Data::addCode(QString& text, int currentLineNo){
     int newInstruction=0;
     int instructionTypeTemplate=8;
     Maps* mapInstance=Maps::getInstance();
@@ -111,9 +116,42 @@ bool Data::addCode(QString& text){
                     return false;
                 break;
 
-                case 2:{
-
+            case 4:
+                newInstruction=newInstruction | Maps::Commands[list.at(i)].first << (5+5+16);
+                i++;
+                if(list.length()==3)
+                {
+                    QString base=list.at(i+1).mid(list.at(i+1).indexOf('('), list.at(i+1).indexOf(')'));
+                    int offset=convertToInt(list.at(i+1).left(list.at(i+1).indexOf(('('))));
+                    if(isRegisterValid(base)&&isRegisterValid(list.at(i))&&offset%4==0)
+                    {
+                        newInstruction=newInstruction | Maps::Registers[list.at(i)] << (16);
+                        newInstruction=newInstruction | Maps::Registers[base] <<(16+5);
+                        newInstruction=newInstruction | offset >> 2;
+                    }
+                    else
+                        return false;
                 }
+                else
+                    return false;
+                break;
+
+            case 2:
+                newInstruction=newInstruction | Maps::Commands[list.at(i)].first << (5+5+16);
+                i++;
+                if(list.length()==4&&isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&(isValue(list.at(i+2))||isValidLabel(list.at(i+2))))
+                {
+                    newInstruction=newInstruction | Maps::Registers[list.at(i)] << (5+5+16);
+                    newInstruction=newInstruction | Maps::Registers[list.at(i+1)] << (5+16);
+                    if(isValue(list.at(i+2)))
+                        newInstruction=newInstruction | convertToInt(list.at(i+2));
+                    else
+                        newInstruction=newInstruction | Data::labelMap[list.at(i+2)]-currentLineNo;
+                }
+                else
+                    return false;
+                break;
+
         }
         instructionSize++;
         return true;

@@ -61,7 +61,7 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
             h3=true;
             continue;
         }
-        lineValid=x->addCode(text);
+        lineValid=x->addCode(text, lineNo);
         if(lineValid){
             ui->textBrowser_2->append(QString("%1").arg(text));
             MainWindow::ValidCodePresent=true;

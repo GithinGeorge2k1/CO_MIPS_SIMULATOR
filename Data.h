@@ -13,14 +13,14 @@ class Data{
     int dataSize;
     int instructions[4096];
     int instructionSize;
-    QMap<QString,int> labelMap;
 private:
     static Data* instance;
     Data();
 public:
-    static Data* getInstance();
+    QMap<QString,int> labelMap;
+    static Data* getInstance(); 
     void initialize();
-    bool addCode(QString& data);
+    bool addCode(QString& data, int currentLineNo);
     QString displayRegisters();
 };
 
