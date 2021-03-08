@@ -3,10 +3,12 @@
 #include <QMap>
 
 class Maps{
-    static QMap<QString,int> Commands;
-    static QMap<QString,int> Registers;
+    static QMap<QString,uint> Commands;
+    static QMap<QString,uint> Registers;
+    static Maps* KeyValueMap;
 public:
     Maps();
+    static Maps* getInstance();
 };
 
 

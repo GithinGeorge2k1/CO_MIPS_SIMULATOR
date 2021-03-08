@@ -6,6 +6,7 @@
 #include <QTextStream>
 #include <QStringList>
 #include "Data.h"
+#include "Maps.h"
 #include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), ValidCodePresent(false)
@@ -27,6 +28,7 @@ void MainWindow::refreshRegisterPanel(){
 void MainWindow::on_actionReinitialize_and_Load_File_triggered()
 {
     Data* x=Data::getInstance();
+    Maps* KeyValuePair=Maps::getInstance();
     bool h1=false,h2=false,h3=false; //.text, .data, .globl main
     QString path=QFileDialog::getOpenFileName(this,"title");
     QFile file(path);
