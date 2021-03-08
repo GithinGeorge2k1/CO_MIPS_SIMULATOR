@@ -5,6 +5,7 @@
 #include <QMap>
 
 class Data{
+public:
     int R[31];
     int PC;
     int Stack[2048];
@@ -13,11 +14,12 @@ class Data{
     int dataSize;
     int instructions[4096];
     int instructionSize;
+    QMap<QString,int> labelMap;
+    QMap<QString,int> variableMap;
 private:
     static Data* instance;
     Data();
 public:
-    QMap<QString,int> labelMap;
     static Data* getInstance(); 
     void initialize();
     bool addCode(QString& data, int currentLineNo);
