@@ -1,33 +1,33 @@
 #include "Maps.h"
 
-QMap<QString,uint> Maps::Commands;
+QMap<QString,QPair<int,int>> Maps::Commands;
 QMap<QString,uint> Maps::Registers;
 Maps* Maps::KeyValueMap=NULL;
 Maps::Maps()
 {
-    Commands["add"]=0x20;
-    Commands["sub"]=0x22;
-    Commands["addi"]=0x20000000;
+    Commands["add"]=qMakePair(0x20,0);
+    Commands["sub"]=qMakePair(0x22,0);
+    Commands["addi"]=qMakePair(0x20000000,0);
 
-    Commands["and"]=0x24;
-    Commands["andi"]=0x20000000;
-    Commands["or"]=0x5;
-    Commands["ori"]=0x34000000;
-    Commands["sll"]=0x0;
-    Commands["slr"]=0x2;
+    Commands["and"]=qMakePair(0x24,0);
+    Commands["andi"]=qMakePair(0x20000000,0);
+    Commands["or"]=qMakePair(0x5,0);
+    Commands["ori"]=qMakePair(0x34000000,0);
+    Commands["sll"]=qMakePair(0x0,0);
+    Commands["slr"]=qMakePair(0x2,0);
 
-    Commands["bne"]=0x14000000;
-    Commands["beq"]=0x10000000;
-    Commands["slt"]=0xa;
-    Commands["slti"]=0x28000000;
+    Commands["bne"]=qMakePair(0x14000000,0);
+    Commands["beq"]=qMakePair(0x10000000,0);
+    Commands["slt"]=qMakePair(0xa,0);
+    Commands["slti"]=qMakePair(0x28000000,0);
 
-    Commands["lui"]=0x3c000000;
-    Commands["lw"]=0x8c000000;
-    Commands["sw"]=0xac000000;
+    Commands["lui"]=qMakePair(0x3c000000,0);
+    Commands["lw"]=qMakePair(0x8c000000,0);
+    Commands["sw"]=qMakePair(0xac000000,0);
 
-    Commands["j"]=0x08000000;
-    Commands["jr"]=0x8;
-    Commands["jal"]=0x0c000000;
+    Commands["j"]=qMakePair(0x08000000,0);
+    Commands["jr"]=qMakePair(0x8,0);
+    Commands["jal"]=qMakePair(0x0c000000,0);
 
     Registers["$r0"]=0x0;
     Registers["$at"]=0x1;
