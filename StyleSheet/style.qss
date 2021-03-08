@@ -1,0 +1,17 @@
+QLabel{
+	font-family: arial;
+	font-size: 18px;
+	background-color: lightgray;
+	padding: 2px;
+}
+QLabel:hover{
+	background-color: #AEABA8;
+}
+QTextBrowser{
+	font-family: arial;
+	font-size: 18px;
+	background-color: black;
+	color: white;
+	margin-left: 2px;
+	border: none;
+}
