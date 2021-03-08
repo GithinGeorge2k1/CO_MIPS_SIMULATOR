@@ -5,29 +5,38 @@ QMap<QString,uint> Maps::Registers;
 Maps* Maps::KeyValueMap=NULL;
 Maps::Maps()
 {
+    //Command Templates
+//    0 for ins R1 R2 R3            = add,sub,slt,and,or
+//    1 for inst R1 R2 value        = sll,slr,andi,ori,addi,slti
+//    2 for inst R1 R2 value        = bne,beq
+//    3 for inst value|Label        = j,jal
+//    4 for inst R1 x(R2)           = lw,sw
+//    5 for inst R1                 = jr
+//    6 for inst R1 value|Label     = lui
+
     Commands["add"]=qMakePair(0x20,0);
     Commands["sub"]=qMakePair(0x22,0);
-    Commands["addi"]=qMakePair(0x20000000,0);
+    Commands["addi"]=qMakePair(0x20000000,1);
 
     Commands["and"]=qMakePair(0x24,0);
-    Commands["andi"]=qMakePair(0x20000000,0);
+    Commands["andi"]=qMakePair(0x20000000,1);
     Commands["or"]=qMakePair(0x5,0);
-    Commands["ori"]=qMakePair(0x34000000,0);
-    Commands["sll"]=qMakePair(0x0,0);
-    Commands["slr"]=qMakePair(0x2,0);
+    Commands["ori"]=qMakePair(0x34000000,1);
+    Commands["sll"]=qMakePair(0x0,1);
+    Commands["slr"]=qMakePair(0x2,1);
 
-    Commands["bne"]=qMakePair(0x14000000,0);
-    Commands["beq"]=qMakePair(0x10000000,0);
+    Commands["bne"]=qMakePair(0x14000000,2);
+    Commands["beq"]=qMakePair(0x10000000,2);
     Commands["slt"]=qMakePair(0xa,0);
-    Commands["slti"]=qMakePair(0x28000000,0);
+    Commands["slti"]=qMakePair(0x28000000,1);
 
-    Commands["lui"]=qMakePair(0x3c000000,0);
-    Commands["lw"]=qMakePair(0x8c000000,0);
-    Commands["sw"]=qMakePair(0xac000000,0);
+    Commands["lui"]=qMakePair(0x3c000000,6);
+    Commands["lw"]=qMakePair(0x8c000000,4);
+    Commands["sw"]=qMakePair(0xac000000,4);
 
-    Commands["j"]=qMakePair(0x08000000,0);
-    Commands["jr"]=qMakePair(0x8,0);
-    Commands["jal"]=qMakePair(0x0c000000,0);
+    Commands["j"]=qMakePair(0x08000000,3);
+    Commands["jr"]=qMakePair(0x8,5);
+    Commands["jal"]=qMakePair(0x0c000000,3);
 
     Registers["$r0"]=0x0;
     Registers["$at"]=0x1;
