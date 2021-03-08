@@ -42,10 +42,8 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
     while(!in.atEnd()){
         lineNo++;
         QString text=in.readLine().simplified();
-        //remove starting commands and empty file
         if(text[0]=='#' || text=="")
               continue;
-        //remove comments in between
         if(text.indexOf('#')!=-1){
             text=text.section('#',0,0);
         }
@@ -65,7 +63,7 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
         }
         lineValid=x->addCode(text);
         if(lineValid){
-            ui->textBrowser_2->append(text);
+            ui->textBrowser_2->append(QString("%1").arg(text));
             MainWindow::ValidCodePresent=true;
         }
         else{

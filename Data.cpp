@@ -86,24 +86,26 @@ bool Data::addCode(QString& text){
         switch(instructionTypeTemplate)
         {
             case 0:
-                newInstruction=newInstruction | Maps::Commands[list.at(0)].first;
+                newInstruction=newInstruction | Maps::Commands[list.at(i)].first;
+                i++;
                 if(list.length()==4  &&  isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&isRegisterValid(list.at(i+2)))
                 {
-                    newInstruction=newInstruction | Maps::Registers[list.at(1)] << (5+6);
-                    newInstruction=newInstruction | Maps::Registers[list.at(3)] << (5+5+6);
-                    newInstruction=newInstruction | Maps::Registers[list.at(2)]<<(5+5+5+6);
+                    newInstruction=newInstruction | Maps::Registers[list.at(i)] << (5+6);
+                    newInstruction=newInstruction | Maps::Registers[list.at(i+1)] << (5+5+6);
+                    newInstruction=newInstruction | Maps::Registers[list.at(i+2)]<<(5+5+5+6);
                 }
                 else
                     return false;
                 break;
 
             case 1:
-                newInstruction=newInstruction | Maps::Commands[list.at(0)].first << (5+5+16);
+                newInstruction=newInstruction | Maps::Commands[list.at(i)].first << (5+5+16);
+                i++;
                 if(list.length()==4&&isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&isValue(list.at(i+2)))
                 {
-                    newInstruction=newInstruction | Maps::Registers[list.at(1)] << (5+16);
-                    newInstruction=newInstruction | Maps::Registers[list.at(2)] << (5+5+16);
-                    newInstruction=newInstruction | convertToInt(list.at(3));
+                    newInstruction=newInstruction | Maps::Registers[list.at(i)] << (5+16);
+                    newInstruction=newInstruction | Maps::Registers[list.at(i+1)] << (5+5+16);
+                    newInstruction=newInstruction | convertToInt(list.at(i+2));
                 }
                 else
                     return false;
@@ -112,8 +114,6 @@ bool Data::addCode(QString& text){
                 case 2:{
 
                 }
-
-
         }
         instructionSize++;
         return true;

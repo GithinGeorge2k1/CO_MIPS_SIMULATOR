@@ -7,7 +7,7 @@ Maps::Maps()
 {
     //Command Templates
 //    0 for inst R1 R2 R3           = add,sub,slt,and,or
-//    1 for inst R1 R2 value        = sll,slr,andi,ori,addi,slti
+//    1 for inst R1 R2 value        = sll,srl,andi,ori,addi,slti
 //    2 for inst R1 R2 value|Label  = bne,beq               /////exe   value | Label    4, labelmap-currentlineNo;;
 //    3 for inst value|Label        = j,jal                 /////exe   value | Label    value|Label;
 //    4 for inst R1 x(R2)           = lw,sw                 /////exe   x->x/4
@@ -23,7 +23,7 @@ Maps::Maps()
     Commands["or"]=qMakePair(0x5,0);
     Commands["ori"]=qMakePair(0x34000000,1);
     Commands["sll"]=qMakePair(0x0,1);
-    Commands["slr"]=qMakePair(0x2,1);
+    Commands["srl"]=qMakePair(0x2,1);
 
     Commands["bne"]=qMakePair(0x14000000,2);
     Commands["beq"]=qMakePair(0x10000000,2);
