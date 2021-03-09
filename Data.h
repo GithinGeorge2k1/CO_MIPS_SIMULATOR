@@ -27,7 +27,7 @@ public:
     QString displayData();
     void run();
 
-    int instructionFetch(int& pc);
+    int instructionFetch();
     void instructionDecodeRegisterFetch(int instruction);
     void Execute(int opCode,int target);
     void Execute(int funct,int Rs,int Rt,int Rd,int shamt);

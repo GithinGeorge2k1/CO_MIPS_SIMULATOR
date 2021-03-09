@@ -188,7 +188,6 @@ void MainWindow::on_actionRun_triggered()
             return;
         }
         D->run();
-        qDebug()<<D->R[16];
         QString text=D->displayRegisters();
         ui->textBrowser->setPlainText(text);
         text=D->displayData();

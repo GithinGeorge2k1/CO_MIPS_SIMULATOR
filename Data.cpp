@@ -230,7 +230,7 @@ bool Data::addCode(QString& text){
 QString Data::displayRegisters(){
     QString text="";
     text.append(QString("PC      = %1\n").arg(PC));
-    for(int i=0;i<31;i++)
+    for(int i=0;i<32;i++)
     {
         text.append(QString("R[%1]      = %2\n").arg(i).arg(R[i]));
     }
@@ -238,31 +238,26 @@ QString Data::displayRegisters(){
 }
 
 QString Data::displayData(){
-    Data *x=Data::getInstance();
     QString text="";
     int DummyAddress=2000;
-    for(int i=0;i<x->dataSize;i++){
-        text.append(QString("[%1]   %2   ").arg(DummyAddress).arg(x->data[i]));
+    for(int i=0;i<dataSize;i++){
+        text.append(QString("[%1]   %2   \n").arg(DummyAddress).arg(data[i]));
         DummyAddress+=4;
     }
     return text;
 }
 
 void Data::run(){
-
-    while(PC!=-1){
-        int instruction=instructionFetch(PC);
+    qDebug()<<instructionSize;
+    while(PC<instructionSize){
         qDebug()<<PC;
+        int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
-        if(PC>instructionSize){
-            //give warning or return bool;
-            return;
-        }
     }
 }
-int Data::instructionFetch(int &pc){
-    int result=instructions[pc];
-    pc++;
+int Data::instructionFetch(){
+    int result=instructions[PC];
+    PC++;
     return result;
 }
 
@@ -287,9 +282,7 @@ void Data::instructionDecodeRegisterFetch(int instruction){
     else if(opCode==0x8 || opCode==0xc ||opCode==0xd ||opCode==0x5 || opCode==0x4
             ||opCode==0xa || opCode==0xf ||opCode==0x23 ||opCode==0x2b){
         int Rs=(instruction>>21) & 0x1f;
-        qDebug()<<Rs;
         int Rt=(instruction>>16) & 0x1f;
-        qDebug()<<Rt;
         int immediate=instruction & 0xffff;
         Execute(opCode,R[Rs],Rt,immediate);
 
@@ -344,36 +337,38 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
     int result=0;
     switch(opCode){
     case 0x8:{//addi
-        int r1=R[R1];
+        qDebug()<<"exec addi";
+        int r1=R1;
         result=r1+immediate;
+        qDebug()<<result;
         break;
     }
     case 0xc:{//andi
-        int r1=R[R1];
+        int r1=R1;
         result=r1&immediate;
         break;
     }
     case 0xd:{//ori
-        int r1=R[R1];
+        int r1=R1;
         result=r1|immediate;
         break;
     }
     case 0x5:{//bne
-        int r1=R[R1];
+        int r1=R1;
         int r2=R[R2];
         if(r1!=r2)
             result=PC+immediate-1;
         break;
     }
     case 0x4:{//beq
-        int r1=R[R1];
+        int r1=R1;
         int r2=R[R2];
         if(r1==r2)
             result=PC+immediate-1;
         break;
     }
     case 0xa:{//slti
-        int r1=R[R1];
+        int r1=R1;
         if(r1<immediate)
             result=1;
         else
@@ -387,12 +382,12 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
 
     case 0x23:{//lw
         //result is Effective Address
-        int r1=R[R1];
+        int r1=R1;
         result=immediate+r1;
         break;
     }
     case 0x2b:{//sw
-        int r1=R[R1];
+        int r1=R1;
         result=immediate+r1;
         break;
     }   
@@ -417,17 +412,17 @@ void Data::MEM(int opCode, int Rd, int result)
     //Rd is index of the destination Register
     int value;
     switch(opCode){
-    case 0x14:{//bne
+    case 0x5:{//bne
         PC=result;
         WB(-1, result);
         break;
     }
-    case 0x10:{//beq
+    case 0x4:{//beq
         PC=result;
         WB(-1, result);
         break;
     }
-    case 0x8c:{//lw
+    case 0x23:{//lw
         if(result<(int)(sizeof(data)/sizeof(data[0])))//BoundCheck
             value=data[result];
         else
@@ -436,7 +431,7 @@ void Data::MEM(int opCode, int Rd, int result)
         break;
         //value must be wriiten to Register R[R2] in WB
     }
-    case 0xac:{//sw
+    case 0x2b:{//sw
         if(result<(int)(sizeof(data)/sizeof(data[0])))//BoundCheck
         {
             value=-1;
@@ -445,21 +440,25 @@ void Data::MEM(int opCode, int Rd, int result)
         }
         break;
     }
-    case 0x0c://jal
+    case 0x3://jal
         PC=result;
         WB(Rd,result);
         break;
-    case 0x08:
+    case 0x2://jump
         PC=result;
         WB(Rd,result);
         break;
     default:
+        qDebug()<<"default MEM";
         WB(Rd,result);
+        break;
     }
 }
 void Data::WB(int Rd, int result)
 {
-    if(Rd!=-1 && isRegisterValid(QString("%1").arg(Rd))){
+    if(Rd!=-1 && 0<=Rd && Rd<32){
         R[Rd]=result;
+        qDebug()<<Rd;
+        qDebug()<<result;
     }
 }
