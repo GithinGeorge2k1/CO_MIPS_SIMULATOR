@@ -31,7 +31,7 @@ int convertToInt(QString R);
 
 int storeAllLabelsAndData(QTextStream& in){
     bool h1=false,h2=false,h3=false; //.text, .data, .globl main
-    int start=1;
+    int start=-1;
     Data* x=Data::getInstance();
     int lineNo=0;
     while(!in.atEnd()){
@@ -74,7 +74,6 @@ int storeAllLabelsAndData(QTextStream& in){
         if(!h3 && text==".globl main"){
             h3=true;
             start=lineNo;
-            qDebug()<<start;
             continue;
         }
         QStringList list=text.split(" ");
@@ -82,12 +81,12 @@ int storeAllLabelsAndData(QTextStream& in){
             x->labelMap[list.at(0).section(':',0,0)]=lineNo;
         }
     }
-    return start+1;
+    return start;
 }
 
 void MainWindow::on_actionReinitialize_and_Load_File_triggered()
 {
-    int start=1;
+    int start=-1;
     Data* x=Data::getInstance();
     QString path=QFileDialog::getOpenFileName(this,"title");
     QFile file(path);

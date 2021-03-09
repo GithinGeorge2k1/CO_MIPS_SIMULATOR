@@ -3,6 +3,7 @@
 #include <QRegExp>
 #include <string.h>
 #include "Maps.h"
+#include <QChar>
 //Find yy this works(TutorialsPoint - singleton class)
 Data *Data::instance=0;
 //=====================================================//
@@ -34,9 +35,12 @@ void Data::initialize(){
 }
 void debugInstruction(int I)
 {
-    for(int i=31;i>=0;i--)
-       qDebug()<<((I>>i)&1);
-    qDebug()<<"\n";
+    QString test="";
+    for(int i=31;i>=0;i--){
+        char c=(char)(((I>>i)&1)+48);
+        test.append(QChar(c));
+    }
+    qDebug()<<test;
 
 }
 bool isRegisterValid(QString R)
