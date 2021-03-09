@@ -204,7 +204,21 @@ bool Data::addCode(QString& text){
                 }
                 else
                     return false;
-            break;
+                break;
+
+            case 7:
+                newInstruction=newInstruction | Maps::Commands[list.at(i)].first;
+                i++;
+                if(list.length()==4&&isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&isRegisterValid(list.at(i+2)))
+                {
+                    newInstruction=newInstruction | Maps::Registers[list.at(i)] << (5+6);
+                    newInstruction=newInstruction | Maps::Registers[list.at(i+1)] << (5+5+6);
+                    newInstruction=newInstruction | Maps::Registers[list.at(i+2)] << 6;
+                }
+                else
+                    return false;
+                break;
+
         }
         debugInstruction(newInstruction);
         D->instructions[instructionSize]=newInstruction;
