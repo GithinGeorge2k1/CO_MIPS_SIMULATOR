@@ -10,8 +10,10 @@ QLabel:hover{
 QTextBrowser{
 	font-family: arial;
 	font-size: 18px;
+	selection-background-color:brown;
 	background-color: black;
 	color: white;
 	margin-left: 2px;
 	border: none;
+	spacing: 3px;
 }

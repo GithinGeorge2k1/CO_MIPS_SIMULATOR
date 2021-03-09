@@ -25,6 +25,13 @@ public:
     bool addCode(QString& data);
     QString displayRegisters();
     QString displayData();
+    void run();
+
+    int instructionFetch(int& pc);
+    void instructionDecodeRegisterFetch(int instruction);
+    void Execute();
+    void MEM();
+    void WB();
 };
 
 

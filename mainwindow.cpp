@@ -10,7 +10,8 @@
 #include <QMessageBox>
 #include <QDebug>
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), ValidCodePresent(false)
+bool MainWindow::ValidCodePresent=false;
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     refreshRegisterPanel();
@@ -88,6 +89,7 @@ int storeAllLabelsAndData(QTextStream& in){
             instructionsize++;
 
     }
+
     return start;
 }
 
@@ -145,6 +147,7 @@ void MainWindow::on_actionQuit_triggered()
 
 void MainWindow::on_actionInitialize_triggered()
 {
+    MainWindow::ValidCodePresent=false;
     initialize();
 }
 
@@ -167,4 +170,27 @@ void MainWindow::initialize(){
     ui->textBrowser_3->setPlainText("");
     x->initialize();
     ui->textBrowser->setPlainText(x->displayRegisters());
+}
+
+void MainWindow::on_actionClear_Registers_triggered()
+{
+    Data* D=Data::getInstance();
+    memset(D->R,0,sizeof(D->R));
+    ui->textBrowser->setPlainText(D->displayRegisters());
+}
+
+void MainWindow::on_actionRun_triggered()
+{
+    if(MainWindow::ValidCodePresent){
+        Data *D=Data::getInstance();
+        if(!D->labelMap.contains("main")){
+            QMessageBox::warning(this,"Cannot find main","No entry point defined");
+            return;
+        }
+        D->run();
+    }
+    else{
+        QMessageBox::warning(this,"Invalid Assembly Code","Cannot Run!! Invalid Code");
+        return;
+    }
 }

@@ -4,6 +4,7 @@
 #include <string.h>
 #include "Maps.h"
 #include <QChar>
+
 //Find yy this works(TutorialsPoint - singleton class)
 Data *Data::instance=0;
 //=====================================================//
@@ -248,3 +249,29 @@ QString Data::displayData(){
     return text;
 }
 
+void Data::run(){
+
+    while(PC!=-1){
+        int instruction=instructionFetch(PC);
+        instructionDecodeRegisterFetch(instruction);
+        Execute();
+        MEM();
+        WB();
+        if(PC>instructionSize){
+            //give warning or return bool;
+            return;
+        }
+    }
+}
+int Data::instructionFetch(int &pc){
+    int result=instructions[pc];
+    pc++;
+    return result;
+}
+
+void Data::instructionDecodeRegisterFetch(int instruction){
+    int opCode=(instruction>>26) & 0xffffffff
+    switch(instruction){
+    case
+    }
+}

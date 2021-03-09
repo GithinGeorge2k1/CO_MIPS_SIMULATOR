@@ -24,9 +24,13 @@ private slots:
 
     void on_actionSee_DataMap_triggered();
 
+    void on_actionClear_Registers_triggered();
+
+    void on_actionRun_triggered();
+
 private:
     Ui::MainWindow *ui;
-    bool ValidCodePresent;
+    static bool ValidCodePresent;
 //methods
 private:
     void refreshRegisterPanel();
