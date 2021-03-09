@@ -2,8 +2,4 @@
     <qresource prefix="/stylesheet">
         <file>StyleSheet/style.qss</file>
     </qresource>
-    <qresource prefix="/MapCodes">
-        <file>Commands.csv</file>
-        <file>Registers.csv</file>
-    </qresource>
 </RCC>
