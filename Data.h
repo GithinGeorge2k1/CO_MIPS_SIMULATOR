@@ -24,6 +24,7 @@ public:
     void initialize();
     bool addCode(QString& data, int currentLineNo);
     QString displayRegisters();
+    QString displayData();
 };
 
 

@@ -165,6 +165,16 @@ QString Data::displayRegisters(){
         text.append(QString("R[%1]      = %2\n").arg(i).arg(R[i]));
     }
     return text;
+}
 
+QString Data::displayData(){
+    Data *x=Data::getInstance();
+    QString text="";
+    int DummyAddress=2000;
+    for(int i=0;i<x->dataSize;i++){
+        text.append(QString("[%1]   %2   ").arg(DummyAddress).arg(x->data[i]));
+        DummyAddress+=4;
+    }
+    return text;
 }
 
