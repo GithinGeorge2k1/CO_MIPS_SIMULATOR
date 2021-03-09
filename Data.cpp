@@ -289,32 +289,34 @@ void Data::instructionDecodeRegisterFetch(int instruction){
         int Rt=(instruction>>16) & 0x1f;
         int Rd=(instruction>>11) & 0x1f;
         int shamt=(instruction>>6) & 0x1f;
+        Execute(funct,Rs,Rt,Rd,shamt);
+    }
+    //J - Type instruction
+    else if(opCode==0x08){
+        int target=instruction & 0x3ffffff;
+        Execute(opCode,target);
+    }
+    //I - Type
+    else if(opCode==0x20 || opCode==0x30 ||opCode==0x34 ||opCode==0x14 || opCode==0x10
+            ||opCode==0x28 || opCode==0x3c ||opCode==0x8c ||opCode==0xac || opCode==0x0c){
+        int Rs=(instruction>>21) & 0x1f;
+        int Rt=(instruction>>16) & 0x1f;
+        int immediate=instruction & 0xffff;
+        Execute(opCode,Rs,Rt,immediate);
 
     }
-    else if(opCode==)
 
 }
-void Data::Execute(int opCode,int rs1,int rt,int rd,int shamt){
-
+void Data::Execute(int funct,int Rs,int Rt,int Rd,int shamt){
     switch(funct){
     case 0x0: //sll
         break;
 
     case 0x20:{//add
-        int RIndex1= (instruction >> (5+5+5+6)) & 0x1f;
-        int RIndex2= (instruction >> (5+5+6)) & 0x1f;
-        int* tempMemory=new int[2];
-        tempMemory[0]=R[RIndex1];
-        tempMemory[1]=R[RIndex2];
-        break;
+
     }
     case 0x22:{//sub
-        int RIndex1= (instruction >> (5+5+5+6)) & 0x1f;
-        int RIndex2= (instruction >> (5+5+6)) & 0x1f;
-        int* tempMemory=new int[2];
-        tempMemory[0]=R[RIndex1];
-        tempMemory[1]=R[RIndex2];
-        break;
+
     }
     case 0x2://srl
         break;
@@ -331,11 +333,9 @@ void Data::Execute(int opCode,int rs1,int rt,int rd,int shamt){
     case 0x5://or
         break;
     }
-    break;
 
 }
 
-}
 void Execute(int opCode,int R1,int R2,int immediate){
     switch(opCode){
     case 0x20://addi

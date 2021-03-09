@@ -29,8 +29,8 @@ public:
 
     int instructionFetch(int& pc);
     void instructionDecodeRegisterFetch(int instruction);
-    void Execute(int funct,int R1,int R2,int R3,int shamt);
-    void Execute(int opCode,int R1,int R2,int immediate);
+    void Execute(int funct,int Rs,int Rt,int Rd,int shamt);
+    void Execute(int opCode,int Rs,int Rt,int immediate);
     void Execute(int opCode,int target);
 
     void MEM();
