@@ -33,8 +33,8 @@ public:
     void Execute(int opCode,int Rs,int Rt,int immediate);
     void Execute(int opCode,int target);
 
-    void MEM();
-    void WB();
+    void MEM(int opCode, int R2, int result);
+    void WB(int opCode, int address, int value);
 };
 
 

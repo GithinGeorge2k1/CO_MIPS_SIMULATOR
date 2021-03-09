@@ -358,14 +358,14 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
         int r1=D->R[R1];
         int r2=D->R[R2];
         if(r1!=r2)
-            PC=PC+immediate;
+            result=PC+immediate;
         break;
     }
     case 0x10:{//beq
         int r1=D->R[R1];
         int r2=D->R[R2];
         if(r1==r2)
-            PC=PC+immediate;
+            result=PC+immediate;
         break;
     }
     case 0x28:{//slti
@@ -398,6 +398,7 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
         //idk is jal a special case?? It is right??
         break;
     }
+    MEM(opCode, R2, result);
 }
 
 void Data::Execute(int opCode,int target){
@@ -407,5 +408,62 @@ void Data::Execute(int opCode,int target){
         //set PC to Rs?? or in MEM??
         PC=target;
     }
+
+}
+void Data::MEM(int opCode, int R2, int result)
+{
+    //R2 is index of the destination Register
+    Data* D=Data::getInstance();
+    int value;
+    switch(opCode){
+    /*
+    case 0x20:{//addi
+        break;
+    }
+    case 0x30:{//andi
+        break;
+    }
+
+    case 0x34:{//ori
+        break;
+    }
+    case 0x14:{//bne
+        break;
+    }
+    case 0x10:{//beq
+        break;
+    }
+    case 0x28:{//slti
+        break;
+    }
+    case 0x3c://lui
+        break;
+    */
+    case 0x8c:{//lw
+        if(R2<(sizeof(D->data)/sizeof(D->data[0])))//BoundCheck
+            value=D->data[R2];
+        else
+            value=0;
+        WB(opCode, R2, value);
+        //value must be wriiten to Register R[R2] in WB
+    }
+    case 0xac:{//sw
+        if(result<(sizeof(D->data)/sizeof(D->data[0])))//BoundCheck
+        {
+            value=D->R[R2];
+            //value must be written to MEM or data[result] in WB
+            WB(opCode, result, value);
+        }
+        break;
+    }
+    /*
+    case 0x0c://jal
+        break;
+    }
+    */
+    }
+}
+void Data::WB(int opCode, int address, int value)
+{
 
 }
