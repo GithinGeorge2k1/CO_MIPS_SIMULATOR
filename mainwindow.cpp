@@ -31,9 +31,11 @@ int convertToInt(QString R);
 
 int storeAllLabelsAndData(QTextStream& in){
     bool h1=false,h2=false,h3=false; //.text, .data, .globl main
+    int instructionsize=0;
     int start=-1;
     Data* x=Data::getInstance();
     int lineNo=0;
+
     while(!in.atEnd()){
         lineNo++;
         QString text=in.readLine().simplified();
@@ -78,8 +80,11 @@ int storeAllLabelsAndData(QTextStream& in){
         }
         QStringList list=text.split(" ");
         if(list.at(0).indexOf(":")==list.at(0).length()-1){
-            x->labelMap[list.at(0).section(':',0,0)]=lineNo;
+            x->labelMap[list.at(0).section(':',0,0)]=instructionsize;
         }
+        if(list.length()!=1)
+            instructionsize++;
+
     }
     return start;
 }
@@ -88,6 +93,7 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
 {
     int start=-1;
     Data* x=Data::getInstance();
+    x->initialize();
     QString path=QFileDialog::getOpenFileName(this,"title");
     QFile file(path);
     if(!file.open(QFile::ReadOnly | QFile::Text)){
@@ -142,4 +148,18 @@ void MainWindow::on_actionInitialize_triggered()
     ui->textBrowser_3->setPlainText("");
     x->initialize();
     ui->textBrowser->setPlainText(x->displayRegisters());
+}
+
+void MainWindow::on_actionSee_LabelMap_triggered()
+{
+    Data *D=Data::getInstance();
+    qDebug()<<D->labelMap;
+
+}
+
+void MainWindow::on_actionSee_DataMap_triggered()
+{
+    Data *D=Data::getInstance();
+    qDebug()<<D->variableMap;
+
 }
