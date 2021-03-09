@@ -22,7 +22,7 @@ private:
 public:
     static Data* getInstance(); 
     void initialize();
-    bool addCode(QString& data, int currentLineNo);
+    bool addCode(QString& data);
     QString displayRegisters();
     QString displayData();
 };

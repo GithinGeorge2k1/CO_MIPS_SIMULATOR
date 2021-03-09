@@ -80,7 +80,7 @@ bool isValidLabel(QString L)
     Data* D=Data::getInstance();
     return (D->labelMap.contains(L));
 }
-bool Data::addCode(QString& text, int currentLineNo){
+bool Data::addCode(QString& text){
     Data* D=Data::getInstance();
     int newInstruction=0;
     int instructionTypeTemplate=8;
@@ -89,7 +89,15 @@ bool Data::addCode(QString& text, int currentLineNo){
     QRegExp sep("(,| |, )");
     QStringList list=text.split(sep);
     int i=0;
-    if(list.length()==1 && (D->labelMap).contains(list.at(i)));
+    //IF LABEL IS SEPARATELY SEEN ON A LINE IT IS VALID....
+    if(list.length()==1){
+        if(list.at(0).contains(":") && D->labelMap.contains(list.at(0).section(":",0,0))){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
     if(Maps::Commands.contains(list.at(i)))
     {
         instructionTypeTemplate=Maps::Commands[list.at(i)].second;
@@ -153,7 +161,7 @@ bool Data::addCode(QString& text, int currentLineNo){
                         newInstruction=newInstruction | convertToInt(list.at(i+2));
                     else
                         //wrong...need to figure out a way!!
-                        newInstruction=newInstruction | Data::labelMap[list.at(i+2)]-currentLineNo;
+                        newInstruction=newInstruction | Data::labelMap[list.at(i+2)]-D->instructionSize;
                 }
                 else
                     return false;

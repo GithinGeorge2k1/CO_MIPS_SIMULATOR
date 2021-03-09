@@ -31,7 +31,9 @@ int convertToInt(QString R);
 
 int storeAllLabelsAndData(QTextStream& in){
     bool h1=false,h2=false,h3=false; //.text, .data, .globl main
+    //LABEL SHOULD GET CORRECT INSTRUCTION NO(NOT TO BE CONFUSED WITH LINE NO)
     int instructionsize=0;
+
     int start=-1;
     Data* x=Data::getInstance();
     int lineNo=0;
@@ -120,7 +122,7 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
         if(text.indexOf('#')!=-1){
             text=text.section('#',0,0);
         }
-        lineValid=x->addCode(text, lineNo);
+        lineValid=x->addCode(text);
         if(lineValid){
             ui->textBrowser_2->append(QString("%1").arg(text));
             MainWindow::ValidCodePresent=true;
