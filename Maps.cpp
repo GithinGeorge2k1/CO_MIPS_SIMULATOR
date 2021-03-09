@@ -38,7 +38,7 @@ Maps::Maps()
     Commands["jr"]=qMakePair(0x8,5);
     Commands["jal"]=qMakePair(0x0c000000,3);
 
-    Registers["$r0"]=0x0;
+    Registers["$zero"]=0x0;
     Registers["$at"]=0x1;
     Registers["$v0"]=0x2;
     Registers["$v1"]=0x3;

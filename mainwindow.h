@@ -20,6 +20,10 @@ private slots:
     void on_actionQuit_triggered();
     void on_actionInitialize_triggered();
 
+    void on_actionSee_LabelMap_triggered();
+
+    void on_actionSee_DataMap_triggered();
+
 private:
     Ui::MainWindow *ui;
     bool ValidCodePresent;

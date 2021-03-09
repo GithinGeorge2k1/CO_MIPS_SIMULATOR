@@ -224,10 +224,18 @@
     </property>
     <addaction name="separator"/>
    </widget>
+   <widget class="QMenu" name="menuDebug_Options">
+    <property name="title">
+     <string>Debug Options</string>
+    </property>
+    <addaction name="actionSee_LabelMap"/>
+    <addaction name="actionSee_DataMap"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSimulator"/>
    <addaction name="menuWindow"/>
    <addaction name="menuAbout"/>
+   <addaction name="menuDebug_Options"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -261,6 +269,9 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionReinitialize_and_Load_File"/>
+   <addaction name="actionSee_LabelMap"/>
+   <addaction name="actionSee_DataMap"/>
   </widget>
   <action name="actionReinitialize_and_Load_File">
    <property name="text">
@@ -315,6 +326,16 @@
   <action name="actionInitialize">
    <property name="text">
     <string>Initialize</string>
+   </property>
+  </action>
+  <action name="actionSee_LabelMap">
+   <property name="text">
+    <string>See LabelMap</string>
+   </property>
+  </action>
+  <action name="actionSee_DataMap">
+   <property name="text">
+    <string>See DataMap</string>
    </property>
   </action>
  </widget>

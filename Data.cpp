@@ -32,6 +32,8 @@ void Data::initialize(){
     dataSize=0;
     memset(instructions,0,sizeof (instructions));
     instructionSize=0;
+    variableMap.clear();
+    labelMap.clear();
 }
 void debugInstruction(int I)
 {
@@ -79,6 +81,7 @@ bool isValidLabel(QString L)
     return (D->labelMap.contains(L));
 }
 bool Data::addCode(QString& text, int currentLineNo){
+    Data* D=Data::getInstance();
     int newInstruction=0;
     int instructionTypeTemplate=8;
     Maps* mapInstance=Maps::getInstance();
@@ -86,8 +89,7 @@ bool Data::addCode(QString& text, int currentLineNo){
     QRegExp sep("(,| |, )");
     QStringList list=text.split(sep);
     int i=0;
-
-    //Do From Here......
+    if(list.length()==1 && (D->labelMap).contains(list.at(i)));
     if(Maps::Commands.contains(list.at(i)))
     {
         instructionTypeTemplate=Maps::Commands[list.at(i)].second;
@@ -150,6 +152,7 @@ bool Data::addCode(QString& text, int currentLineNo){
                     if(isValue(list.at(i+2)))
                         newInstruction=newInstruction | convertToInt(list.at(i+2));
                     else
+                        //wrong...need to figure out a way!!
                         newInstruction=newInstruction | Data::labelMap[list.at(i+2)]-currentLineNo;
                 }
                 else
@@ -174,7 +177,6 @@ bool Data::addCode(QString& text, int currentLineNo){
                 {
                     if(isValidLabel(list.at(i)))
                         newInstruction=newInstruction | Data::labelMap[list.at(i)];
-
                     else if(isValue(list.at(i)))
                         newInstruction=newInstruction | convertToInt(list.at(i));
                     else
@@ -185,7 +187,7 @@ bool Data::addCode(QString& text, int currentLineNo){
                 break;
 
             case 6:
-                newInstruction=newInstruction | newInstruction | Maps::Commands[list.at(i)].first << (5+5+16);
+                newInstruction=newInstruction | Maps::Commands[list.at(i)].first << (5+5+16);
                 i++;
                 if(list.length()==3&&isRegisterValid(list.at(i))&&isValidLabel(list.at(i+1)))
                 {
@@ -197,7 +199,8 @@ bool Data::addCode(QString& text, int currentLineNo){
             break;
         }
         debugInstruction(newInstruction);
-        instructionSize++;
+        D->instructions[instructionSize]=newInstruction;
+        D->instructionSize++;
         return true;
     }
     return false;
