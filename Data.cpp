@@ -212,7 +212,7 @@ bool Data::addCode(QString& text){
                 if(list.length()==4&&isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&isValue(list.at(i+2)))
                 {
                     newInstruction=newInstruction | (Maps::Registers[list.at(i)] << (5+6));
-                    newInstruction=newInstruction | (Maps::Registers[list.at(i+1)] << (5+5+6));
+                    newInstruction=newInstruction | (Maps::Registers[list.at(i+1)] << (5+5+5+6));
                     newInstruction=newInstruction | convertToInt(list.at(i+1)) << 6;
                 }
                 else
@@ -253,9 +253,6 @@ void Data::run(){
     while(PC!=-1){
         int instruction=instructionFetch(PC);
         instructionDecodeRegisterFetch(instruction);
-        Execute();
-        MEM();
-        WB();
         if(PC>instructionSize){
             //give warning or return bool;
             return;
@@ -267,19 +264,7 @@ int Data::instructionFetch(int &pc){
     pc++;
     return result;
 }
-int* returnRegisters(int instruction)
-{
-    int* tempMemory=new int[3];
-    Data* D=Data::getInstance();
-    //rs-0 rt-1 sa-2
-    int RIndex0= (instruction >> (5+5+5+6)) & 0x1f;
-    int RIndex1= (instruction >> (5+5+6)) & 0x1f;
-    int RIndex2= (instruction >> (6)) & 0x1f;
-    tempMemory[0]=D->R[RIndex0];
-    tempMemory[1]=D->R[RIndex1];
-    tempMemory[2]=D->R[RIndex2];
-    return tempMemory;
-}
+
 void Data::instructionDecodeRegisterFetch(int instruction){
     int opCode=(instruction>>26) & 0x3f;
     //R-Type
@@ -289,7 +274,7 @@ void Data::instructionDecodeRegisterFetch(int instruction){
         int Rt=(instruction>>16) & 0x1f;
         int Rd=(instruction>>11) & 0x1f;
         int shamt=(instruction>>6) & 0x1f;
-        Execute(funct,Rs,Rt,Rd,shamt);
+        Execute(funct,R[Rs],R[Rt],Rd,shamt);
     }
     //J - Type instruction
     else if(opCode==0x08){
@@ -308,8 +293,10 @@ void Data::instructionDecodeRegisterFetch(int instruction){
 
 }
 void Data::Execute(int funct,int Rs,int Rt,int Rd,int shamt){
+    int result=0;
     switch(funct){
     case 0x0: //sll
+        result=
         break;
 
     case 0x20:{//add
@@ -369,12 +356,9 @@ void Execute(int opCode,int R1,int R2,int immediate){
     }
 }
 
-void Execute(int opCode,int immediate){
+void Execute(int opCode,int target){
     if(opCode==0x08){
 
     }
-
-
-
 
 }
