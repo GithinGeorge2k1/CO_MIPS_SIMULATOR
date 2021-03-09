@@ -289,9 +289,9 @@ void Data::instructionDecodeRegisterFetch(int instruction){
         int Rt=(instruction>>16) & 0x1f;
         int Rd=(instruction>>11) & 0x1f;
         int shamt=(instruction>>6) & 0x1f;
-
+        Execute(funct,Rs,Rt,Rd,shamt);
     }
-    else if(opCode==)
+    else if(opCode==0x08)
 
 }
 void Data::Execute(int opCode,int rs1,int rt,int rd,int shamt){
