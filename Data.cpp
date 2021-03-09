@@ -83,13 +83,6 @@ bool Data::addCode(QString& text, int currentLineNo){
     QStringList list=text.split(sep);
     int i=0;
 
-    //checking for a label...
-    if(i<list.length() && list.at(i).indexOf(":")==list.at(i).length()-1){
-        labelMap[list.at(i).section(':',0,0)]=instructionSize;
-        i++;
-    }
-
-
     //Do From Here......
     if(Maps::Commands.contains(list.at(i)))
     {

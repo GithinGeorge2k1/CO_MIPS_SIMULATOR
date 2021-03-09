@@ -8,6 +8,7 @@
 #include "Data.h"
 #include "Maps.h"
 #include <QMessageBox>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), ValidCodePresent(false)
 {
@@ -28,13 +29,12 @@ void MainWindow::refreshRegisterPanel(){
 bool isValue(QString R);
 int convertToInt(QString R);
 
-int storeAllLabelsAndData(QFile& file){
+int storeAllLabelsAndData(QTextStream& in){
     bool h1=false,h2=false,h3=false; //.text, .data, .globl main
     int start=1;
     Data* x=Data::getInstance();
-    QTextStream in(&file);
     int lineNo=0;
-    while(in.atEnd()){
+    while(!in.atEnd()){
         lineNo++;
         QString text=in.readLine().simplified();
         if(text[0]=='#' || text=="")
@@ -46,6 +46,7 @@ int storeAllLabelsAndData(QFile& file){
             QRegExp sep("(,| |, )");
             bool checkingDataInNextLine=true;
             while(checkingDataInNextLine){
+                lineNo++;
                 text=in.readLine().simplified();
                 QStringList list=text.split(sep);
                 if(list.at(0).indexOf(":")==list.at(0).length()-1){
@@ -73,6 +74,7 @@ int storeAllLabelsAndData(QFile& file){
         if(!h3 && text==".globl main"){
             h3=true;
             start=lineNo;
+            qDebug()<<start;
             continue;
         }
         QStringList list=text.split(" ");
@@ -80,7 +82,6 @@ int storeAllLabelsAndData(QFile& file){
             x->labelMap[list.at(0).section(':',0,0)]=lineNo;
         }
     }
-    //file.close();
     return start+1;
 }
 
@@ -96,9 +97,13 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
     }
     QTextStream in(&file);
     ui->textBrowser_2->setPlainText("");
+    ui->textBrowser_3->setPlainText("");
     bool lineValid;
     int lineNo=0;
-    start=storeAllLabelsAndData(file);
+    start=storeAllLabelsAndData(in);
+    in.seek(0);
+    QString dataText=x->displayData();
+    ui->textBrowser_3->setPlainText(dataText);
     while(!in.atEnd()){
         lineNo++;
         QString text=in.readLine().simplified();
