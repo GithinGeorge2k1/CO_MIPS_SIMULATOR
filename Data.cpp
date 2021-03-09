@@ -270,8 +270,69 @@ int Data::instructionFetch(int &pc){
 }
 
 void Data::instructionDecodeRegisterFetch(int instruction){
-    int opCode=(instruction>>26) & 0xffffffff
-    switch(instruction){
-    case
+    int opCode=(instruction>>26) & 0x3f;
+    switch(opCode){
+    case 0x0:{
+        int funct=(instruction & 0x3f);
+        switch(funct){
+        case 0x0: //sll
+            break;
+
+        case 0x20://add
+            break;
+
+        case 0x22://sub
+            break;
+
+        case 0x2://srl
+            break;
+
+        case 0xa://slt
+            break;
+
+        case 0x8://jr
+            break;
+
+        case 0x24://and
+            break;
+
+        case 0x5://or
+            break;
+        }
+        break;
     }
+    case 0x20://addi
+        break;
+
+    case 0x30://andi
+        break;
+
+    case 0x34://ori
+        break;
+
+    case 0x14://bne
+        break;
+
+    case 0x10://beq
+        break;
+
+    case 0x28://slti
+        break;
+
+    case 0x3c://lui
+        break;
+
+    case 0x8c://lw
+        break;
+
+    case 0xac://sw
+        break;
+
+    case 0x08://jump
+        break;
+
+    case 0x0c:
+        break;
+    }
+
 }

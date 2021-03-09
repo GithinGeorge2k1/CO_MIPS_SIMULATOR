@@ -20,7 +20,7 @@ Maps::Maps()
     Commands["addi"]=qMakePair(0x20000000,1);
 
     Commands["and"]=qMakePair(0x24,0);
-    Commands["andi"]=qMakePair(0x20000000,1);
+    Commands["andi"]=qMakePair(0x30000000,1);
     Commands["or"]=qMakePair(0x5,0);
     Commands["ori"]=qMakePair(0x34000000,1);
     Commands["sll"]=qMakePair(0x0,7);
