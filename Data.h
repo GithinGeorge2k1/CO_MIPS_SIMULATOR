@@ -29,7 +29,10 @@ public:
 
     int instructionFetch(int& pc);
     void instructionDecodeRegisterFetch(int instruction);
-    void Execute();
+    void Execute(int opCode,int R1,int R2);
+    void Execute(int opCode,int R1,int R2,int R3);
+    void Execute(int opCode,int R1,int R2,int R3);
+
     void MEM();
     void WB();
 };
