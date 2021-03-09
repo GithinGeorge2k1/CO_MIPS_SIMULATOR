@@ -30,5 +30,6 @@ private:
 //methods
 private:
     void refreshRegisterPanel();
+    void initialize();
 };
 #endif // MAINWINDOW_H

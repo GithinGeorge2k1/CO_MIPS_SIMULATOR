@@ -13,7 +13,7 @@ Maps::Maps()
 //    4 for inst R1 x(R2)           = lw,sw                 /////exe   x->x/4
 //    5 for inst R1                 = jr
 //    6 for inst R1 value|Label     = lui
-//    7 for inst R1 R2 value           = sll,srl (shamt) is used
+//    7 for inst R1 R2 value        = sll,srl (shamt) is used
 
     Commands["add"]=qMakePair(0x20,0);
     Commands["sub"]=qMakePair(0x22,0);
