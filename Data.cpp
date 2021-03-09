@@ -167,7 +167,7 @@ bool Data::addCode(QString& text){
                 i++;
                 if(list.length()==3)
                 {
-                    QString base=list.at(i+1).mid(list.at(i+1).indexOf('('), list.at(i+1).indexOf(')'));
+                    QString base=list.at(i+1).mid(list.at(i+1).indexOf('(')+1, list.at(i+1).indexOf(')')-list.at(i+1).indexOf('(')-1);
                     int offset=convertToInt(list.at(i+1).left(list.at(i+1).indexOf(('('))));
                     if(isRegisterValid(base)&&isRegisterValid(list.at(i))&&offset%4==0)
                     {
