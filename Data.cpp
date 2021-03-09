@@ -9,7 +9,6 @@
 Data *Data::instance=0;
 //=====================================================//
 
-
 Data* Data::getInstance(){
     if(instance==NULL){
         instance=new Data;
@@ -268,22 +267,47 @@ int Data::instructionFetch(int &pc){
     pc++;
     return result;
 }
+int* returnRegisters(int instruction)
+{
+    int* tempMemory=new int[3];
+    Data* D=Data::getInstance();
+    //rs-0 rt-1 sa-2
+    int RIndex0= (instruction >> (5+5+5+6)) & 0x1f;
+    int RIndex1= (instruction >> (5+5+6)) & 0x1f;
+    int RIndex2= (instruction >> (6)) & 0x1f;
+    tempMemory[0]=D->R[RIndex0];
+    tempMemory[1]=D->R[RIndex1];
+    tempMemory[2]=D->R[RIndex2];
+    return tempMemory;
+}
 
 void Data::instructionDecodeRegisterFetch(int instruction){
     int opCode=(instruction>>26) & 0x3f;
     switch(opCode){
     case 0x0:{
         int funct=(instruction & 0x3f);
+        int* tempMemory=returnRegisters(instruction);
+        /*
         switch(funct){
         case 0x0: //sll
             break;
 
-        case 0x20://add
+        case 0x20:{//add
+            int RIndex1= (instruction >> (5+5+5+6)) & 0x1f;
+            int RIndex2= (instruction >> (5+5+6)) & 0x1f;
+            int* tempMemory=new int[2];
+            tempMemory[0]=R[RIndex1];
+            tempMemory[1]=R[RIndex2];
             break;
-
-        case 0x22://sub
+        }
+        case 0x22:{//sub
+            int RIndex1= (instruction >> (5+5+5+6)) & 0x1f;
+            int RIndex2= (instruction >> (5+5+6)) & 0x1f;
+            int* tempMemory=new int[2];
+            tempMemory[0]=R[RIndex1];
+            tempMemory[1]=R[RIndex2];
             break;
-
+        }
         case 0x2://srl
             break;
 
@@ -300,6 +324,7 @@ void Data::instructionDecodeRegisterFetch(int instruction){
             break;
         }
         break;
+        */
     }
     case 0x20://addi
         break;
