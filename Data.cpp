@@ -412,7 +412,6 @@ void Data::Execute(int opCode, int target) {
     }
 
 }
-<<<<<<< HEAD
 void Data::MEM(int opCode, int R2, int result)
 {
     //R2 is index of the destination Register
@@ -470,6 +469,3 @@ void Data::WB(int opCode, int address, int value)
 {
 
 }
-=======
-
->>>>>>> b447ae359ab71684f363d6e5208316281413ba3e
