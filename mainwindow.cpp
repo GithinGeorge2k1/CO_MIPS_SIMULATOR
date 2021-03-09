@@ -39,9 +39,8 @@ int storeAllLabelsAndData(QFile& file){
         QString text=in.readLine().simplified();
         if(text[0]=='#' || text=="")
               continue;
-        if(text.indexOf('#')!=-1){
+        if(text.indexOf('#')!=-1)
             text=text.section('#',0,0);
-        }
         //ADDING DATA TO THE DATA SECTION
         if(!h1 && text==".data"){
             QRegExp sep("(,| |, )");
@@ -81,7 +80,7 @@ int storeAllLabelsAndData(QFile& file){
             x->labelMap[list.at(0).section(':',0,0)]=lineNo;
         }
     }
-    file.close();
+    //file.close();
     return start+1;
 }
 

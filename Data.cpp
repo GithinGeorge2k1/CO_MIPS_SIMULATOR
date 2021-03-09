@@ -32,6 +32,13 @@ void Data::initialize(){
     memset(instructions,0,sizeof (instructions));
     instructionSize=0;
 }
+void debugInstruction(int I)
+{
+    for(int i=31;i>=0;i--)
+       qDebug()<<((I>>i)&1);
+    qDebug()<<"\n";
+
+}
 bool isRegisterValid(QString R)
 {
     return Maps::Registers.contains(R);
@@ -51,7 +58,6 @@ bool isValue(QString R)
         return exp.exactMatch(R);
     }
 }
-
 int convertToInt(QString R)
 {
     if(R.contains("0x"))
@@ -136,6 +142,7 @@ bool Data::addCode(QString& text, int currentLineNo){
                     return false;
                 break;
 
+
             case 2:
                 newInstruction=newInstruction | Maps::Commands[list.at(i)].first << (5+5+16);
                 i++;
@@ -152,10 +159,51 @@ bool Data::addCode(QString& text, int currentLineNo){
                     return false;
                 break;
 
+            case 5:
+                newInstruction = newInstruction | Maps::Commands[list.at(i)].first;
+                i++;
+                if(list.length()==2&&isRegisterValid(list.at(i)))
+                {
+                    newInstruction=newInstruction | Maps::Registers[list.at(i)] << (5+5+5+6);
+                }
+                else
+                    return false;
+                break;
+
+            case 3:
+                newInstruction=newInstruction | Maps::Commands[list.at(i)].first << 26;
+                i++;
+                if(list.length()==2)
+                {
+                    if(isValidLabel(list.at(i)))
+                        newInstruction=newInstruction | Data::labelMap[list.at(i)];
+
+                    else if(isValue(list.at(i)))
+                        newInstruction=newInstruction | convertToInt(list.at(i));
+                    else
+                        return false;
+                }
+                else
+                    return false;
+                break;
+
+            case 6:
+                newInstruction=newInstruction | newInstruction | Maps::Commands[list.at(i)].first << (5+5+16);
+                i++;
+                if(list.length()==3&&isRegisterValid(list.at(i))&&isValidLabel(list.at(i+1)))
+                {
+                    newInstruction=newInstruction | Maps::Registers[list.at(i)] << 16;
+                    newInstruction=newInstruction | convertToInt(list.at(i+1));
+                }
+                else
+                    return false;
+            break;
         }
+        debugInstruction(newInstruction);
         instructionSize++;
         return true;
     }
+    return false;
 }
 QString Data::displayRegisters(){
     QString text="";
