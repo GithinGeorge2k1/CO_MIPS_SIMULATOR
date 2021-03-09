@@ -259,6 +259,7 @@ void Data::run(){
         }
     }
 }
+
 int Data::instructionFetch(int &pc){
     int result=instructions[pc];
     pc++;
@@ -394,22 +395,24 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
         //value stored in R[R2] should be wriitten to MEM[result] in WB
         break;
     }
-    case 0x0c://jal
-        //idk is jal a special case?? It is right??
-        break;
     }
     MEM(opCode, R2, result);
 }
 
-void Data::Execute(int opCode,int target){
+void Data::Execute(int opCode, int target) {
     int result=0;
     if(opCode==0x08){
         result=target;
         //set PC to Rs?? or in MEM??
         PC=target;
     }
+    if(opCode==0x0c){
+        //jal
+        //idk is jal a special case?? It is right?
+    }
 
 }
+<<<<<<< HEAD
 void Data::MEM(int opCode, int R2, int result)
 {
     //R2 is index of the destination Register
@@ -467,3 +470,6 @@ void Data::WB(int opCode, int address, int value)
 {
 
 }
+=======
+
+>>>>>>> b447ae359ab71684f363d6e5208316281413ba3e
