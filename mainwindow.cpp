@@ -188,6 +188,8 @@ void MainWindow::on_actionRun_triggered()
             return;
         }
         D->run();
+        ui->textBrowser->setPlainText(D->displayRegisters());
+        ui->textBrowser->setPlainText(D->displayData());
     }
     else{
         QMessageBox::warning(this,"Invalid Assembly Code","Cannot Run!! Invalid Code");

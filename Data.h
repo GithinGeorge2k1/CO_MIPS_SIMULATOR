@@ -6,7 +6,7 @@
 
 class Data{
 public:
-    int R[31];
+    int R[32];
     int PC;
     int Stack[2048];
     int SP;
@@ -35,7 +35,7 @@ public:
 
 
     void MEM(int opCode, int R2, int result);
-    void WB(int opCode, int address, int value);
+    void WB(int address, int value);
 };
 
 

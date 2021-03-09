@@ -252,11 +252,13 @@ void Data::run(){
 
     while(PC!=-1){
         int instruction=instructionFetch(PC);
+        qDebug()<<PC;
         instructionDecodeRegisterFetch(instruction);
         if(PC>instructionSize){
             //give warning or return bool;
             return;
         }
+        qDebug()<<PC;
     }
 }
 int Data::instructionFetch(int &pc){
@@ -330,46 +332,46 @@ void Data::Execute(int funct,int Rs,int Rt,int Rd,int shamt){
         result=Rs | Rd;
         break;
     }
+    MEM(funct,Rd,result);
 
 }
 
 void Data::Execute(int opCode,int R1,int R2,int immediate){
     //R2 is index of the destination Register
     //R1 is index of source Register
-    int result;
-    Data* D=Data::getInstance();
+    int result=0;
     switch(opCode){
     case 0x20:{//addi
-        int r1=D->R[R1];
+        int r1=R[R1];
         result=r1+immediate;
         break;
     }
     case 0x30:{//andi
-        int r1=D->R[R1];
+        int r1=R[R1];
         result=r1&immediate;
         break;
     }
     case 0x34:{//ori
-        int r1=D->R[R1];
+        int r1=R[R1];
         result=R1|immediate;
         break;
     }
     case 0x14:{//bne
-        int r1=D->R[R1];
-        int r2=D->R[R2];
+        int r1=R[R1];
+        int r2=R[R2];
         if(r1!=r2)
-            result=PC+immediate;
+            result=PC+immediate-4;
         break;
     }
     case 0x10:{//beq
-        int r1=D->R[R1];
-        int r2=D->R[R2];
+        int r1=R[R1];
+        int r2=R[R2];
         if(r1==r2)
-            result=PC+immediate;
+            result=PC+immediate-4;
         break;
     }
     case 0x28:{//slti
-        int r1=D->R[R1];
+        int r1=R[R1];
         if(r1<immediate)
             result=1;
         else
@@ -383,87 +385,79 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
 
     case 0x8c:{//lw
         //result is Effective Address
-        int r1=D->R[R1];
+        int r1=R[R1];
         result=immediate+r1;
-        //value in MEM[result] should be stored in R[R2] in MEM
         break;
     }
     case 0xac:{//sw
-        int r1=D->R[R1];
+        int r1=R[R1];
         result=immediate+r1;
-        //value stored in R[R2] should be wriitten to MEM[result] in WB
         break;
-    }
-    case 0x0c://jal
-        //idk is jal a special case?? It is right??
-        break;
+    }   
     }
     MEM(opCode, R2, result);
 }
 
 void Data::Execute(int opCode,int target){
-    int result=0;
+    int Rd=-1;
     if(opCode==0x08){
-        result=target;
-        //set PC to Rs?? or in MEM??
-        PC=target;
+        Rd=-1;
     }
-
+    if(opCode==0x0c){//jal
+        //idk is jal a special case?? It is right??
+        Rd=31;
+    }
+    MEM(opCode,Rd,target);
 }
-void Data::MEM(int opCode, int R2, int result)
+
+void Data::MEM(int opCode, int Rd, int result)
 {
-    //R2 is index of the destination Register
-    Data* D=Data::getInstance();
+    //Rd is index of the destination Register
     int value;
     switch(opCode){
-    /*
-    case 0x20:{//addi
-        break;
-    }
-    case 0x30:{//andi
-        break;
-    }
-
-    case 0x34:{//ori
-        break;
-    }
     case 0x14:{//bne
+        PC=result;
+        WB(-1, result);
         break;
     }
     case 0x10:{//beq
+        PC=result;
+        WB(-1, result);
         break;
     }
-    case 0x28:{//slti
-        break;
-    }
-    case 0x3c://lui
-        break;
-    */
     case 0x8c:{//lw
-        if(R2<(sizeof(D->data)/sizeof(D->data[0])))//BoundCheck
-            value=D->data[R2];
+        if(result<(int)(sizeof(data)/sizeof(data[0])))//BoundCheck
+            value=data[result];
         else
-            value=0;
-        WB(opCode, R2, value);
+            value=-1;
+        WB(Rd, value);
+        break;
         //value must be wriiten to Register R[R2] in WB
     }
     case 0xac:{//sw
-        if(result<(sizeof(D->data)/sizeof(D->data[0])))//BoundCheck
+        if(result<(int)(sizeof(data)/sizeof(data[0])))//BoundCheck
         {
-            value=D->R[R2];
-            //value must be written to MEM or data[result] in WB
-            WB(opCode, result, value);
+            value=-1;
+            data[result]=R[Rd];
+            WB(value, result);
         }
         break;
     }
-    /*
     case 0x0c://jal
+        PC=result;
+        WB(Rd,result);
         break;
-    }
-    */
+    case 0x08:
+        PC=result;
+        WB(Rd,result);
+        break;
+    default:
+        WB(Rd,result);
     }
 }
-void Data::WB(int opCode, int address, int value)
+void Data::WB(int Rd, int result)
 {
-
+    if(Rd!=-1 && isRegisterValid(QString("%1").arg(Rd))){
+        R[Rd]=result;
+    }
 }
