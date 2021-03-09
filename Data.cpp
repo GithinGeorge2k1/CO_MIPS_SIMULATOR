@@ -117,7 +117,7 @@ bool Data::addCode(QString& text){
                 break;
 
             case 1:
-                newInstruction=newInstruction | Maps::Commands[list.at(i)].first << (5+5+16);
+                newInstruction=newInstruction | Maps::Commands[list.at(i)].first;
                 i++;
                 if(list.length()==4&&isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&isValue(list.at(i+2)))
                 {
@@ -130,7 +130,7 @@ bool Data::addCode(QString& text){
                 break;
 
             case 4:
-                newInstruction=newInstruction | Maps::Commands[list.at(i)].first << (5+5+16);
+                newInstruction=newInstruction | Maps::Commands[list.at(i)].first;
                 i++;
                 if(list.length()==3)
                 {
@@ -151,7 +151,7 @@ bool Data::addCode(QString& text){
 
 
             case 2:
-                newInstruction=newInstruction | Maps::Commands[list.at(i)].first << (5+5+16);
+                newInstruction=newInstruction | Maps::Commands[list.at(i)].first;
                 i++;
                 if(list.length()==4&&isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&(isValue(list.at(i+2))||isValidLabel(list.at(i+2))))
                 {
@@ -179,7 +179,7 @@ bool Data::addCode(QString& text){
                 break;
 
             case 3:
-                newInstruction=newInstruction | Maps::Commands[list.at(i)].first << 26;
+                newInstruction=newInstruction | Maps::Commands[list.at(i)].first;
                 i++;
                 if(list.length()==2)
                 {
@@ -195,7 +195,7 @@ bool Data::addCode(QString& text){
                 break;
 
             case 6:
-                newInstruction=newInstruction | Maps::Commands[list.at(i)].first << (5+5+16);
+                newInstruction=newInstruction | Maps::Commands[list.at(i)].first;
                 i++;
                 if(list.length()==3&&isRegisterValid(list.at(i))&&isValidLabel(list.at(i+1)))
                 {
@@ -209,11 +209,11 @@ bool Data::addCode(QString& text){
             case 7:
                 newInstruction=newInstruction | Maps::Commands[list.at(i)].first;
                 i++;
-                if(list.length()==4&&isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&isRegisterValid(list.at(i+2)))
+                if(list.length()==4&&isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&isValue(list.at(i+2)))
                 {
                     newInstruction=newInstruction | Maps::Registers[list.at(i)] << (5+6);
                     newInstruction=newInstruction | Maps::Registers[list.at(i+1)] << (5+5+6);
-                    newInstruction=newInstruction | Maps::Registers[list.at(i+2)] << 6;
+                    newInstruction=newInstruction | convertToInt(list.at(i+1)) << 6;
                 }
                 else
                     return false;

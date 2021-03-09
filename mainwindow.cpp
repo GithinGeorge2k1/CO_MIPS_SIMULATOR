@@ -95,7 +95,7 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
 {
     int start=-1;
     Data* x=Data::getInstance();
-    x->initialize();
+    initialize();
     QString path=QFileDialog::getOpenFileName(this,"title");
     QFile file(path);
     if(!file.open(QFile::ReadOnly | QFile::Text)){
@@ -145,11 +145,7 @@ void MainWindow::on_actionQuit_triggered()
 
 void MainWindow::on_actionInitialize_triggered()
 {
-    Data* x=Data::getInstance();
-    ui->textBrowser_2->setPlainText("");
-    ui->textBrowser_3->setPlainText("");
-    x->initialize();
-    ui->textBrowser->setPlainText(x->displayRegisters());
+    initialize();
 }
 
 void MainWindow::on_actionSee_LabelMap_triggered()
@@ -163,5 +159,12 @@ void MainWindow::on_actionSee_DataMap_triggered()
 {
     Data *D=Data::getInstance();
     qDebug()<<D->variableMap;
+}
 
+void MainWindow::initialize(){
+    Data* x=Data::getInstance();
+    ui->textBrowser_2->setPlainText("");
+    ui->textBrowser_3->setPlainText("");
+    x->initialize();
+    ui->textBrowser->setPlainText(x->displayRegisters());
 }
