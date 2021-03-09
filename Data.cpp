@@ -258,7 +258,6 @@ void Data::run(){
             //give warning or return bool;
             return;
         }
-        qDebug()<<PC;
     }
 }
 int Data::instructionFetch(int &pc){
@@ -269,6 +268,7 @@ int Data::instructionFetch(int &pc){
 
 void Data::instructionDecodeRegisterFetch(int instruction){
     int opCode=(instruction>>26) & 0x3f;
+    qDebug()<<opCode;
     //R-Type
     if(opCode==0x0){
         int funct=instruction & 0x3f;
@@ -279,15 +279,17 @@ void Data::instructionDecodeRegisterFetch(int instruction){
         Execute(funct,R[Rs],R[Rt],Rd,shamt);
     }
     //J - Type instruction
-    else if(opCode==0x08){
+    else if(opCode==0x2  || opCode==0x3){
         int target=instruction & 0x3ffffff;
         Execute(opCode,target);
     }
     //I - Type
-    else if(opCode==0x20 || opCode==0x30 ||opCode==0x34 ||opCode==0x14 || opCode==0x10
-            ||opCode==0x28 || opCode==0x3c ||opCode==0x8c ||opCode==0xac || opCode==0x0c){
+    else if(opCode==0x8 || opCode==0xc ||opCode==0xd ||opCode==0x5 || opCode==0x4
+            ||opCode==0xa || opCode==0xf ||opCode==0x23 ||opCode==0x2b){
         int Rs=(instruction>>21) & 0x1f;
+        qDebug()<<Rs;
         int Rt=(instruction>>16) & 0x1f;
+        qDebug()<<Rt;
         int immediate=instruction & 0xffff;
         Execute(opCode,R[Rs],Rt,immediate);
 
@@ -341,36 +343,36 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
     //R1 is index of source Register
     int result=0;
     switch(opCode){
-    case 0x20:{//addi
+    case 0x8:{//addi
         int r1=R[R1];
         result=r1+immediate;
         break;
     }
-    case 0x30:{//andi
+    case 0xc:{//andi
         int r1=R[R1];
         result=r1&immediate;
         break;
     }
-    case 0x34:{//ori
+    case 0xd:{//ori
         int r1=R[R1];
-        result=R1|immediate;
+        result=r1|immediate;
         break;
     }
-    case 0x14:{//bne
+    case 0x5:{//bne
         int r1=R[R1];
         int r2=R[R2];
         if(r1!=r2)
-            result=PC+immediate-4;
+            result=PC+immediate-1;
         break;
     }
-    case 0x10:{//beq
+    case 0x4:{//beq
         int r1=R[R1];
         int r2=R[R2];
         if(r1==r2)
-            result=PC+immediate-4;
+            result=PC+immediate-1;
         break;
     }
-    case 0x28:{//slti
+    case 0xa:{//slti
         int r1=R[R1];
         if(r1<immediate)
             result=1;
@@ -378,18 +380,18 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
             result=0;
         break;
     }
-    case 0x3c://lui
+    case 0xf://lui
         result=immediate<<16;
         //should be stored in R[R2]
         break;
 
-    case 0x8c:{//lw
+    case 0x23:{//lw
         //result is Effective Address
         int r1=R[R1];
         result=immediate+r1;
         break;
     }
-    case 0xac:{//sw
+    case 0x2b:{//sw
         int r1=R[R1];
         result=immediate+r1;
         break;
@@ -400,10 +402,10 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
 
 void Data::Execute(int opCode,int target){
     int Rd=-1;
-    if(opCode==0x08){
+    if(opCode==0x2){
         Rd=-1;
     }
-    if(opCode==0x0c){//jal
+    if(opCode==0x3){//jal
         //idk is jal a special case?? It is right??
         Rd=31;
     }
