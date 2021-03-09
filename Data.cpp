@@ -4,7 +4,7 @@
 #include <string.h>
 #include "Maps.h"
 #include <QChar>
-
+#include <cmath>
 //Find yy this works(TutorialsPoint - singleton class)
 Data *Data::instance=0;
 //=====================================================//
@@ -296,34 +296,44 @@ void Data::Execute(int funct,int Rs,int Rt,int Rd,int shamt){
     int result=0;
     switch(funct){
     case 0x0: //sll
-        result=
+        result=Rs*pow(2,shamt);
         break;
 
     case 0x20:{//add
-
+        result=Rs+Rt;
+        break;
     }
     case 0x22:{//sub
-
+        result=Rs-Rt;
+        break;
     }
     case 0x2://srl
+        result=Rs/pow(2,shamt);
         break;
 
     case 0xa://slt
+        //rs<<rt then rd==1
+        Rs<Rt ? result=1:result=0;
         break;
 
     case 0x8://jr
+        result=Rs;
+        //set PC to Rs?? or in MEM??
+        PC=Rs;
         break;
 
     case 0x24://and
+        result=Rs & Rd;
         break;
 
     case 0x5://or
+        result=Rs | Rd;
         break;
     }
 
 }
 
-void Execute(int opCode,int R1,int R2,int immediate){
+void Data::Execute(int opCode,int R1,int R2,int immediate){
     switch(opCode){
     case 0x20://addi
         break;
@@ -356,9 +366,12 @@ void Execute(int opCode,int R1,int R2,int immediate){
     }
 }
 
-void Execute(int opCode,int target){
+void Data::Execute(int opCode,int target){
+    int result=0;
     if(opCode==0x08){
-
+        result=target;
+        //set PC to Rs?? or in MEM??
+        PC=target;
     }
 
 }
