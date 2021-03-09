@@ -287,7 +287,7 @@ void Data::instructionDecodeRegisterFetch(int instruction){
         int Rs=(instruction>>21) & 0x1f;
         int Rt=(instruction>>16) & 0x1f;
         int immediate=instruction & 0xffff;
-        Execute(opCode,Rs,Rt,immediate);
+        Execute(opCode,R[Rs],Rt,immediate);
 
     }
 
@@ -296,7 +296,7 @@ void Data::Execute(int funct,int Rs,int Rt,int Rd,int shamt){
     int result=0;
     switch(funct){
     case 0x0: //sll
-        result=Rs*pow(2,shamt);
+        result=Rs << shamt;
         break;
 
     case 0x20:{//add
@@ -308,7 +308,7 @@ void Data::Execute(int funct,int Rs,int Rt,int Rd,int shamt){
         break;
     }
     case 0x2://srl
-        result=Rs/pow(2,shamt);
+        result=Rs >> shamt;
         break;
 
     case 0xa://slt
@@ -334,34 +334,68 @@ void Data::Execute(int funct,int Rs,int Rt,int Rd,int shamt){
 }
 
 void Data::Execute(int opCode,int R1,int R2,int immediate){
+    //R2 is index of the destination Register
+    //R1 is index of source Register
+    int result;
+    Data* D=Data::getInstance();
     switch(opCode){
-    case 0x20://addi
+    case 0x20:{//addi
+        int r1=D->R[R1];
+        result=r1+immediate;
         break;
-
-    case 0x30://andi
+    }
+    case 0x30:{//andi
+        int r1=D->R[R1];
+        result=r1&immediate;
         break;
-
-    case 0x34://ori
+    }
+    case 0x34:{//ori
+        int r1=D->R[R1];
+        result=R1|immediate;
         break;
-
-    case 0x14://bne
+    }
+    case 0x14:{//bne
+        int r1=D->R[R1];
+        int r2=D->R[R2];
+        if(r1!=r2)
+            PC=PC+immediate;
         break;
-
-    case 0x10://beq
+    }
+    case 0x10:{//beq
+        int r1=D->R[R1];
+        int r2=D->R[R2];
+        if(r1==r2)
+            PC=PC+immediate;
         break;
-
-    case 0x28://slti
+    }
+    case 0x28:{//slti
+        int r1=D->R[R1];
+        if(r1<immediate)
+            result=1;
+        else
+            result=0;
         break;
-
+    }
     case 0x3c://lui
+        result=immediate<<16;
+        //should be stored in R[R2]
         break;
 
-    case 0x8c://lw
+    case 0x8c:{//lw
+        //result is Effective Address
+        int r1=D->R[R1];
+        result=immediate+r1;
+        //value in MEM[result] should be stored in R[R2] in MEM
         break;
-
-    case 0xac://sw
+    }
+    case 0xac:{//sw
+        int r1=D->R[R1];
+        result=immediate+r1;
+        //value stored in R[R2] should be wriitten to MEM[result] in WB
         break;
+    }
     case 0x0c://jal
+        //idk is jal a special case?? It is right??
         break;
     }
 }
