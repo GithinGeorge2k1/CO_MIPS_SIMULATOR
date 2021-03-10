@@ -218,6 +218,8 @@
     <addaction name="actionClear_Registers"/>
     <addaction name="separator"/>
     <addaction name="actionRun"/>
+    <addaction name="separator"/>
+    <addaction name="actionRun_Step_By_Step"/>
    </widget>
    <widget class="QMenu" name="menuWindow">
     <property name="title">
@@ -282,6 +284,7 @@
    <addaction name="actionReinitialize_and_Load_File"/>
    <addaction name="actionSee_LabelMap"/>
    <addaction name="actionSee_DataMap"/>
+   <addaction name="actionRun_Step_By_Step"/>
   </widget>
   <action name="actionReinitialize_and_Load_File">
    <property name="text">
@@ -346,6 +349,11 @@
   <action name="actionSee_DataMap">
    <property name="text">
     <string>See DataMap</string>
+   </property>
+  </action>
+  <action name="actionRun_Step_By_Step">
+   <property name="text">
+    <string>Run Step By Step</string>
    </property>
   </action>
  </widget>

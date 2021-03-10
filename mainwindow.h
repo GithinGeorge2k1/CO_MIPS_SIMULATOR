@@ -28,6 +28,8 @@ private slots:
 
     void on_actionRun_triggered();
 
+    void on_actionRun_Step_By_Step_triggered();
+
 private:
     Ui::MainWindow *ui;
     static bool ValidCodePresent;

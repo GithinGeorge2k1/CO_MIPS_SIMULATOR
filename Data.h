@@ -25,7 +25,8 @@ public:
     bool addCode(QString& data);
     QString displayRegisters();
     QString displayData();
-    void run();
+    bool run();
+    bool runStepByStep();
 
     int instructionFetch();
     void instructionDecodeRegisterFetch(int instruction);

@@ -189,8 +189,31 @@ void MainWindow::on_actionRun_triggered()
             QMessageBox::warning(this,"Cannot find main","No entry point defined");
             return;
         }
-        D->run();
+        bool isExitSmooth=D->run();
         refreshAllPanels();
+        if(!isExitSmooth){
+            QMessageBox::information(this,"Run Error",QString("No Valid Instruction at %1").arg(D->instructionSize+1));
+        }
+    }
+    else{
+        QMessageBox::warning(this,"Invalid Assembly Code","Cannot Run!! Invalid Code");
+        return;
+    }
+}
+
+void MainWindow::on_actionRun_Step_By_Step_triggered()
+{
+    if(MainWindow::ValidCodePresent){
+        Data *D=Data::getInstance();
+        if(!D->labelMap.contains("main")){
+            QMessageBox::warning(this,"Cannot find main","No entry point defined");
+            return;
+        }
+        bool isExitSmooth=D->runStepByStep();
+        refreshAllPanels();
+        if(!isExitSmooth){
+            QMessageBox::information(this,"Run Error",QString("No Valid Instruction at %1").arg(D->instructionSize+1));
+        }
     }
     else{
         QMessageBox::warning(this,"Invalid Assembly Code","Cannot Run!! Invalid Code");

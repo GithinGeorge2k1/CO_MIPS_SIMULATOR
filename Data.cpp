@@ -5,6 +5,7 @@
 #include "Maps.h"
 #include <QChar>
 #include <cmath>
+#include <QMessageBox>
 //Find yy this works(TutorialsPoint - singleton class)
 Data *Data::instance=0;
 //=====================================================//
@@ -258,14 +259,25 @@ QString Data::displayData(){
     return text;
 }
 
-void Data::run(){
+bool Data::run(){
     qDebug()<<instructionSize;
     while(PC<instructionSize){
         qDebug()<<PC;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
     }
+    return false;
 }
+
+bool Data::runStepByStep(){
+    if(PC<instructionSize){
+        qDebug()<<PC;
+        int instruction=instructionFetch();
+        instructionDecodeRegisterFetch(instruction);
+    }
+    return false;
+}
+
 int Data::instructionFetch(){
     int result=instructions[PC];
     PC++;
@@ -296,7 +308,7 @@ void Data::instructionDecodeRegisterFetch(int instruction){
         int Rt=(instruction>>16) & 0x1f;
         int immediate=instruction & 0xffff;
         //IF IMMEDIATE WAS A NEGATIVE NUMBER...
-        if((immediate>>15) & 1==1){
+        if(((immediate>>15) & 1)==1){
             immediate=immediate | 0xffff0000;
         }
         Execute(opCode,R[Rs],Rt,immediate);
