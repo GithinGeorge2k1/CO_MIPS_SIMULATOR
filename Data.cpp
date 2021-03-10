@@ -60,7 +60,7 @@ bool isValue(QString R)
     }
     else
     {
-        QRegExp exp("\\d*");
+        QRegExp exp("[-+]?[0-9]*");
         return exp.exactMatch(R);
     }
 }
@@ -101,6 +101,7 @@ bool Data::addCode(QString& text){
     if(Maps::Commands.contains(list.at(i)))
     {
         instructionTypeTemplate=Maps::Commands[list.at(i)].second;
+        int IMM=0;
         switch(instructionTypeTemplate)
         {
             case 0:
@@ -123,7 +124,11 @@ bool Data::addCode(QString& text){
                 {
                     newInstruction=newInstruction | (Maps::Registers[list.at(i)] << (16));
                     newInstruction=newInstruction | (Maps::Registers[list.at(i+1)] << (5+16));
-                    newInstruction=newInstruction | convertToInt(list.at(i+2));
+                    IMM=convertToInt(list.at(i+2));
+                    if(IMM<0){
+                        IMM=IMM & 0x0000ffff;
+                    }
+                    newInstruction=newInstruction | IMM;
                 }
                 else
                     return false;
@@ -284,6 +289,10 @@ void Data::instructionDecodeRegisterFetch(int instruction){
         int Rs=(instruction>>21) & 0x1f;
         int Rt=(instruction>>16) & 0x1f;
         int immediate=instruction & 0xffff;
+        //IF IMMEDIATE WAS A NEGATIVE NUMBER...
+        if((immediate>>15) & 1==1){
+            immediate=immediate | 0xffff0000;
+        }
         Execute(opCode,R[Rs],Rt,immediate);
 
     }
