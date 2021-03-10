@@ -33,7 +33,7 @@ private:
     static bool ValidCodePresent;
 //methods
 private:
-    void refreshRegisterPanel();
+    void refreshAllPanels();
     void initialize();
 };
 #endif // MAINWINDOW_H

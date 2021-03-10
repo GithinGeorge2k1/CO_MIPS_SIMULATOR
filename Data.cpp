@@ -301,7 +301,7 @@ void Data::Execute(int funct,int Rs,int Rt,int Rd,int shamt){
         break;
     }
     case 0x22:{//sub
-        result=Rs-Rt;
+        result=Rt-Rs;
         break;
     }
     case 0x2://srl

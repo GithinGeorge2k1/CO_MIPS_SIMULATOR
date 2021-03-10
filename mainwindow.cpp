@@ -14,17 +14,19 @@ bool MainWindow::ValidCodePresent=false;
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    refreshRegisterPanel();
+    refreshAllPanels();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
-void MainWindow::refreshRegisterPanel(){
+void MainWindow::refreshAllPanels(){
     Data* x=Data::getInstance();
     QString text=x->displayRegisters();
     ui->textBrowser->setPlainText(text);
+    text=x->displayData();
+    ui->textBrowser_3->setPlainText(text);
 }
 
 bool isValue(QString R);
@@ -169,7 +171,7 @@ void MainWindow::initialize(){
     ui->textBrowser_2->setPlainText("");
     ui->textBrowser_3->setPlainText("");
     x->initialize();
-    ui->textBrowser->setPlainText(x->displayRegisters());
+    refreshAllPanels();
 }
 
 void MainWindow::on_actionClear_Registers_triggered()
@@ -188,10 +190,7 @@ void MainWindow::on_actionRun_triggered()
             return;
         }
         D->run();
-        QString text=D->displayRegisters();
-        ui->textBrowser->setPlainText(text);
-        text=D->displayData();
-        ui->textBrowser->setPlainText(text);
+        refreshAllPanels();
     }
     else{
         QMessageBox::warning(this,"Invalid Assembly Code","Cannot Run!! Invalid Code");
