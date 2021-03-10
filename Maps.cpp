@@ -7,12 +7,12 @@ Maps::Maps()
 {
     //Command Templates
 //    0 for inst R1 R2 R3           = add,sub,slt,and,or
-//    1 for inst R1 R2 value        = andi,ori,addi,slti
-//    2 for inst R1 R2 value|Label  = bne,beq               /////exe   value | Label    4, labelmap-currentlineNo;;
+//    1 for inst R1 R2 value|Var    = andi,ori,addi,slti
+//    2 for inst R1 R2 value|Label  = bne,beq               /////exe   value | Label    4, labelmap-currentInstructionNo;;
 //    3 for inst value|Label        = j,jal                 /////exe   value | Label    value|Label;
-//    4 for inst R1 x(R2)           = lw,sw                 /////exe   x->x/4
+//    4 for inst R1 x(R2)|Var       = lw,sw                 /////exe   x->x/4
 //    5 for inst R1                 = jr
-//    6 for inst R1 value|Label     = lui
+//    6 for inst R1 value           = lui
 //    7 for inst R1 R2 value        = sll,srl (shamt) is used
 
     Commands["add"]=qMakePair(0x20,0);

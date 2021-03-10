@@ -64,6 +64,11 @@ bool isValue(QString R)
         return exp.exactMatch(R);
     }
 }
+
+bool isVar(QString R){
+    Data* D=Data::getInstance();
+    return (D->variableMap.contains(R));
+}
 int convertToInt(QString R)
 {
     if(R.contains("0x"))
@@ -90,13 +95,8 @@ bool Data::addCode(QString& text){
     QStringList list=text.split(sep);
     int i=0;
     //IF LABEL IS SEPARATELY SEEN ON A LINE IT IS VALID....
-    if(list.length()==1){
-        if(list.at(0).contains(":") && D->labelMap.contains(list.at(0).section(":",0,0))){
-            return true;
-        }
-        else{
-            return false;
-        }
+    if(list.at(0).contains(":") && D->labelMap.contains(list.at(0).section(":",0,0))){
+        i++;
     }
     if(Maps::Commands.contains(list.at(i)))
     {
@@ -107,7 +107,7 @@ bool Data::addCode(QString& text){
             case 0:
                 newInstruction=newInstruction | Maps::Commands[list.at(i)].first;
                 i++;
-                if(list.length()==4  &&  isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&isRegisterValid(list.at(i+2)))
+                if(list.length()-i==3  &&  isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&isRegisterValid(list.at(i+2)))
                 {
                     newInstruction=newInstruction | (Maps::Registers[list.at(i)] << (5+6));
                     newInstruction=newInstruction | (Maps::Registers[list.at(i+1)] << (5+5+6));
@@ -120,7 +120,7 @@ bool Data::addCode(QString& text){
             case 1:
                 newInstruction=newInstruction | Maps::Commands[list.at(i)].first;
                 i++;
-                if(list.length()==4&&isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&isValue(list.at(i+2)))
+                if(list.length()-i==3&&isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&isValue(list.at(i+2)))
                 {
                     newInstruction=newInstruction | (Maps::Registers[list.at(i)] << (16));
                     newInstruction=newInstruction | (Maps::Registers[list.at(i+1)] << (5+16));
@@ -137,7 +137,7 @@ bool Data::addCode(QString& text){
             case 2:
                 newInstruction=newInstruction | Maps::Commands[list.at(i)].first;
                 i++;
-                if(list.length()==4&&isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&(isValue(list.at(i+2))||isValidLabel(list.at(i+2))))
+                if(list.length()-i==3&&isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&(isValue(list.at(i+2))||isValidLabel(list.at(i+2))))
                 {
                     newInstruction=newInstruction | (Maps::Registers[list.at(i)] << (5+16));
                     newInstruction=newInstruction | (Maps::Registers[list.at(i+1)] << (16));
@@ -153,7 +153,7 @@ bool Data::addCode(QString& text){
             case 3:
                 newInstruction=newInstruction | Maps::Commands[list.at(i)].first;
                 i++;
-                if(list.length()==2)
+                if(list.length()-i==1)
                 {
                     if(isValidLabel(list.at(i)))
                         newInstruction=newInstruction | Data::labelMap[list.at(i)];
@@ -169,7 +169,7 @@ bool Data::addCode(QString& text){
             case 4:
                 newInstruction=newInstruction | Maps::Commands[list.at(i)].first;
                 i++;
-                if(list.length()==3)
+                if(list.length()-i==2)
                 {
                     QString base=list.at(i+1).mid(list.at(i+1).indexOf('(')+1, list.at(i+1).indexOf(')')-list.at(i+1).indexOf('(')-1);
                     int offset=convertToInt(list.at(i+1).left(list.at(i+1).indexOf(('('))));
@@ -190,7 +190,7 @@ bool Data::addCode(QString& text){
             case 5:
                 newInstruction = newInstruction | Maps::Commands[list.at(i)].first;
                 i++;
-                if(list.length()==2&&isRegisterValid(list.at(i)))
+                if(list.length()-i==1&&isRegisterValid(list.at(i)))
                 {
                     newInstruction=newInstruction | (Maps::Registers[list.at(i)] << (5+5+5+6));
                 }
@@ -202,7 +202,7 @@ bool Data::addCode(QString& text){
             case 6:
                 newInstruction=newInstruction | Maps::Commands[list.at(i)].first;
                 i++;
-                if(list.length()==3&&isRegisterValid(list.at(i))&&(isValidLabel(list.at(i+1)) || isValue(list.at(i+1))))
+                if(list.length()-i==2&&isRegisterValid(list.at(i))&& isValue(list.at(i+1)))
                 {
                     newInstruction=newInstruction | (Maps::Registers[list.at(i)] << 16);
                     newInstruction=newInstruction | convertToInt(list.at(i+1));
@@ -214,7 +214,7 @@ bool Data::addCode(QString& text){
             case 7:
                 newInstruction=newInstruction | Maps::Commands[list.at(i)].first;
                 i++;
-                if(list.length()==4&&isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&isValue(list.at(i+2)))
+                if(list.length()-i==3&&isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&isValue(list.at(i+2)))
                 {
                     newInstruction=newInstruction | (Maps::Registers[list.at(i)] << (5+6));
                     newInstruction=newInstruction | (Maps::Registers[list.at(i+1)] << (5+5+5+6));
