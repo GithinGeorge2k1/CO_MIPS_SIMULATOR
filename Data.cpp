@@ -6,6 +6,7 @@
 #include <QChar>
 #include <cmath>
 #include <QMessageBox>
+
 //Find yy this works(TutorialsPoint - singleton class)
 Data *Data::instance=0;
 //=====================================================//
@@ -115,8 +116,8 @@ bool Data::addCode(QString& text){
                 if(list.length()-i==3  &&  isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&isRegisterValid(list.at(i+2)))
                 {
                     newInstruction=newInstruction | (Maps::Registers[list.at(i)] << (5+6));
-                    newInstruction=newInstruction | (Maps::Registers[list.at(i+1)] << (5+5+6));
-                    newInstruction=newInstruction | (Maps::Registers[list.at(i+2)]<<(5+5+5+6));
+                    newInstruction=newInstruction | (Maps::Registers[list.at(i+1)] << (5+5+5+6));
+                    newInstruction=newInstruction | (Maps::Registers[list.at(i+2)]<<(5+5+6));
                 }
                 else
                     return false;
@@ -184,6 +185,11 @@ bool Data::addCode(QString& text){
                         }
                         QString base=list.at(i+1).mid(list.at(i+1).indexOf('(')+1, list.at(i+1).indexOf(')')-list.at(i+1).indexOf('(')-1);
                         int offset=convertToInt(list.at(i+1).left(list.at(i+1).indexOf(('('))));
+                        //EDITED
+                        if(offset<0){
+                            offset=offset & 0x0003ffff;
+                        }
+                        //EDITED
                         if(isRegisterValid(base)&&offset%4==0)
                         {
                             newInstruction=newInstruction | (Maps::Registers[base] <<(16+5));
@@ -246,9 +252,13 @@ bool Data::addCode(QString& text){
 QString Data::displayRegisters(){
     QString text="";
     text.append(QString("PC      = %1\n").arg(PC));
+    QStringList regs={"zero", "at", "v0", "v1", "a0", "a1", "a2", "a3", "t0", "t1", "t2", "t3", "t4", "t5", "t6",
+                      "t7", "s0", "s1", "s2", "s3", "s4", "s5", "s6",  "s7",  "t8",  "t9", "k0", "k1", "gp", "sp", "s8",
+                      "ra"};
     for(int i=0;i<32;i++)
     {
-        text.append(QString("R[%1]      = %2\n").arg(i).arg(R[i]));
+        text.append(QString("R[%1]  $%3    = %2\n").arg(i).arg(R[i]).arg(regs.at(i)));
+
     }
     return text;
 }
@@ -331,7 +341,7 @@ void Data::Execute(int funct,int Rs,int Rt,int Rd,int shamt){
         break;
     }
     case 0x22:{//sub
-        result=Rt-Rs;
+        result=Rs-Rt;
         break;
     }
     case 0x2://srl
@@ -387,6 +397,8 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
         int r2=R[R2];
         if(r1!=r2)
             result=PC+immediate-1;
+        else
+            result=PC;
         break;
     }
     case 0x4:{//beq
@@ -394,6 +406,8 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
         int r2=R[R2];
         if(r1==r2)
             result=PC+immediate-1;
+        else
+            result=PC;
         break;
     }
     case 0xa:{//slti
