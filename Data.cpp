@@ -98,7 +98,11 @@ bool Data::addCode(QString& text){
     //IF LABEL IS SEPARATELY SEEN ON A LINE IT IS VALID....
     if(list.at(0).contains(":") && D->labelMap.contains(list.at(0).section(":",0,0))){
         i++;
+        if(list.length()==1){
+            return true;
+        }
     }
+
     if(Maps::Commands.contains(list.at(i)))
     {
         instructionTypeTemplate=Maps::Commands[list.at(i)].second;
@@ -275,7 +279,7 @@ bool Data::runStepByStep(){
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
     }
-    return false;
+    return PC<instructionSize;
 }
 
 int Data::instructionFetch(){
@@ -286,7 +290,6 @@ int Data::instructionFetch(){
 
 void Data::instructionDecodeRegisterFetch(int instruction){
     int opCode=(instruction>>26) & 0x3f;
-    qDebug()<<opCode;
     //R-Type
     if(opCode==0x0){
         int funct=instruction & 0x3f;
@@ -367,7 +370,6 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
         qDebug()<<"exec addi";
         int r1=R1;
         result=r1+immediate;
-        qDebug()<<result;
         break;
     }
     case 0xc:{//andi
@@ -476,7 +478,6 @@ void Data::MEM(int opCode, int Rd, int result)
         WB(Rd,result);
         break;
     default:
-        qDebug()<<"default MEM";
         WB(Rd,result);
         break;
     }
@@ -485,7 +486,5 @@ void Data::WB(int Rd, int result)
 {
     if(Rd!=-1 && 0<=Rd && Rd<32){
         R[Rd]=result;
-        qDebug()<<Rd;
-        qDebug()<<result;
     }
 }

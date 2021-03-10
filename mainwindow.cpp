@@ -126,6 +126,7 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
         if(text.indexOf('#')!=-1){
             text=text.section('#',0,0);
         }
+        text=text.trimmed();
         lineValid=x->addCode(text);
         if(lineValid){
             ui->textBrowser_2->append(QString("%1").arg(text));
