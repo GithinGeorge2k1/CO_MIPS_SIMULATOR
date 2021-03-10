@@ -171,16 +171,22 @@ bool Data::addCode(QString& text){
                 i++;
                 if(list.length()-i==2)
                 {
-                    QString base=list.at(i+1).mid(list.at(i+1).indexOf('(')+1, list.at(i+1).indexOf(')')-list.at(i+1).indexOf('(')-1);
-                    int offset=convertToInt(list.at(i+1).left(list.at(i+1).indexOf(('('))));
-                    if(isRegisterValid(base)&&isRegisterValid(list.at(i))&&offset%4==0)
-                    {
+                    if(isRegisterValid(list.at(i))){
                         newInstruction=newInstruction | (Maps::Registers[list.at(i)] << (16));
-                        newInstruction=newInstruction | (Maps::Registers[base] <<(16+5));
-                        newInstruction=newInstruction | offset >> 2;
-                    }
-                    else
+                        if(isVar(list.at(i+1))){
+                            newInstruction=newInstruction | (D->variableMap[list.at(i+1)]);
+                            break;
+                        }
+                        QString base=list.at(i+1).mid(list.at(i+1).indexOf('(')+1, list.at(i+1).indexOf(')')-list.at(i+1).indexOf('(')-1);
+                        int offset=convertToInt(list.at(i+1).left(list.at(i+1).indexOf(('('))));
+                        if(isRegisterValid(base)&&offset%4==0)
+                        {
+                            newInstruction=newInstruction | (Maps::Registers[base] <<(16+5));
+                            newInstruction=newInstruction | offset >> 2;
+                            break;
+                        }
                         return false;
+                    }
                 }
                 else
                     return false;
