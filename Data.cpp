@@ -21,7 +21,9 @@ Data* Data::getInstance(){
 //Member initializer list && constructor implementation
 Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0)
 {
-
+    //initialize();
+//    QString initial("jal 0x0");
+//    addCode(initial);
 }
 
 void Data::initialize(){
@@ -88,16 +90,13 @@ bool isValidLabel(QString L)
     return (D->labelMap.contains(L));
 }
 bool Data::addCode(QString& text){
-    Data* D=Data::getInstance();
     int newInstruction=0;
     int instructionTypeTemplate=8;
-    Maps* mapInstance=Maps::getInstance();
-
     QRegExp sep("(,| |, )");
     QStringList list=text.split(sep);
     int i=0;
     //IF LABEL IS SEPARATELY SEEN ON A LINE IT IS VALID....
-    if(list.at(0).contains(":") && D->labelMap.contains(list.at(0).section(":",0,0))){
+    if(list.at(0).contains(":") && labelMap.contains(list.at(0).section(":",0,0))){
         i++;
         if(list.length()==1){
             return true;
@@ -150,7 +149,7 @@ bool Data::addCode(QString& text){
                     if(isValue(list.at(i+2)))
                         newInstruction=newInstruction | convertToInt(list.at(i+2));
                     else
-                        newInstruction=newInstruction | (Data::labelMap[list.at(i+2)]-D->instructionSize);
+                        newInstruction=newInstruction | (Data::labelMap[list.at(i+2)]-instructionSize);
                 }
                 else
                     return false;
@@ -180,7 +179,7 @@ bool Data::addCode(QString& text){
                     if(isRegisterValid(list.at(i))){
                         newInstruction=newInstruction | (Maps::Registers[list.at(i)] << (16));
                         if(isVar(list.at(i+1))){
-                            newInstruction=newInstruction | (D->variableMap[list.at(i+1)]);
+                            newInstruction=newInstruction | (variableMap[list.at(i+1)]);
                             break;
                         }
                         QString base=list.at(i+1).mid(list.at(i+1).indexOf('(')+1, list.at(i+1).indexOf(')')-list.at(i+1).indexOf('(')-1);
@@ -243,8 +242,8 @@ bool Data::addCode(QString& text){
 
         }
         debugInstruction(newInstruction);
-        D->instructions[instructionSize]=newInstruction;
-        D->instructionSize++;
+        instructions[instructionSize]=newInstruction;
+        instructionSize++;
         return true;
     }
     return false;
@@ -355,8 +354,7 @@ void Data::Execute(int funct,int Rs,int Rt,int Rd,int shamt){
 
     case 0x8://jr
         result=Rs;
-        //set PC to Rs?? or in MEM??
-        PC=Rs;
+        Rd=-1;
         break;
 
     case 0x24://and
@@ -377,7 +375,6 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
     int result=0;
     switch(opCode){
     case 0x8:{//addi
-        qDebug()<<"exec addi";
         int r1=R1;
         result=r1+immediate;
         break;
@@ -452,6 +449,7 @@ void Data::Execute(int opCode,int target){
 
 void Data::MEM(int opCode, int Rd, int result)
 {
+    qDebug()<<PC;
     //Rd is index of the destination Register
     int value;
     switch(opCode){
@@ -484,21 +482,34 @@ void Data::MEM(int opCode, int Rd, int result)
         break;
     }
     case 0x3://jal
+        value=PC;
         PC=result;
-        WB(Rd,result);
+        WB(Rd,value);
         break;
     case 0x2://jump
         PC=result;
         WB(Rd,result);
         break;
-    default:
+
+    //funct of jr is 0x8 and opCode of addi is 0x8.....
+    case 0x8:
+        //jr has Rd==-1.....addi and jr is distinguished as such
+        if(Rd==-1){
+            PC=result;
+            WB(-1,result);
+            break;
+        }
         WB(Rd,result);
         break;
+    default:
+        WB(Rd,result);
     }
+
+
 }
 void Data::WB(int Rd, int result)
 {
-    if(Rd!=-1 && 0<=Rd && Rd<32){
+    if(0<=Rd && Rd<32){
         R[Rd]=result;
     }
 }
