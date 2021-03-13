@@ -235,6 +235,7 @@
      <string>About</string>
     </property>
     <addaction name="separator"/>
+    <addaction name="actionHelp"/>
    </widget>
    <widget class="QMenu" name="menuDebug_Options">
     <property name="title">
@@ -361,6 +362,11 @@
   <action name="actionCustom_Function">
    <property name="text">
     <string>Custom Function</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>Help</string>
    </property>
   </action>
  </widget>
