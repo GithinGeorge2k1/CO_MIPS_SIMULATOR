@@ -281,3 +281,9 @@ void MainWindow::on_actionCustom_Function_triggered()
         }
         qDebug()<<test;
 }
+
+void MainWindow::on_actionHelp_triggered()
+{
+    helpwindow=new About_Help(nullptr);
+    helpwindow->show();
+}

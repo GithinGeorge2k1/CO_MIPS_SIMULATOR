@@ -11,15 +11,18 @@ CONFIG += c++11
 SOURCES += \
     Data.cpp \
     Maps.cpp \
+    about_help.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     Data.h \
     Maps.h \
+    about_help.h \
     mainwindow.h
 
 FORMS += \
+    about_help.ui \
     mainwindow.ui
 
 # Default rules for deployment.

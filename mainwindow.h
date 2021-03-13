@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "about_help.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -32,9 +33,12 @@ private slots:
 
     void on_actionCustom_Function_triggered();
 
+    void on_actionHelp_triggered();
+
 private:
     Ui::MainWindow *ui;
     static bool ValidCodePresent;
+    About_Help* helpwindow;
 //methods
 private:
     void refreshAllPanels();

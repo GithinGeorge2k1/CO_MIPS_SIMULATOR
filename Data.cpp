@@ -43,9 +43,20 @@ void Data::initialize(){
     addCode(b);
 }
 
-bool isRegisterValid(QString R)
+bool isRegisterValid(QString R, bool flag=false)
 {
-    return Maps::Registers.contains(R);
+    if(Maps::Registers.contains(R))
+    {
+        if(flag)
+        {
+            int i=Maps::Registers[R];
+            if(i==0 || i==1)
+                return false;
+            return true;
+        }
+        return true;
+    }
+    return false;
 }
 bool isValue(QString R)
 {
@@ -106,7 +117,7 @@ bool Data::addCode(QString& text){
             case 0:
                 newInstruction=newInstruction | Maps::Commands[list.at(i)].first;
                 i++;
-                if(list.length()-i==3  &&  isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&isRegisterValid(list.at(i+2)))
+                if(list.length()-i==3  &&  isRegisterValid(list.at(i), true)&&isRegisterValid(list.at(i+1))&&isRegisterValid(list.at(i+2)))
                 {
                     newInstruction=newInstruction | (Maps::Registers[list.at(i)] << (5+6));
                     newInstruction=newInstruction | (Maps::Registers[list.at(i+1)] << (5+5+5+6));
@@ -119,7 +130,7 @@ bool Data::addCode(QString& text){
             case 1:
                 newInstruction=newInstruction | Maps::Commands[list.at(i)].first;
                 i++;
-                if(list.length()-i==3&&isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&isValue(list.at(i+2)))
+                if(list.length()-i==3&&isRegisterValid(list.at(i), true)&&isRegisterValid(list.at(i+1))&&isValue(list.at(i+2)))
                 {
                     newInstruction=newInstruction | (Maps::Registers[list.at(i)] << (16));
                     newInstruction=newInstruction | (Maps::Registers[list.at(i+1)] << (5+16));
@@ -170,7 +181,7 @@ bool Data::addCode(QString& text){
                 i++;
                 if(list.length()-i==2)
                 {
-                    if(isRegisterValid(list.at(i))){
+                    if(isRegisterValid(list.at(i), true)){
                         newInstruction=newInstruction | (Maps::Registers[list.at(i)] << (16));
                         if(isVar(list.at(i+1))){
                             newInstruction=newInstruction | (variableMap[list.at(i+1)]);
@@ -183,7 +194,7 @@ bool Data::addCode(QString& text){
                             offset=offset & 0x0003ffff;
                         }
                         //EDITED
-                        if(isRegisterValid(base)&&offset%4==0)
+                        if(isRegisterValid(base, true)&&offset%4==0)
                         {
                             newInstruction=newInstruction | (Maps::Registers[base] <<(16+5));
                             newInstruction=newInstruction | (offset >> 2);
@@ -212,7 +223,7 @@ bool Data::addCode(QString& text){
             case 6:
                 newInstruction=newInstruction | Maps::Commands[list.at(i)].first;
                 i++;
-                if(list.length()-i==2&&isRegisterValid(list.at(i))&& isValue(list.at(i+1)))
+                if(list.length()-i==2&&isRegisterValid(list.at(i), true)&& isValue(list.at(i+1)))
                 {
                     newInstruction=newInstruction | (Maps::Registers[list.at(i)] << 16);
                     newInstruction=newInstruction | convertToInt(list.at(i+1));
@@ -224,7 +235,7 @@ bool Data::addCode(QString& text){
             case 7:
                 newInstruction=newInstruction | Maps::Commands[list.at(i)].first;
                 i++;
-                if(list.length()-i==3&&isRegisterValid(list.at(i))&&isRegisterValid(list.at(i+1))&&isValue(list.at(i+2)))
+                if(list.length()-i==3&&isRegisterValid(list.at(i), true)&&isRegisterValid(list.at(i+1))&&isValue(list.at(i+2)))
                 {
                     newInstruction=newInstruction | (Maps::Registers[list.at(i)] << (5+6));
                     newInstruction=newInstruction | (Maps::Registers[list.at(i+1)] << (5+5+5+6));
