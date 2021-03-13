@@ -87,7 +87,7 @@ int storeAllLabelsAndData(QTextStream& in){
         }
         QStringList list=text.split(" ");
         if(list.at(0).indexOf(":")==list.at(0).length()-1){
-            x->labelMap[list.at(0).section(':',0,0)]=instructionsize;
+            x->labelMap[list.at(0).section(':',0,0)]=instructionsize+2;
         }
         if(list.length()!=1)
             instructionsize++;
@@ -95,6 +95,24 @@ int storeAllLabelsAndData(QTextStream& in){
     }
 
     return start;
+}
+
+QString decimalToHex(int x){
+    QString result="";
+    unsigned int n=(unsigned int)x;
+    while(n!=0){
+        unsigned int temp=n%16;
+        char a;
+        if(temp<10){
+            a=temp+48;
+        }
+        else{
+            a=temp+55;
+        }
+        result=QString(a)+result;
+        n=n/16;
+    }
+    return result;
 }
 
 void MainWindow::on_actionReinitialize_and_Load_File_triggered()
@@ -105,16 +123,32 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
     QString path=QFileDialog::getOpenFileName(this,"title");
     QFile file(path);
     if(!file.open(QFile::ReadOnly | QFile::Text)){
+        MainWindow::ValidCodePresent=false;
         QMessageBox::warning(this,"title","File not Opened");
         return;
     }
     QTextStream in(&file);
-    ui->textBrowser_2->setPlainText("");
-    ui->textBrowser_3->setPlainText("");
     bool lineValid;
     int lineNo=0;
     start=storeAllLabelsAndData(in);
     in.seek(0);
+
+
+            //MODIFYING JAL AND SHOWING THEM ON TEXT TAB
+    if(x->labelMap.contains("main")){
+    x->instructions[0]=x->instructions[0] | x->labelMap["main"];
+    ui->textBrowser_2->append(QString("0. [0x%2]  jal 0x%1").arg(x->labelMap["main"]).arg(decimalToHex(x->instructions[0])));
+    ui->textBrowser_2->append(QString("1. [0x0]  nop"));
+    }
+    else
+    {
+        QMessageBox::warning(this,"Wrong Code","No Entry Point Defined!! Define Main");
+        MainWindow::ValidCodePresent=false;
+        file.close();
+        return;
+    }
+            //..............................................//
+
     QString dataText=x->displayData();
     ui->textBrowser_3->setPlainText(dataText);
     while(!in.atEnd()){
@@ -131,7 +165,10 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
         text=text.trimmed();
         lineValid=x->addCode(text);
         if(lineValid){
-            ui->textBrowser_2->append(QString("%1").arg(text));
+            QString instructionHex=decimalToHex(x->instructions[x->instructionSize-1]);
+            qDebug()<<x->instructions[x->instructionSize-1];
+            qDebug()<<instructionHex;
+            ui->textBrowser_2->append(QString("%2. [0x%3]  %1").arg(text).arg(x->instructionSize-1).arg(instructionHex));
             MainWindow::ValidCodePresent=true;
         }
         else{
@@ -197,6 +234,11 @@ void MainWindow::on_actionRun_triggered()
         if(!isExitSmooth){
             QMessageBox::information(this,"Run Error",QString("No Valid Instruction at %1").arg(D->instructionSize+1));
         }
+        else{
+
+            QMessageBox::information(this,"Program Done","EXITED VIA NOP INSTRUCTION");
+            D->nopOccured=false;
+        }
     }
     else{
         QMessageBox::warning(this,"Invalid Assembly Code","Cannot Run!! Invalid Code");
@@ -217,9 +259,25 @@ void MainWindow::on_actionRun_Step_By_Step_triggered()
         if(!isExitSmooth){
             QMessageBox::information(this,"Run Error",QString("No Valid Instruction at %1").arg(D->instructionSize+1));
         }
+        else if(D->nopOccured){
+            QMessageBox::information(this,"Program Done","EXITED VIA NOP INSTRUCTION");
+             D->nopOccured=false;
+        }
     }
     else{
         QMessageBox::warning(this,"Invalid Assembly Code","Cannot Run!! Invalid Code");
         return;
     }
+}
+
+void MainWindow::on_actionCustom_Function_triggered()
+{
+    Data* x=Data::getInstance();
+        QString test="";
+        int I=x->instructions[2];
+        for(int i=31;i>=0;i--){
+            char c=(char)(((I>>i)&1)+48);
+            test.append(QChar(c));
+        }
+        qDebug()<<test;
 }

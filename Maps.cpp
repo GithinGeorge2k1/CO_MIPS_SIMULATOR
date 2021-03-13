@@ -14,7 +14,7 @@ Maps::Maps()
 //    5 for inst R1                 = jr
 //    6 for inst R1 value           = lui
 //    7 for inst R1 R2 value        = sll,srl (shamt) is used
-
+//    8 for inst                    = nop
     Commands["add"]=qMakePair(0x20,0);
     Commands["sub"]=qMakePair(0x22,0);
     Commands["addi"]=qMakePair(0x20000000,1);
@@ -38,6 +38,8 @@ Maps::Maps()
     Commands["j"]=qMakePair(0x08000000,3);
     Commands["jr"]=qMakePair(0x8,5);
     Commands["jal"]=qMakePair(0x0c000000,3);
+
+    Commands["nop"]=qMakePair(0x0,8);
 
     Registers["$zero"]=0x0;
     Registers["$at"]=0x1;

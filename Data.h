@@ -16,9 +16,11 @@ public:
     int instructionSize;
     QMap<QString,int> labelMap;
     QMap<QString,int> variableMap;
+    bool nopOccured;
 private:
     static Data* instance;
     Data();
+
 public:
     static Data* getInstance(); 
     void initialize();

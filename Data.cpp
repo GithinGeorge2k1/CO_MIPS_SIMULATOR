@@ -19,11 +19,9 @@ Data* Data::getInstance(){
 }
 
 //Member initializer list && constructor implementation
-Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0)
+Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0),nopOccured(false)
 {
-    //initialize();
-//    QString initial("jal 0x0");
-//    addCode(initial);
+
 }
 
 void Data::initialize(){
@@ -38,17 +36,13 @@ void Data::initialize(){
     instructionSize=0;
     variableMap.clear();
     labelMap.clear();
+    nopOccured=false;
+    QString a="jal 0x2";
+    addCode(a);
+    QString b="nop";
+    addCode(b);
 }
-void debugInstruction(int I)
-{
-    QString test="";
-    for(int i=31;i>=0;i--){
-        char c=(char)(((I>>i)&1)+48);
-        test.append(QChar(c));
-    }
-    qDebug()<<test;
 
-}
 bool isRegisterValid(QString R)
 {
     return Maps::Registers.contains(R);
@@ -192,7 +186,7 @@ bool Data::addCode(QString& text){
                         if(isRegisterValid(base)&&offset%4==0)
                         {
                             newInstruction=newInstruction | (Maps::Registers[base] <<(16+5));
-                            newInstruction=newInstruction | offset >> 2;
+                            newInstruction=newInstruction | (offset >> 2);
                             break;
                         }
                         return false;
@@ -240,8 +234,13 @@ bool Data::addCode(QString& text){
                     return false;
                 break;
 
+            case 8:
+                if(list.length()-i==1)
+                    newInstruction=0;
+                else
+                    return false;
+            break;
         }
-        debugInstruction(newInstruction);
         instructions[instructionSize]=newInstruction;
         instructionSize++;
         return true;
@@ -274,16 +273,16 @@ QString Data::displayData(){
 
 bool Data::run(){
     qDebug()<<instructionSize;
-    while(PC<instructionSize){
+    while(PC<instructionSize && !nopOccured){
         qDebug()<<PC;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
     }
-    return false;
+    return nopOccured;
 }
 
 bool Data::runStepByStep(){
-    if(PC<instructionSize){
+    if(PC<instructionSize && !nopOccured){
         qDebug()<<PC;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
@@ -328,10 +327,15 @@ void Data::instructionDecodeRegisterFetch(int instruction){
     }
 
 }
+
+//R- TYPE
 void Data::Execute(int funct,int Rs,int Rt,int Rd,int shamt){
     int result=0;
     switch(funct){
     case 0x0: //sll
+        if(Rd==0){
+            break;
+        }
         result=Rs << shamt;
         break;
 
@@ -369,6 +373,7 @@ void Data::Execute(int funct,int Rs,int Rt,int Rd,int shamt){
 
 }
 
+//I-TYPE
 void Data::Execute(int opCode,int R1,int R2,int immediate){
     //R2 is index of the destination Register
     //R1 is index of source Register
@@ -435,6 +440,7 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
     MEM(opCode, R2, result);
 }
 
+//J TYPE
 void Data::Execute(int opCode,int target){
     int Rd=-1;
     if(opCode==0x2){
@@ -449,7 +455,6 @@ void Data::Execute(int opCode,int target){
 
 void Data::MEM(int opCode, int Rd, int result)
 {
-    qDebug()<<PC;
     //Rd is index of the destination Register
     int value;
     switch(opCode){
@@ -509,7 +514,10 @@ void Data::MEM(int opCode, int Rd, int result)
 }
 void Data::WB(int Rd, int result)
 {
-    if(0<=Rd && Rd<32){
+    if(Rd==0){
+        nopOccured=true;
+    }
+    if(1<=Rd && Rd<32){
         R[Rd]=result;
     }
 }
