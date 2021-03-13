@@ -1,0 +1,46 @@
+.data
+	array: .word 0, 0, 11, 11, 4, 2, 6, 1, 99, 8, 200, 17, 110, 152, 209, 180
+	n: .word 16
+.text
+.globl main
+main:
+	lw $s0 n
+	addi $s0 $s0 -1			#s0 is n-1
+	add $t0 $zero $zero		#t0 is i
+	
+Bubble:
+	slt $t2 $t0 $s0			#return t0 <n-1
+	beq $t2 $zero EXIT			#if(t0<n-1){execute loo}
+	
+	add $t1 $zero $s0		#initialise j
+
+INNER_LOOP:
+	slt $t2 $t0 $t1			#return j<n-1
+	beq $t2 $zero increment
+	
+	sll $t4 $t1 2
+	add $t4 $s1 $t4
+	lw $t5 0($t4)
+	lw $t6 -4($t4)
+	
+
+	#ble $t6 $t5 decrement_j
+	slt $t8 $t5 $t6 
+	beq $t8 $zero decrement_j 
+	
+	sw $t6 0($t4)
+	sw $t5 -4($t4)
+
+decrement_j:
+	addi $t1 $t1 -1
+	j INNER_LOOP
+		
+			
+increment:
+	addi $t0 $t0 1
+	j Bubble
+			
+	
+EXIT:
+	jr $ra
+
