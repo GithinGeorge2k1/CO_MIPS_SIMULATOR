@@ -9,6 +9,7 @@
 
 //Find yy this works(TutorialsPoint - singleton class)
 Data *Data::instance=0;
+int registerWriteBackLine=-1;
 //=====================================================//
 
 Data* Data::getInstance(){
@@ -264,10 +265,19 @@ QString Data::displayRegisters(){
     QStringList regs={"zero", "at", "v0", "v1", "a0", "a1", "a2", "a3", "t0", "t1", "t2", "t3", "t4", "t5", "t6",
                       "t7", "s0", "s1", "s2", "s3", "s4", "s5", "s6",  "s7",  "t8",  "t9", "k0", "k1", "gp", "sp", "s8",
                       "ra"};
-    for(int i=0;i<32;i++)
+    if(registerWriteBackLine!=-1)
     {
-        text.append(QString("R[%1]  $%3    = %2\n").arg(i).arg(R[i]).arg(regs.at(i)));
-
+        for(int i=0;i<registerWriteBackLine;i++)
+            text.append(QString("<br>R[%1]&nbsp;&nbsp;$%3 &nbsp;=&nbsp;%2").arg(i).arg(R[i]).arg(regs.at(i)));
+        text.append(QString("<br><edit style=\"color:#ffd700\">R[%1]&nbsp;&nbsp;$%3 &nbsp;=&nbsp;%2\n</edit>").arg(registerWriteBackLine).arg(R[registerWriteBackLine]).arg(regs.at(registerWriteBackLine)));
+        for(int i=registerWriteBackLine+1;i<32;i++)
+            text.append(QString("<br>R[%1]&nbsp;&nbsp;$%3 &nbsp;=&nbsp;%2").arg(i).arg(R[i]).arg(regs.at(i)));
+        registerWriteBackLine=-1;
+    }
+    else
+    {
+        for(int i=0;i<32;i++)
+            text.append(QString("<br>R[%1]&nbsp;&nbsp;$%3 &nbsp;=&nbsp;%2").arg(i).arg(R[i]).arg(regs.at(i)));
     }
     return text;
 }
@@ -530,5 +540,6 @@ void Data::WB(int Rd, int result)
     }
     if(1<=Rd && Rd<32){
         R[Rd]=result;
+        registerWriteBackLine=Rd;
     }
 }

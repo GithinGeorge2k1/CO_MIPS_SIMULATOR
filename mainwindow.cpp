@@ -26,7 +26,7 @@ MainWindow::~MainWindow()
 void MainWindow::refreshAllPanels(){
     Data* x=Data::getInstance();
     QString text=x->displayRegisters();
-    ui->textBrowser->setPlainText(text);
+    ui->textBrowser->setHtml(text);
     text=x->displayData();
     ui->textBrowser_3->setPlainText(text);
 }
