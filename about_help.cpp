@@ -6,7 +6,6 @@ About_Help::About_Help(QWidget *parent) :
     ui(new Ui::About_Help)
 {
     ui->setupUi(this);
-    this->setStyleSheet(NULL);
 }
 
 About_Help::~About_Help()
