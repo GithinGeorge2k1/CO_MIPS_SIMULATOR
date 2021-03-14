@@ -11,9 +11,12 @@ QTextBrowser{
 	font-family: arial;
 	font-size: 18px;
 	selection-background-color:brown;
+	margin-left: 2px;
+	spacing: 6px;
+}
+
+#MainWindow  QTextBrowser{
 	background-color: black;
 	color: white;
-	margin-left: 2px;
 	border: none;
-	spacing: 3px;
 }
