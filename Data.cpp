@@ -191,7 +191,7 @@ bool Data::addCode(QString& text){
                         int offset=convertToInt(list.at(i+1).left(list.at(i+1).indexOf(('('))));
                         //EDITED
                         if(offset<0){
-                            offset=offset & 0x0003ffff;
+                            offset=offset & 0x0000ffff;
                         }
                         //EDITED
                         if(isRegisterValid(base, true)&&offset%4==0)
