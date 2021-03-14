@@ -192,6 +192,8 @@ bool Data::addCode(QString& text){
                         int offset=convertToInt(list.at(i+1).left(list.at(i+1).indexOf(('('))));
                         //EDITED
                         if(offset<0){
+                            //extra 2 bits(from 3) comes becomes of divison by 4(>>2) in next step....
+                            //hence the totally obtained piece of code will be 16 bits..
                             offset=offset & 0x0003ffff;
                         }
                         //EDITED
