@@ -9,32 +9,31 @@ CS19B047 - Harish Pradyot M
 ## About and Agenda
 
 * Main aim was to gain more understanding of how an ISA actually executes the Instructions at a lower level.
-* It also enabled us to gain more experience in the methods innvolved in the development of a tool from bottom up and hone our coding skills.
+* It also enabled us to gain more experience in the methods involved in the development of a tool from bottom-up and hone our coding skills.
 
 *What is a Simulator?*
->An application build using any programming language which will simulate/imitate all the functions that are implemented in a MIPS32 ISA.\
-The tool which we are developing is a simulator that will run a MIPS32 assembly program and display the Registers and Memory (both the text segement as well as the data segment).
+>An application build using any programming language that will simulate/imitate all the functions implemented in an ISA. (MIPS32 ISA)\
+The tool which we are developing is a simulator that will run a MIPS32 assembly program and display the Registers and Memory (both the text segment as well as the data segment).
 
-The tool was developed using QTCreator (version  4.14.0) which is a cross-platform IDE which allows developers to create applications across desktop, mobile, and embedded platforms.
+The tool was developed using QTCreator (version  4.14.0), a cross-platform IDE that allows developers to create applications across desktop, mobile, and embedded platforms.
 
 
 ## Phase 1 Overview
 
 #### Progress Made:
->* **Parsing** : Instructions are loaded to the Application and the parser runs through the code to extract each line as a token string
-  and converts it into a 32 bit Instruction.\
-  The Syntax an Semantics of the Assembly Code is also checked and returns a Warning Message and aborts the program on encountering a parse error.\
+>* **Parsing** : Instructions are loaded to the Application, and the parser runs through the code to extract each line as a token string and converts it into a 32-bit Instruction.\
+  The Syntax and Semantics of the Assembly Code are also checked, and a Warning Message is returned, and the program is aborted on encountering a parse error.
 >* **Execution** :\
-  Each intruction is executed in 5 steps i.e.\
-  **1. Instruction Fetch (IF) stage** : Fetches the instruction at the current PC address and sets the PC address to the next instruction.\
-  **2. Instruction Decode and Register Fetch (ID/RF) stage** : Decodes the 32 bit Instruction code which can be of 3 types R Type, J Type, I type splits the Instruction into specific components and passes on the values to the respective EX (Execute, the next stage) overloaded functions.\
-  **3. Execute (EX) stage** : Calculates the result of all Arithmatic and Logical Instructions, Effective Address calcualtion etc.\
-  **4. Memory (MEM) stage** : Used to access the memory that has been defined for the ISA either to load a value or store a value in the Memory.\
+  Each Instruction is executed in 5 steps, i.e., \
+  **1. Instruction Fetch (IF) stage** : Fetches the Instruction at the current PC address and sets the PC address to the next Instruction.\
+  **2. Instruction Decode and Register Fetch (ID/RF) stage** : Decodes the 32-bit Instruction code, which can be of 3 types R Type, J Type, I type splits the Instruction into specific components and passes on the values to the respective EX (Execute, the next stage) overloaded functions.\
+  **3. Execute (EX) stage** : Calculates the result of all Arithmetic and Logical Instructions, Effective Address calculation, etc.\
+  **4. Memory (MEM) stage** : Used to access the Memory that has been defined for the ISA, either to load or store a value in the Memory.\
   **5. Write Back (WB) stage** : Update the value of the destination Register after completing the Execution.
 
 
 #### Instructions Simulated:
-*The list of valid Registers that can be used are displayed on the left Panel of the Application*\
+*The list of valid Registers that can be used is displayed on the left panel of the Application*
 Operation | Type | Syntax
 ------------ | ------------ | -------------
 add | R type | add rd, rs, rt
@@ -89,4 +88,4 @@ srl | R Type | srl rd, rs, value
 
 #### How to use the Application
 
-1. Incomplete I'll do this later I'll try filling the form now
+1. Pretty much self Explanatory (To be Updated)
