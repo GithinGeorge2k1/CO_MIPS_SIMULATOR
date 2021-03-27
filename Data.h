@@ -1,6 +1,7 @@
 #ifndef DATA_H
 #define DATA_H
 #include <QString>
+#include<QBitArray>
 #include <QStringList>
 #include <QMap>
 
@@ -27,6 +28,7 @@ public:
     bool FWD_ENABLED;
     bool BRANCH_STALL; //WHETHER THE CURRENT INS WOULD CAUSE A BRANCH RELATED STALL FOR NEXT INSTRUCTION (NOT TAKEN PREDICTOR)
     int stallInInstruction;
+    QString timelineTable;
     //We won't consider 3 stalls for normal data dependancy - (by making WB - half cycle)
 
 private:
@@ -41,6 +43,7 @@ public:
     QString displayData();
     bool run();
     bool runStepByStep();
+    QString updateTable();
 
     int instructionFetch();
     void instructionDecodeRegisterFetch(int instruction);

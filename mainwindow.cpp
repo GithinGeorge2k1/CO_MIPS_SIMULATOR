@@ -32,6 +32,7 @@ void MainWindow::refreshAllPanels(){
     ui->textBrowser->setHtml(text);
     text=x->displayData();
     ui->textBrowser_3->setPlainText(text);
+    ui->textBrowser_5->setHtml(x->updateTable());
 }
 
 int storeAllLabelsAndData(QTextStream& in){

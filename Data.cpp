@@ -23,7 +23,7 @@ Data* Data::getInstance(){
 
 //Member initializer list && constructor implementation
 Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0), nopOccured(false),
-    CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false), BRANCH_STALL(false), stallInInstruction(0)
+    CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false), BRANCH_STALL(false), stallInInstruction(0), timelineTable("")
 {
 
 }
@@ -279,13 +279,55 @@ QString Data::displayData(){
     return text;
 }
 
+QString Data::updateTable()
+{
+    QString rowHeading="";
+    if(CLOCK<=0)
+        return "";
+    rowHeading.append("<table style=\"width:150px\" border=\"4\" bordercolor=#151B54 cellspacing=\"1\">");
+    rowHeading.append("<tr>");
+    int currentInsCycle=CLOCK+STALL-stallInInstruction;
+    rowHeading.append("<td></td>");
+    for(int i=1;i<=currentInsCycle+stallInInstruction+5;i++)
+        rowHeading.append(QString("<th>ClockCycle %1</th>").arg(i));
+    rowHeading.append("</tr>");
+
+    timelineTable.append("<tr>");
+    if(!BRANCH_STALL||true)
+    {
+        timelineTable.append(QString("<th>I%1</th>").arg(instructionSize));
+        for(int i=0;i<=currentInsCycle;i++)
+            timelineTable.append("<td></td>");
+        timelineTable.append("<td bgcolor=\"red\"> IF </td>");
+        timelineTable.append("<td bgcolor=\"red\"> ID/RF </td>");
+        int temp=1;
+        while(true)
+        {
+            if(temp==stallInInstruction)
+            {
+                timelineTable.append("<td bgcolor=\"red\"> ID/RF </td>");
+                break;
+            }
+            timelineTable.append("<td bgcolor=\"red\"> Stall </td>");
+            temp++;
+        }
+        timelineTable.append("<td bgcolor=\"red\"> EX </td>");
+        timelineTable.append("<td bgcolor=\"red\"> MEM </td>");
+        timelineTable.append("<td bgcolor=\"red\"> WB </td>");
+
+    }
+    timelineTable.append("</tr>");
+
+    return (rowHeading.append(timelineTable).append("</table"));
+}
+
 bool Data::run(){
     while(PC<instructionSize && !nopOccured){
         CLOCK++;
-        bool branch_stall=BRANCH_STALL;
+        //bool branch_stall=BRANCH_STALL;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
-        updateTable(branch_stall,stallInInstruction);//additional params if req....
+        //updateTable();//additional params if req....
 
     }
     return nopOccured;
@@ -294,10 +336,10 @@ bool Data::run(){
 bool Data::runStepByStep(){
     if(PC<instructionSize && !nopOccured){
         CLOCK++;
-        bool branch_stall=BRANCH_STALL;
+        //bool branch_stall=BRANCH_STALL;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
-        updateTable(branch_stall,stallInInstruction);
+        //updateTable();
     }
     return PC<instructionSize;
 }
@@ -305,6 +347,7 @@ bool Data::runStepByStep(){
 int Data::instructionFetch(){
     int result=instructions[PC];
     PC++;
+    stallInInstruction=0;
     return result;
 }
 
@@ -319,7 +362,7 @@ void Data::instructionDecodeRegisterFetch(int instruction){
         int shamt=(instruction>>6) & 0x1f;
         //add r1 r2 r3
         //add r4 r5 r6
-        //add r7 r1 r4      ??how many stalls 2 ryt!!
+        //add r7 r1 r4      ??how many stalls 2 ryt!!  Yes!!
         if(BRANCH_STALL){
             STALL++;
             stallInInstruction=1;
