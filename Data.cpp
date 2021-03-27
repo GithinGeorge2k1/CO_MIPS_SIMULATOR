@@ -283,13 +283,14 @@ QString Data::getTimeLine()
     if(CLOCK<=0)
         return QString("");
     QString rowHeading="";
-    rowHeading.append("<table style=\"width:150px\" border=\"4\" bordercolor=#151B54 cellspacing=\"1\">");
+    rowHeading.append("<table style=\"width:100%\" border=\"4\" bordercolor=#151B54 cellspacing=\"1\">");
     rowHeading.append("<tr>");
     rowHeading.append("<td></td>");
     for(int i=1;i<=CLOCK+STALL+5;i++)
         rowHeading.append(QString("<th>ClockCycle %1</th>").arg(i));
     rowHeading.append("</tr>");
-    return rowHeading.append(timelineTable).append(QString("</table>"));
+    rowHeading.append(timelineTable).append(QString("</table>"));
+    return rowHeading;
 }
 void Data::updateTable(bool branchStall)
 {
@@ -321,6 +322,13 @@ void Data::updateTable(bool branchStall)
     timelineTable.append("</tr>");
 }
 
+QString Data::forConsole(){
+    QString result="";
+    result.append("No of instructions executed: ").append(QString::number(CLOCK));
+    result.append("\nNo of Clock Cycles in total: ").append(QString::number(CLOCK+STALL+4));
+    result.append("\nNo of Stalls in total: ").append(QString::number(STALL));
+    return result;
+}
 bool Data::run(){
     while(PC<instructionSize && !nopOccured){
         CLOCK++;

@@ -45,6 +45,7 @@ public:
     bool runStepByStep();
     void updateTable(bool branchStall);
     QString getTimeLine();
+    QString forConsole();
 
     int instructionFetch();
     void instructionDecodeRegisterFetch(int instruction);
