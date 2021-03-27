@@ -26,6 +26,7 @@ public:
     int prevToPrevRd;
     bool FWD_ENABLED;
     bool BRANCH_STALL; //WHETHER THE CURRENT INS WOULD CAUSE A BRANCH RELATED STALL FOR NEXT INSTRUCTION (NOT TAKEN PREDICTOR)
+    int stallInInstruction;
     //We won't consider 3 stalls for normal data dependancy - (by making WB - half cycle)
 
 private:

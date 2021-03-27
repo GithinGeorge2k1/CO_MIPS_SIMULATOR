@@ -23,7 +23,7 @@ Data* Data::getInstance(){
 
 //Member initializer list && constructor implementation
 Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0), nopOccured(false),
-    CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false), BRANCH_STALL(false)
+    CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false), BRANCH_STALL(false), stallInInstruction(0)
 {
 
 }
@@ -285,7 +285,7 @@ bool Data::run(){
         bool branch_stall=BRANCH_STALL;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
-        updateTable(branch_stall,stall_No);//additional params if req....
+        updateTable(branch_stall,stallInInstruction);//additional params if req....
 
     }
     return nopOccured;
@@ -297,7 +297,7 @@ bool Data::runStepByStep(){
         bool branch_stall=BRANCH_STALL;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
-        updateTable(branch_stall,stall_No);
+        updateTable(branch_stall,stallInInstruction);
     }
     return PC<instructionSize;
 }
@@ -322,14 +322,17 @@ void Data::instructionDecodeRegisterFetch(int instruction){
         //add r7 r1 r4      ??how many stalls 2 ryt!!
         if(BRANCH_STALL){
             STALL++;
+            stallInInstruction=1;
             BRANCH_STALL=false;
         }
         else if(!FWD_ENABLED && (Rs==prevRd || Rt==prevRd)){
             STALL+=2;
+            stallInInstruction=2;
             prevToPrevRd=-1;
         }
         else if(!FWD_ENABLED && (Rs==prevToPrevRd || Rt==prevToPrevRd)){
             STALL++;
+            stallInInstruction=1;
         }
         //NOT SURE WHETHER I CAN DO THIS HERE
         prevToPrevRd=prevRd;
@@ -341,6 +344,7 @@ void Data::instructionDecodeRegisterFetch(int instruction){
         int target=instruction & 0x3ffffff;
         if(BRANCH_STALL){
             STALL++;
+            stallInInstruction=1;
             BRANCH_STALL=false;
         }
         prevToPrevRd=prevRd;
@@ -360,14 +364,17 @@ void Data::instructionDecodeRegisterFetch(int instruction){
 
         if(BRANCH_STALL){
             STALL++;
+            stallInInstruction=1;
             BRANCH_STALL=false;
         }
         else if(!FWD_ENABLED && Rs==prevRd){
             STALL+=2;
+            stallInInstruction=2;
             prevToPrevRd=-1;
         }
         else if(!FWD_ENABLED && Rs==prevToPrevRd){
             STALL++;
+            stallInInstruction=1;
         }
         //NOT SURE WHETHER I CAN DO THIS HERE
         prevToPrevRd=prevRd;
@@ -569,7 +576,6 @@ void Data::WB(int Rd, int result)
 {
     if(Rd==0){
         nopOccured=true;
-        CLOCK+=4;
     }
     if(2<=Rd && Rd<32){
         R[Rd]=result;
