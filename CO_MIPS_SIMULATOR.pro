@@ -13,13 +13,15 @@ SOURCES += \
     Maps.cpp \
     about_help.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    utilities.cpp
 
 HEADERS += \
     Data.h \
     Maps.h \
     about_help.h \
-    mainwindow.h
+    mainwindow.h \
+    utilities.h
 
 FORMS += \
     about_help.ui \

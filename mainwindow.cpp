@@ -1,14 +1,17 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "Data.h"
+#include "Maps.h"
+#include "utilities.h"
+
 #include <QFile>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QTextStream>
 #include <QStringList>
-#include "Data.h"
-#include "Maps.h"
 #include <QMessageBox>
 #include <QDebug>
+
 
 bool MainWindow::ValidCodePresent=false;
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -30,9 +33,6 @@ void MainWindow::refreshAllPanels(){
     text=x->displayData();
     ui->textBrowser_3->setPlainText(text);
 }
-
-bool isValue(QString R);
-int convertToInt(QString R);
 
 int storeAllLabelsAndData(QTextStream& in){
     bool h1=false,h2=false,h3=false; //.text, .data, .globl main

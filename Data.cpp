@@ -1,13 +1,15 @@
 #include "Data.h"
+#include "utilities.h"
+#include "Maps.h"
+
 #include <QDebug>
 #include <QRegExp>
 #include <string.h>
-#include "Maps.h"
 #include <QChar>
 #include <cmath>
 #include <QMessageBox>
 
-//Find yy this works(TutorialsPoint - singleton class)
+
 Data *Data::instance=0;
 int registerWriteBackLine=-1;
 //=====================================================//
@@ -20,7 +22,8 @@ Data* Data::getInstance(){
 }
 
 //Member initializer list && constructor implementation
-Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0),nopOccured(false)
+Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0), nopOccured(false),
+    CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false)
 {
 
 }
@@ -42,6 +45,11 @@ void Data::initialize(){
     addCode(a);
     QString b="nop";
     addCode(b);
+    CLOCK=0;
+    STALL=0;
+    prevRd=-1;
+    prevToPrevRd=-1;
+    FWD_ENABLED=false;
 }
 
 bool isRegisterValid(QString R, bool flag=false)
@@ -59,37 +67,13 @@ bool isRegisterValid(QString R, bool flag=false)
     }
     return false;
 }
-bool isValue(QString R)
-{
 
-    if(R.contains("0x")){
-        R=R.section("0x",1,1);
-        bool bstatus=false;
-        R.toInt(&bstatus,16);
-        return bstatus;
-    }
-    else
-    {
-        QRegExp exp("[-+]?[0-9]*");
-        return exp.exactMatch(R);
-    }
-}
 
 bool isVar(QString R){
     Data* D=Data::getInstance();
     return (D->variableMap.contains(R));
 }
-int convertToInt(QString R)
-{
-    if(R.contains("0x"))
-    {
-        R=R.section("0x", 1, 1);
-        bool bstatus=false;
-        return R.toInt(&bstatus,16);
-    }
-    else
-        return R.toInt();
-}
+
 bool isValidLabel(QString L)
 {
     Data* D=Data::getInstance();
@@ -295,9 +279,8 @@ QString Data::displayData(){
 }
 
 bool Data::run(){
-    qDebug()<<instructionSize;
     while(PC<instructionSize && !nopOccured){
-        qDebug()<<PC;
+        CLOCK++;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
     }
@@ -306,7 +289,7 @@ bool Data::run(){
 
 bool Data::runStepByStep(){
     if(PC<instructionSize && !nopOccured){
-        qDebug()<<PC;
+        CLOCK++;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
     }
@@ -328,11 +311,26 @@ void Data::instructionDecodeRegisterFetch(int instruction){
         int Rt=(instruction>>16) & 0x1f;
         int Rd=(instruction>>11) & 0x1f;
         int shamt=(instruction>>6) & 0x1f;
+        //add r1 r2 r3
+        //add r4 r5 r6
+        //add r7 r1 r4      ??how many stalls 2 ryt!!
+        if(!FWD_ENABLED && (Rs==prevRd || Rt==prevRd)){
+            STALL+=2;
+            prevToPrevRd=-1;
+        }
+        else if(!FWD_ENABLED && (Rs==prevToPrevRd || Rt==prevToPrevRd)){
+            STALL++;
+        }
+        //NOT SURE WHETHER I CAN DO THIS HERE
+        prevToPrevRd=prevRd;
+        prevRd=Rd;
         Execute(funct,R[Rs],R[Rt],Rd,shamt);
     }
     //J - Type instruction
     else if(opCode==0x2  || opCode==0x3){
         int target=instruction & 0x3ffffff;
+        prevToPrevRd=prevRd;
+        prevRd=-1;
         Execute(opCode,target);
     }
     //I - Type
@@ -345,6 +343,18 @@ void Data::instructionDecodeRegisterFetch(int instruction){
         if(((immediate>>15) & 1)==1){
             immediate=immediate | 0xffff0000;
         }
+
+        if(!FWD_ENABLED && Rs==prevRd){
+            STALL+=2;
+            prevToPrevRd=-1;
+        }
+        else if(!FWD_ENABLED && Rs==prevToPrevRd){
+            STALL++;
+        }
+        //NOT SURE WHETHER I CAN DO THIS HERE
+        prevToPrevRd=prevRd;
+        prevRd=Rt;
+
         Execute(opCode,R[Rs],Rt,immediate);
     }
 
@@ -465,11 +475,10 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
 //J TYPE
 void Data::Execute(int opCode,int target){
     int Rd=-1;
-    if(opCode==0x2){
+    if(opCode==0x2){//Jump
         Rd=-1;
     }
     if(opCode==0x3){//jal
-        //idk is jal a special case?? It is right??
         Rd=31;
     }
     MEM(opCode,Rd,target);
@@ -478,7 +487,7 @@ void Data::Execute(int opCode,int target){
 void Data::MEM(int opCode, int Rd, int result)
 {
     //Rd is index of the destination Register
-    int value;
+    int value=0;
     switch(opCode){
     case 0x5:{//bne
         PC=result;
@@ -494,10 +503,10 @@ void Data::MEM(int opCode, int Rd, int result)
         if(result<(int)(sizeof(data)/sizeof(data[0])))//BoundCheck
             value=data[result];
         else
-            value=-1;
+            Rd=-1;
         WB(Rd, value);
         break;
-        //value must be wriiten to Register R[R2] in WB
+        //value must be written to Register Rd in WB
     }
     case 0x2b:{//sw
         if(result<(int)(sizeof(data)/sizeof(data[0])))//BoundCheck
@@ -538,8 +547,9 @@ void Data::WB(int Rd, int result)
 {
     if(Rd==0){
         nopOccured=true;
+        CLOCK+=4;
     }
-    if(1<=Rd && Rd<32){
+    if(2<=Rd && Rd<32){
         R[Rd]=result;
         registerWriteBackLine=Rd;
     }
