@@ -283,11 +283,11 @@ QString Data::getTimeLine()
     if(CLOCK<=0)
         return QString("");
     QString rowHeading="";
-    rowHeading.append("<table style=\"width:100%\" border=\"4\" bordercolor=#151B54 cellspacing=\"1\">");
+    rowHeading.append("<table style=\"width:1000px\" border=\"4\" bordercolor=#151B54 cellspacing=\"1\">");
     rowHeading.append("<tr>");
     rowHeading.append("<td></td>");
     for(int i=1;i<=CLOCK+STALL+5;i++)
-        rowHeading.append(QString("<th>ClockCycle %1</th>").arg(i));
+        rowHeading.append(QString("<th>C%1</th>").arg(i));
     rowHeading.append("</tr>");
     rowHeading.append(timelineTable).append(QString("</table>"));
     return rowHeading;
@@ -299,25 +299,25 @@ void Data::updateTable(bool branchStall)
     timelineTable.append("<tr>");
     if(!branchStall)
     {
-        //timelineTable.append(QString("<th>I%1</th>").arg(instructionSize));
+        timelineTable.append(QString("<th>I%1</th>").arg(PC));
         for(int i=1;i<CLOCK+STALL-stallInInstruction;i++)
             timelineTable.append("<td></td>");
-        timelineTable.append("<td bgcolor=\"red\"> IF </td>");
-        timelineTable.append("<td bgcolor=\"red\"> ID/RF </td>");
+        timelineTable.append("<td bgcolor=\"red\">IF</td>");
+        timelineTable.append("<td bgcolor=\"red\">ID/RF</td>");
         int temp=1;
         while(stallInInstruction!=0)
         {
             if(temp==stallInInstruction)
             {
-                timelineTable.append("<td bgcolor=\"red\"> ID/RF </td>");
+                timelineTable.append("<td bgcolor=\"black\">ID/RF</td>");
                 break;
             }
-            timelineTable.append("<td bgcolor=\"red\"> Stall </td>");
+            timelineTable.append("<td bgcolor=\"purple\">Stall</td>");
             temp++;
         }
-        timelineTable.append("<td bgcolor=\"red\"> EX </td>");
-        timelineTable.append("<td bgcolor=\"red\"> MEM </td>");
-        timelineTable.append("<td bgcolor=\"red\"> WB </td>");
+        timelineTable.append("<td bgcolor=\"red\">EX</td>");
+        timelineTable.append("<td bgcolor=\"red\">MEM</td>");
+        timelineTable.append("<td bgcolor=\"red\">WB</td>");
     }
     timelineTable.append("</tr>");
 }
