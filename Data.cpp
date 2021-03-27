@@ -346,7 +346,6 @@ void Data::instructionDecodeRegisterFetch(int instruction){
             immediate=immediate | 0xffff0000;
         }
         Execute(opCode,R[Rs],Rt,immediate);
-
     }
 
 }

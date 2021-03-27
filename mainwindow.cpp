@@ -136,9 +136,9 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
 
             //MODIFYING JAL AND SHOWING THEM ON TEXT TAB
     if(x->labelMap.contains("main")){
-    x->instructions[0]=x->instructions[0] | x->labelMap["main"];
-    ui->textBrowser_2->append(QString("0. [0x%2]  jal 0x%1").arg(x->labelMap["main"]).arg(decimalToHex(x->instructions[0])));
-    ui->textBrowser_2->append(QString("1. [0x0]  nop"));
+        x->instructions[0]=x->instructions[0] | x->labelMap["main"];
+        ui->textBrowser_2->append(QString("0. [0x%2]  jal 0x%1").arg(x->labelMap["main"]).arg(decimalToHex(x->instructions[0])));
+        ui->textBrowser_2->append(QString("1. [0x0]  nop"));
     }
     else
     {

@@ -5,7 +5,7 @@ QMap<QString,uint> Maps::Registers;
 Maps* Maps::KeyValueMap=NULL;
 Maps::Maps()
 {
-    //Command Templates
+//    Command Templates
 //    0 for inst R1 R2 R3           = add,sub,slt,and,or
 //    1 for inst R1 R2 value|Var    = andi,ori,addi,slti
 //    2 for inst R1 R2 value|Label  = bne,beq               /////exe   value | Label    4, labelmap-currentInstructionNo;;
