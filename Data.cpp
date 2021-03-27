@@ -319,7 +319,10 @@ void Data::instructionDecodeRegisterFetch(int instruction){
         //add r1 r2 r3
         //add r4 r5 r6
         //add r7 r1 r4      ??how many stalls 2 ryt!!
-        if(!FWD_ENABLED && (Rs==prevRd || Rt==prevRd)){
+        if(BRANCH_STALL){
+            STALL++;
+        }
+        else if(!FWD_ENABLED && (Rs==prevRd || Rt==prevRd)){
             STALL+=2;
             prevToPrevRd=-1;
         }
@@ -334,6 +337,9 @@ void Data::instructionDecodeRegisterFetch(int instruction){
     //J - Type instruction
     else if(opCode==0x2  || opCode==0x3){
         int target=instruction & 0x3ffffff;
+        if(BRANCH_STALL){
+            STALL++;
+        }
         prevToPrevRd=prevRd;
         prevRd=-1;
         Execute(opCode,target);
@@ -349,7 +355,10 @@ void Data::instructionDecodeRegisterFetch(int instruction){
             immediate=immediate | 0xffff0000;
         }
 
-        if(!FWD_ENABLED && Rs==prevRd){
+        if(BRANCH_STALL){
+            STALL++;
+        }
+        else if(!FWD_ENABLED && Rs==prevRd){
             STALL+=2;
             prevToPrevRd=-1;
         }
