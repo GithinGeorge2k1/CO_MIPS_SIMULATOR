@@ -28,3 +28,4 @@ int convertToInt(QString R)
     else
         return R.toInt();
 }
+

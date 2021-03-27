@@ -23,7 +23,7 @@ Data* Data::getInstance(){
 
 //Member initializer list && constructor implementation
 Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0), nopOccured(false),
-    CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false)
+    CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false), BRANCH_STALL(false)
 {
 
 }
@@ -50,6 +50,7 @@ void Data::initialize(){
     prevRd=-1;
     prevToPrevRd=-1;
     FWD_ENABLED=false;
+    BRANCH_STALL=false;
 }
 
 bool isRegisterValid(QString R, bool flag=false)
@@ -282,6 +283,10 @@ bool Data::run(){
     while(PC<instructionSize && !nopOccured){
         CLOCK++;
         int instruction=instructionFetch();
+        if(BRANCH_STALL){
+            STALL++;
+            BRANCH_STALL=false;
+        }
         instructionDecodeRegisterFetch(instruction);
     }
     return nopOccured;
@@ -429,8 +434,10 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
     case 0x5:{//bne
         int r1=R1;
         int r2=R[R2];
-        if(r1!=r2)
+        if(r1!=r2){
             result=PC+immediate-1;
+            BRANCH_STALL=true;
+        }
         else
             result=PC;
         break;
@@ -438,8 +445,10 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
     case 0x4:{//beq
         int r1=R1;
         int r2=R[R2];
-        if(r1==r2)
+        if(r1==r2){
             result=PC+immediate-1;
+            BRANCH_STALL=true;
+        }
         else
             result=PC;
         break;
