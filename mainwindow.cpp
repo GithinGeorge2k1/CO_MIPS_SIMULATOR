@@ -32,7 +32,8 @@ void MainWindow::refreshAllPanels(){
     ui->textBrowser->setHtml(text);
     text=x->displayData();
     ui->textBrowser_3->setPlainText(text);
-    ui->textBrowser_5->setPlainText(x->getTimeLine());
+    text=x->getTimeLine();
+    ui->textBrowser_5->setHtml(text);
 }
 
 int storeAllLabelsAndData(QTextStream& in){

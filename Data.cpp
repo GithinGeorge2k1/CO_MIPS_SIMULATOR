@@ -291,20 +291,20 @@ QString Data::getTimeLine()
     rowHeading.append("</tr>");
     return rowHeading.append(timelineTable).append(QString("</table>"));
 }
-void Data::updateTable()
+void Data::updateTable(bool branchStall)
 {
     if(CLOCK<=0)
         return;
     timelineTable.append("<tr>");
-    if(!BRANCH_STALL||true)
+    if(!branchStall)
     {
-        timelineTable.append(QString("<th>I%1</th>").arg(instructionSize));
-        for(int i=0;i<=CLOCK+STALL-stallInInstruction;i++)
+        //timelineTable.append(QString("<th>I%1</th>").arg(instructionSize));
+        for(int i=1;i<CLOCK+STALL-stallInInstruction;i++)
             timelineTable.append("<td></td>");
         timelineTable.append("<td bgcolor=\"red\"> IF </td>");
         timelineTable.append("<td bgcolor=\"red\"> ID/RF </td>");
         int temp=1;
-        while(true)
+        while(stallInInstruction!=0)
         {
             if(temp==stallInInstruction)
             {
@@ -324,10 +324,11 @@ void Data::updateTable()
 bool Data::run(){
     while(PC<instructionSize && !nopOccured){
         CLOCK++;
-        //bool branch_stall=BRANCH_STALL;
+        bool branch_stall=BRANCH_STALL;
+        stallInInstruction=0;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
-        updateTable();//additional params if req....
+        updateTable(branch_stall);//additional params if req....
 
     }
     return nopOccured;
@@ -336,10 +337,11 @@ bool Data::run(){
 bool Data::runStepByStep(){
     if(PC<instructionSize && !nopOccured){
         CLOCK++;
-        //bool branch_stall=BRANCH_STALL;
+        bool branch_stall=BRANCH_STALL;
+        stallInInstruction=0;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
-        //updateTable();
+        updateTable(branch_stall);
     }
     return PC<instructionSize;
 }
@@ -347,7 +349,6 @@ bool Data::runStepByStep(){
 int Data::instructionFetch(){
     int result=instructions[PC];
     PC++;
-    stallInInstruction=0;
     return result;
 }
 

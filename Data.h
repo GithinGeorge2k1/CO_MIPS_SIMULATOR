@@ -43,7 +43,7 @@ public:
     QString displayData();
     bool run();
     bool runStepByStep();
-    void updateTable();
+    void updateTable(bool branchStall);
     QString getTimeLine();
 
     int instructionFetch();
