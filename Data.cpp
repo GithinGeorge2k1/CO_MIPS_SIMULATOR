@@ -278,25 +278,28 @@ QString Data::displayData(){
     }
     return text;
 }
-
-QString Data::updateTable()
+QString Data::getTimeLine()
 {
-    QString rowHeading="";
     if(CLOCK<=0)
-        return "";
+        return QString("");
+    QString rowHeading="";
     rowHeading.append("<table style=\"width:150px\" border=\"4\" bordercolor=#151B54 cellspacing=\"1\">");
     rowHeading.append("<tr>");
-    int currentInsCycle=CLOCK+STALL-stallInInstruction;
     rowHeading.append("<td></td>");
-    for(int i=1;i<=currentInsCycle+stallInInstruction+5;i++)
+    for(int i=1;i<=CLOCK+STALL+5;i++)
         rowHeading.append(QString("<th>ClockCycle %1</th>").arg(i));
     rowHeading.append("</tr>");
-
+    return rowHeading.append(timelineTable).append(QString("</table>"));
+}
+void Data::updateTable()
+{
+    if(CLOCK<=0)
+        return;
     timelineTable.append("<tr>");
     if(!BRANCH_STALL||true)
     {
         timelineTable.append(QString("<th>I%1</th>").arg(instructionSize));
-        for(int i=0;i<=currentInsCycle;i++)
+        for(int i=0;i<=CLOCK+STALL-stallInInstruction;i++)
             timelineTable.append("<td></td>");
         timelineTable.append("<td bgcolor=\"red\"> IF </td>");
         timelineTable.append("<td bgcolor=\"red\"> ID/RF </td>");
@@ -314,11 +317,8 @@ QString Data::updateTable()
         timelineTable.append("<td bgcolor=\"red\"> EX </td>");
         timelineTable.append("<td bgcolor=\"red\"> MEM </td>");
         timelineTable.append("<td bgcolor=\"red\"> WB </td>");
-
     }
     timelineTable.append("</tr>");
-
-    return (rowHeading.append(timelineTable).append("</table"));
 }
 
 bool Data::run(){
@@ -327,7 +327,7 @@ bool Data::run(){
         //bool branch_stall=BRANCH_STALL;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
-        //updateTable();//additional params if req....
+        updateTable();//additional params if req....
 
     }
     return nopOccured;
