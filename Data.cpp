@@ -282,12 +282,11 @@ QString Data::displayData(){
 bool Data::run(){
     while(PC<instructionSize && !nopOccured){
         CLOCK++;
+        bool branch_stall=BRANCH_STALL;
         int instruction=instructionFetch();
-        if(BRANCH_STALL){
-            STALL++;
-            BRANCH_STALL=false;
-        }
         instructionDecodeRegisterFetch(instruction);
+        updateTable(branch_stall,stall_No);//additional params if req....
+
     }
     return nopOccured;
 }
@@ -295,8 +294,10 @@ bool Data::run(){
 bool Data::runStepByStep(){
     if(PC<instructionSize && !nopOccured){
         CLOCK++;
+        bool branch_stall=BRANCH_STALL;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
+        updateTable(branch_stall,stall_No);
     }
     return PC<instructionSize;
 }
@@ -321,6 +322,7 @@ void Data::instructionDecodeRegisterFetch(int instruction){
         //add r7 r1 r4      ??how many stalls 2 ryt!!
         if(BRANCH_STALL){
             STALL++;
+            BRANCH_STALL=false;
         }
         else if(!FWD_ENABLED && (Rs==prevRd || Rt==prevRd)){
             STALL+=2;
@@ -339,6 +341,7 @@ void Data::instructionDecodeRegisterFetch(int instruction){
         int target=instruction & 0x3ffffff;
         if(BRANCH_STALL){
             STALL++;
+            BRANCH_STALL=false;
         }
         prevToPrevRd=prevRd;
         prevRd=-1;
@@ -357,6 +360,7 @@ void Data::instructionDecodeRegisterFetch(int instruction){
 
         if(BRANCH_STALL){
             STALL++;
+            BRANCH_STALL=false;
         }
         else if(!FWD_ENABLED && Rs==prevRd){
             STALL+=2;
