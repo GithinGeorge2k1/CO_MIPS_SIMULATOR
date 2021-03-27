@@ -29,3 +29,7 @@ QMenuBar{
 	font-family:arial;
 	font-size:18px;
 }
+
+#frame{
+	border: 2px solid black
+}
