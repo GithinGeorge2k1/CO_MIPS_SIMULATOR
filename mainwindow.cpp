@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->setupUi(this);
     //Setting widget timeline to "timeline" from form!!
     timeline=ui->timeline;
-    timeline->setRowCount(0);
+    //timeline->setRowCount(0);
     Maps::getInstance();
     Data::getInstance();
     refreshAllPanels();
@@ -103,6 +103,8 @@ int storeAllLabelsAndData(QTextStream& in){
 
 void MainWindow::on_actionReinitialize_and_Load_File_triggered()
 {
+    timeline->setRowCount(0);
+    timeline->setColumnCount(0);
     int start=-1;
     Data* x=Data::getInstance();
     initialize();
@@ -215,6 +217,8 @@ void MainWindow::on_actionRun_triggered()
             QMessageBox::warning(this,"Cannot find main","No entry point defined");
             return;
         }
+        timeline->setRowCount(0);
+        timeline->setColumnCount(0);
         bool isExitSmooth=D->run(timeline);
         //D->updateTable(D->BRANCH_STALL, timeline);
         refreshAllPanels();
