@@ -26,9 +26,6 @@ Data* Data::getInstance(){
 Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0), nopOccured(false),
     CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false), BRANCH_STALL(false), stallInInstruction(0), timelineTable(""), space(""), rowHeading(""), timeline(":/Files/TimeLine.html")
 {
-//    rowHeading.append("<table style=\"width:1000px\" border=\"4\" bordercolor=#151B54 cellspacing=\"1\">");
-//    rowHeading.append("<tr>");
-//    rowHeading.append("<td></td>");
     prevClockCycle=1;
     prevSpace=1;
 }
@@ -253,7 +250,7 @@ bool Data::addCode(QString& text){
 }
 QString Data::displayRegisters(){
     QString text="";
-    text.append(QString("PC      = %1\n").arg(PC));
+    text.append(QString("<edit style=\"color:#ffd700\">PC&nbsp;&nbsp;&nbsp;=&nbsp;%1\n</edit>").arg(PC));
     QStringList regs={"zero", "at", "v0", "v1", "a0", "a1", "a2", "a3", "t0", "t1", "t2", "t3", "t4", "t5", "t6",
                       "t7", "s0", "s1", "s2", "s3", "s4", "s5", "s6",  "s7",  "t8",  "t9", "k0", "k1", "gp", "sp", "s8",
                       "ra"};
@@ -302,15 +299,15 @@ void Data::updateTable(bool branchStall, QTableWidget* timeline)
             if(temp==stallInInstruction)
             {
                 timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("ID/RF"));
-                timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::green);
+                timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::darkGreen);
                 break;
             }
             timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("Stall"));
-            timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::green);
+            timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::darkGreen);
             temp++;
         }
         timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("EX"));
-        timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::yellow);
+        timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::darkCyan);
         timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("MEM"));
         timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::magenta);
         timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("WB"));
