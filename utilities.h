@@ -4,5 +4,5 @@
 
 bool isValue(QString R);
 int convertToInt(QString R);
-
+QString decimalToHex(int x);
 #endif // UTILITIES_H

@@ -101,24 +101,6 @@ int storeAllLabelsAndData(QTextStream& in){
     return start;
 }
 
-QString decimalToHex(int x){
-    QString result="";
-    unsigned int n=(unsigned int)x;
-    while(n!=0){
-        unsigned int temp=n%16;
-        char a;
-        if(temp<10){
-            a=temp+48;
-        }
-        else{
-            a=temp+55;
-        }
-        result=QString(a)+result;
-        n=n/16;
-    }
-    return result;
-}
-
 void MainWindow::on_actionReinitialize_and_Load_File_triggered()
 {
     int start=-1;
