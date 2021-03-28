@@ -26,9 +26,9 @@ Data* Data::getInstance(){
 Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0), nopOccured(false),
     CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false), BRANCH_STALL(false), stallInInstruction(0), timelineTable(""), space(""), rowHeading(""), timeline(":/Files/TimeLine.html")
 {
-    rowHeading.append("<table style=\"width:1000px\" border=\"4\" bordercolor=#151B54 cellspacing=\"1\">");
-    rowHeading.append("<tr>");
-    rowHeading.append("<td></td>");
+//    rowHeading.append("<table style=\"width:1000px\" border=\"4\" bordercolor=#151B54 cellspacing=\"1\">");
+//    rowHeading.append("<tr>");
+//    rowHeading.append("<td></td>");
     prevClockCycle=1;
     prevSpace=1;
 }
@@ -363,26 +363,27 @@ QString Data::forConsole(){
     result.append("\nNo of Stalls in total: ").append(QString::number(STALL));
     return result;
 }
-bool Data::run(){
+
+bool Data::run(QTableWidget *timeline){
     while(PC<instructionSize && !nopOccured){
         CLOCK++;
         bool branch_stall=BRANCH_STALL;
         stallInInstruction=0;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
-        //updateTable(branch_stall);//additional params if req....
+        updateTable(branch_stall,timeline);//additional params if req....
     }
     return nopOccured;
 }
 
-bool Data::runStepByStep(){
+bool Data::runStepByStep(QTableWidget *timeline){
     if(PC<instructionSize && !nopOccured){
         CLOCK++;
         bool branch_stall=BRANCH_STALL;
         stallInInstruction=0;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
-        //updateTable(branch_stall);
+        updateTable(branch_stall,timeline);
     }
     return PC<instructionSize;
 }

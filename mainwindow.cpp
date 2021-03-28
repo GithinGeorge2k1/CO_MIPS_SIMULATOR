@@ -16,7 +16,7 @@ bool MainWindow::ValidCodePresent=false;
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    timeline=new QTableWidget(this);
+    timeline=ui->timeline;
     timeline->setRowCount(0);
     Maps::getInstance();
     Data::getInstance();
@@ -234,8 +234,8 @@ void MainWindow::on_actionRun_triggered()
             QMessageBox::warning(this,"Cannot find main","No entry point defined");
             return;
         }
-        bool isExitSmooth=D->run();
-        D->updateTable(D->BRANCH_STALL, timeline);
+        bool isExitSmooth=D->run(timeline);
+        //D->updateTable(D->BRANCH_STALL, timeline);
         refreshAllPanels();
         if(!isExitSmooth){
             QMessageBox::information(this,"Run Error",QString("No Valid Instruction at %1").arg(D->instructionSize+1));
@@ -260,8 +260,8 @@ void MainWindow::on_actionRun_Step_By_Step_triggered()
             QMessageBox::warning(this,"Cannot find main","No entry point defined");
             return;
         }
-        bool isExitSmooth=D->runStepByStep();
-        D->updateTable(D->BRANCH_STALL, timeline);
+        bool isExitSmooth=D->runStepByStep(timeline);
+        //D->updateTable(D->BRANCH_STALL, timeline);
         refreshAllPanels();
         if(!isExitSmooth){
             QMessageBox::information(this,"Run Error",QString("No Valid Instruction at %1").arg(D->instructionSize+1));
@@ -293,4 +293,10 @@ void MainWindow::on_actionHelp_triggered()
 {
     helpwindow=new About_Help(nullptr);
     helpwindow->show();
+}
+
+void MainWindow::on_actionEnable_Forwarding_triggered()
+{
+    Data* D=Data::getInstance();
+    D->FWD_ENABLED=!D->FWD_ENABLED;
 }

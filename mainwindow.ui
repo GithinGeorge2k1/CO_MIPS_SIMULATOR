@@ -340,7 +340,7 @@
      <x>0</x>
      <y>0</y>
      <width>905</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -363,6 +363,8 @@
     <addaction name="actionRun"/>
     <addaction name="separator"/>
     <addaction name="actionRun_Step_By_Step"/>
+    <addaction name="separator"/>
+    <addaction name="actionEnable_Forwarding"/>
    </widget>
    <widget class="QMenu" name="menuWindow">
     <property name="title">
@@ -510,6 +512,11 @@
   <action name="actionHelp">
    <property name="text">
     <string>Help</string>
+   </property>
+  </action>
+  <action name="actionEnable_Forwarding">
+   <property name="text">
+    <string>Enable Forwarding</string>
    </property>
   </action>
  </widget>

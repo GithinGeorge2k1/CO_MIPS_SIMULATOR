@@ -36,6 +36,8 @@ private slots:
 
     void on_actionHelp_triggered();
 
+    void on_actionEnable_Forwarding_triggered();
+
 private:
     Ui::MainWindow *ui;
     static bool ValidCodePresent;
