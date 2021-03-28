@@ -16,6 +16,7 @@ bool MainWindow::ValidCodePresent=false;
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    //Setting widget timeline to "timeline" from form!!
     timeline=ui->timeline;
     timeline->setRowCount(0);
     Maps::getInstance();
@@ -35,8 +36,6 @@ void MainWindow::refreshAllPanels(){
     ui->textBrowser_3->setPlainText(text);
     text=x->forConsole();
     ui->textBrowser_4->setPlainText(text);
-    //text=x->getTimeLine();
-    //ui->textBrowser_5->setPlainText(text);
 }
 
 int storeAllLabelsAndData(QTextStream& in){
