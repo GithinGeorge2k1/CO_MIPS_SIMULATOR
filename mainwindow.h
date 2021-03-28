@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTableWidget>
 #include "about_help.h"
 
 
@@ -39,6 +40,7 @@ private:
     Ui::MainWindow *ui;
     static bool ValidCodePresent;
     About_Help* helpwindow;
+    QTableWidget *timeline;
 //methods
 private:
     void refreshAllPanels();

@@ -4,6 +4,8 @@
 #include<QBitArray>
 #include <QStringList>
 #include <QMap>
+#include <QFile>
+#include <QTableWidget>
 
 class Data{
 public:
@@ -30,7 +32,8 @@ public:
     int stallInInstruction;
     QString timelineTable;
     QString space;
-    QString rowHeading="";
+    QString rowHeading;
+    QFile timeline;
     //We won't consider 3 stalls for normal data dependancy - (by making WB - half cycle)
 
 private:
@@ -45,7 +48,7 @@ public:
     QString displayData();
     bool run();
     bool runStepByStep();
-    void updateTable(bool branchStall);
+    void updateTable(bool branchStall, QTableWidget* timeline);
     QString getTimeLine();
     QString forConsole();
 

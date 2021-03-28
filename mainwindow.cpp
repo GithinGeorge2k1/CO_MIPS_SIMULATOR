@@ -9,7 +9,6 @@
 #include <QFileDialog>
 #include <QTextStream>
 #include <QStringList>
-#include <QMessageBox>
 #include <QDebug>
 
 
@@ -17,6 +16,8 @@ bool MainWindow::ValidCodePresent=false;
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    timeline=new QTableWidget(this);
+    timeline->setRowCount(0);
     Maps::getInstance();
     Data::getInstance();
     refreshAllPanels();
@@ -34,8 +35,8 @@ void MainWindow::refreshAllPanels(){
     ui->textBrowser_3->setPlainText(text);
     text=x->forConsole();
     ui->textBrowser_4->setPlainText(text);
-    text=x->getTimeLine();
-    ui->textBrowser_5->setPlainText(text);
+    //text=x->getTimeLine();
+    //ui->textBrowser_5->setPlainText(text);
 }
 
 int storeAllLabelsAndData(QTextStream& in){
@@ -234,6 +235,7 @@ void MainWindow::on_actionRun_triggered()
             return;
         }
         bool isExitSmooth=D->run();
+        D->updateTable(D->BRANCH_STALL, timeline);
         refreshAllPanels();
         if(!isExitSmooth){
             QMessageBox::information(this,"Run Error",QString("No Valid Instruction at %1").arg(D->instructionSize+1));
@@ -259,6 +261,7 @@ void MainWindow::on_actionRun_Step_By_Step_triggered()
             return;
         }
         bool isExitSmooth=D->runStepByStep();
+        D->updateTable(D->BRANCH_STALL, timeline);
         refreshAllPanels();
         if(!isExitSmooth){
             QMessageBox::information(this,"Run Error",QString("No Valid Instruction at %1").arg(D->instructionSize+1));

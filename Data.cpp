@@ -9,7 +9,6 @@
 #include <cmath>
 #include <QMessageBox>
 
-
 Data *Data::instance=0;
 int prevClockCycle;
 int prevSpace;
@@ -25,7 +24,7 @@ Data* Data::getInstance(){
 
 //Member initializer list && constructor implementation
 Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0), nopOccured(false),
-    CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false), BRANCH_STALL(false), stallInInstruction(0), timelineTable(""), space(""), rowHeading("")
+    CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false), BRANCH_STALL(false), stallInInstruction(0), timelineTable(""), space(""), rowHeading(""), timeline(":/Files/TimeLine.html")
 {
     rowHeading.append("<table style=\"width:1000px\" border=\"4\" bordercolor=#151B54 cellspacing=\"1\">");
     rowHeading.append("<tr>");
@@ -284,6 +283,34 @@ QString Data::displayData(){
     }
     return text;
 }
+void Data::updateTable(bool branchStall, QTableWidget* timeline)
+{
+    if(CLOCK<=0)
+        return;
+    timeline->setRowCount(timeline->rowCount()+1);
+    timeline->setColumnCount(CLOCK+STALL+5);
+    int index=CLOCK+STALL-stallInInstruction;
+    if(!branchStall)
+    {
+        timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("IF"));
+        timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("ID/RF"));
+        int temp=1;
+        while(stallInInstruction!=0)
+        {
+            if(temp==stallInInstruction)
+            {
+                timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("ID/RF"));
+                break;
+            }
+            timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("Stall"));
+            temp++;
+        }
+        timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("EX"));
+        timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("MEM"));
+        timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("WB"));
+    }
+}
+/*
 QString Data::getTimeLine()
 {
     QString result="";
@@ -328,7 +355,7 @@ void Data::updateTable(bool branchStall)
     timelineTable.append(space).append(currentIns).append("</tr>");
     //qDebug()<<timelineTable;
 }
-
+*/
 QString Data::forConsole(){
     QString result="";
     result.append("No of instructions executed: ").append(QString::number(CLOCK));
@@ -343,8 +370,7 @@ bool Data::run(){
         stallInInstruction=0;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
-        updateTable(branch_stall);//additional params if req....
-
+        //updateTable(branch_stall);//additional params if req....
     }
     return nopOccured;
 }
@@ -356,7 +382,7 @@ bool Data::runStepByStep(){
         stallInInstruction=0;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
-        updateTable(branch_stall);
+        //updateTable(branch_stall);
     }
     return PC<instructionSize;
 }
