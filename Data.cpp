@@ -293,21 +293,28 @@ void Data::updateTable(bool branchStall, QTableWidget* timeline)
     if(!branchStall)
     {
         timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("IF"));
+        timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::gray);
         timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("ID/RF"));
+        timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::red);
         int temp=1;
         while(stallInInstruction!=0)
         {
             if(temp==stallInInstruction)
             {
                 timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("ID/RF"));
+                timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::green);
                 break;
             }
             timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("Stall"));
+            timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::green);
             temp++;
         }
         timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("EX"));
+        timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::yellow);
         timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("MEM"));
+        timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::magenta);
         timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("WB"));
+        timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::red);
     }
 }
 /*
