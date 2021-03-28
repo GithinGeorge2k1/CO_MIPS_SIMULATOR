@@ -11,6 +11,8 @@
 
 
 Data *Data::instance=0;
+int prevClockCycle;
+int prevSpace;
 int registerWriteBackLine=-1;
 //=====================================================//
 
@@ -23,9 +25,13 @@ Data* Data::getInstance(){
 
 //Member initializer list && constructor implementation
 Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0), nopOccured(false),
-    CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false), BRANCH_STALL(false), stallInInstruction(0), timelineTable("")
+    CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false), BRANCH_STALL(false), stallInInstruction(0), timelineTable(""), space(""), rowHeading("")
 {
-
+    rowHeading.append("<table style=\"width:1000px\" border=\"4\" bordercolor=#151B54 cellspacing=\"1\">");
+    rowHeading.append("<tr>");
+    rowHeading.append("<td></td>");
+    prevClockCycle=1;
+    prevSpace=1;
 }
 
 void Data::initialize(){
@@ -280,46 +286,47 @@ QString Data::displayData(){
 }
 QString Data::getTimeLine()
 {
+    QString result="";
     if(CLOCK<=0)
-        return QString("");
-    QString rowHeading="";
-    rowHeading.append("<table style=\"width:1000px\" border=\"4\" bordercolor=#151B54 cellspacing=\"1\">");
-    rowHeading.append("<tr>");
-    rowHeading.append("<td></td>");
-    for(int i=1;i<=CLOCK+STALL+5;i++)
-        rowHeading.append(QString("<th>C%1</th>").arg(i));
-    rowHeading.append("</tr>");
-    rowHeading.append(timelineTable).append(QString("</table>"));
-    return rowHeading;
+        return result;
+
+    for(;prevClockCycle<CLOCK+STALL+5;prevClockCycle++)
+        rowHeading.append(QString("<th>C%1</th>").arg(prevClockCycle));
+
+    result.append(rowHeading).append("</tr>").append(timelineTable).append(QString("</table>"));
+    //qDebug()<<QString(result);
+    return result;
 }
 void Data::updateTable(bool branchStall)
 {
     if(CLOCK<=0)
         return;
     timelineTable.append("<tr>");
+    QString currentIns="";
+    for(;prevSpace<CLOCK+STALL-stallInInstruction;prevSpace++)
+        space.append("<td></td>");
     if(!branchStall)
     {
-        timelineTable.append(QString("<th>I%1</th>").arg(PC));
-        for(int i=1;i<CLOCK+STALL-stallInInstruction;i++)
-            timelineTable.append("<td></td>");
-        timelineTable.append("<td bgcolor=\"red\">IF</td>");
-        timelineTable.append("<td bgcolor=\"red\">ID/RF</td>");
+        timelineTable.append(QString("<th>I%1</th>").arg(CLOCK));
+        currentIns.append("<td bgcolor=\"red\">IF</td>");
+        currentIns.append("<td bgcolor=\"purple\">ID/RF</td>");
         int temp=1;
         while(stallInInstruction!=0)
         {
             if(temp==stallInInstruction)
             {
-                timelineTable.append("<td bgcolor=\"black\">ID/RF</td>");
+                currentIns.append("<td bgcolor=\"black\">ID/RF</td>");
                 break;
             }
-            timelineTable.append("<td bgcolor=\"purple\">Stall</td>");
+            currentIns.append("<td bgcolor=\"purple\">Stall</td>");
             temp++;
         }
-        timelineTable.append("<td bgcolor=\"red\">EX</td>");
-        timelineTable.append("<td bgcolor=\"red\">MEM</td>");
-        timelineTable.append("<td bgcolor=\"red\">WB</td>");
+        currentIns.append("<td bgcolor=\"blue\">EX</td>");
+        currentIns.append("<td bgcolor=\"green\">MEM</td>");
+        currentIns.append("<td bgcolor=\"yellow\">WB</td>");
     }
-    timelineTable.append("</tr>");
+    timelineTable.append(space).append(currentIns).append("</tr>");
+    //qDebug()<<timelineTable;
 }
 
 QString Data::forConsole(){
