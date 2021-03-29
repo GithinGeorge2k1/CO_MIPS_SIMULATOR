@@ -428,6 +428,7 @@ void Data::instructionDecodeRegisterFetch(int instruction){
         {
             STALL+=1;
             stallInInstruction=1;
+            isPrevLW=false;
             prevToPrevRd=-1;//safetycheck
         }
         else if(!FWD_ENABLED && (Rs==prevRd || Rt==prevRd)){
@@ -472,10 +473,17 @@ void Data::instructionDecodeRegisterFetch(int instruction){
             stallInInstruction=1;
             BRANCH_STALL=false;
         }
+        else if(FWD_ENABLED && isPrevLW && Rs==prevRd)
+        {
+            STALL+=1;
+            stallInInstruction=1;
+            isPrevLW=false;
+            prevToPrevRd=-1;//safetycheck
+        }
         else if(!FWD_ENABLED && Rs==prevRd){
             STALL+=2;
             stallInInstruction=2;
-            prevToPrevRd=-1;
+            prevToPrevRd=-1;//safety check
         }
         else if(!FWD_ENABLED && Rs==prevToPrevRd){
             STALL++;
