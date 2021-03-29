@@ -29,6 +29,7 @@ public:
     int prevToPrevRd;
     bool FWD_ENABLED;
     bool BRANCH_STALL; //WHETHER THE CURRENT INS WOULD CAUSE A BRANCH RELATED STALL FOR NEXT INSTRUCTION (NOT TAKEN PREDICTOR)
+    bool isPrevLW;
     int stallInInstruction;
     QString timelineTable;
     QString space;

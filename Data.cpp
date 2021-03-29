@@ -53,6 +53,7 @@ void Data::initialize(){
     prevToPrevRd=-1;
     FWD_ENABLED=false;
     BRANCH_STALL=false;
+    isPrevLW=false;
 }
 
 bool isRegisterValid(QString R, bool flag=false)
@@ -287,32 +288,40 @@ void Data::updateTable(bool branchStall, QTableWidget* timeline)
     timeline->setRowCount(timeline->rowCount()+1);
     timeline->setColumnCount(CLOCK+STALL+5);
     int index=CLOCK+STALL-stallInInstruction;
-    if(!branchStall)
+    if(branchStall)
     {
         timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("IF"));
         timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::gray);
-        timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("ID/RF"));
-        timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::red);
-        int temp=1;
-        while(stallInInstruction!=0)
-        {
-            if(temp==stallInInstruction)
-            {
-                timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("ID/RF"));
-                timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::darkGreen);
-                break;
-            }
-            timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("Stall"));
-            timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::darkGreen);
-            temp++;
-        }
-        timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("EX"));
-        timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::darkCyan);
-        timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("MEM"));
-        timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::magenta);
-        timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("WB"));
-        timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::red);
+        timeline->setItem(timeline->rowCount()-1, index, new QTableWidgetItem("ID/RF"));
+        timeline->item(timeline->rowCount()-1,index)->setBackground(Qt::red);
+        timeline->setItem(timeline->rowCount()-1, index+1, new QTableWidgetItem("Squash"));
+        timeline->item(timeline->rowCount()-1,index)->setBackground(Qt::darkRed);
+
+        timeline->setRowCount(timeline->rowCount()+1);
     }
+    timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("IF"));
+    timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::gray);
+    timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("ID/RF"));
+    timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::red);
+    int temp=1;
+    while(stallInInstruction!=0)
+    {
+        if(temp==stallInInstruction)
+        {
+            timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("ID/RF"));
+            timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::darkGreen);
+            break;
+        }
+        timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("Stall"));
+        timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::darkGreen);
+        temp++;
+    }
+    timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("EX"));
+    timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::darkCyan);
+    timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("MEM"));
+    timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::magenta);
+    timeline->setItem(timeline->rowCount()-1, index++, new QTableWidgetItem("WB"));
+    timeline->item(timeline->rowCount()-1,index-1)->setBackground(Qt::red);
 }
 /*
 QString Data::getTimeLine()
@@ -415,13 +424,19 @@ void Data::instructionDecodeRegisterFetch(int instruction){
             stallInInstruction=1;
             BRANCH_STALL=false;
         }
+        else if(FWD_ENABLED && isPrevLW && (Rs==prevRd || Rt==prevRd))
+        {
+            STALL+=1;
+            stallInInstruction=1;
+            prevToPrevRd=-1;//safetycheck
+        }
         else if(!FWD_ENABLED && (Rs==prevRd || Rt==prevRd)){
             STALL+=2;
             stallInInstruction=2;
-            prevToPrevRd=-1;
+            prevToPrevRd=-1;//safetycheck
         }
         else if(!FWD_ENABLED && (Rs==prevToPrevRd || Rt==prevToPrevRd)){
-            STALL++;
+            STALL+=1;
             stallInInstruction=1;
         }
         //NOT SURE WHETHER I CAN DO THIS HERE
@@ -580,6 +595,7 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
         //result is Effective Address
         int r1=R1;
         result=immediate+r1;
+        isPrevLW=true;
         break;
     }
     case 0x2b:{//sw
