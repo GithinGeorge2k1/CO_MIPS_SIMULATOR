@@ -255,7 +255,7 @@ void MainWindow::on_actionRun_triggered()
             QMessageBox::warning(this,"Cannot find main","No entry point defined");
             return;
         }
-        bool isExitSmooth=D->run(timeline[tableIndex]);
+        bool isExitSmooth=D->run(timeline);
         //D->updateTable(D->BRANCH_STALL, timeline);
         refreshAllPanels();
         if(!isExitSmooth){
@@ -281,7 +281,7 @@ void MainWindow::on_actionRun_Step_By_Step_triggered()
             QMessageBox::warning(this,"Cannot find main","No entry point defined");
             return;
         }
-        bool isExitSmooth=D->runStepByStep(timeline[tableIndex]);
+        bool isExitSmooth=D->runStepByStep(timeline);
         //D->updateTable(D->BRANCH_STALL, timeline);
         refreshAllPanels();
         if(!isExitSmooth){

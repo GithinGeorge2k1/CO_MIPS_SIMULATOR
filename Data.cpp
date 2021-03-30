@@ -14,7 +14,8 @@ Data* Data::instance=0;
 int prevClockCycle;
 int prevSpace;
 int registerWriteBackLine=-1;
-int rindex;
+int rindex=0;
+
 MainWindow* obj;
 //=====================================================//
 Data* Data::getInstance(){
@@ -287,11 +288,14 @@ QString Data::displayData(){
 }
 void Data::updateTable(bool branchStall, QTableWidget* timeline)
 {
-    if(CLOCK>=500 || obj->isTimeLineLocked)
+    if(CLOCK>=400 || obj->isTimeLineLocked)
         return;
     int cindex=CLOCK+STALL-stallInInstruction-1;
-    if(rindex>=timeline->rowCount())
+    if(rindex+1>=timeline->rowCount()){
         obj->setNewTable(rindex, cindex);
+        rindex=0;
+        //reset cindex!! HOW?? - ONE MINOR THING!! last row of table may not be filled --- reason rindex++ in if condn below!!
+    }
     if(branchStall)
     {
         timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
@@ -300,8 +304,14 @@ void Data::updateTable(bool branchStall, QTableWidget* timeline)
         timeline->item(rindex,cindex)->setBackground(Qt::red);
         timeline->setItem(rindex, cindex+1, new QTableWidgetItem("Squash"));
         timeline->item(rindex,cindex)->setBackground(Qt::darkRed);
-
-        timeline->setRowCount(timeline->rowCount()+1);
+        //timeline->setRowCount(timeline->rowCount()+1);
+        //IF PREVIOUS INSTRUCTION WAS BRANCH AND TAKEN, THEN THE STALL CLOCK CYCLE IS ENOUGH TO RESOLVE DATA DEPENDANCY OF CURRENT WITH PREV TO PREV
+        if(stallInInstruction!=0)
+        {
+            STALL=STALL-stallInInstruction;
+            stallInInstruction=0;
+        }
+        rindex++;
     }
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
     timeline->item(rindex,cindex-1)->setBackground(Qt::gray);
@@ -382,26 +392,26 @@ QString Data::forConsole(){
     return result;
 }
 
-bool Data::run(QTableWidget *timeline){
+bool Data::run(QTableWidget **timeline){
     while(PC<instructionSize && !nopOccured){
         CLOCK++;
         bool branch_stall=BRANCH_STALL;
         stallInInstruction=0;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
-        updateTable(branch_stall,timeline);//additional params if req....
+        updateTable(branch_stall,timeline[obj->tableIndex]);//additional params if req....
     }
     return nopOccured;
 }
 
-bool Data::runStepByStep(QTableWidget *timeline){
+bool Data::runStepByStep(QTableWidget **timeline){
     if(PC<instructionSize && !nopOccured){
         CLOCK++;
         bool branch_stall=BRANCH_STALL;
         stallInInstruction=0;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
-        updateTable(branch_stall,timeline);
+        updateTable(branch_stall,timeline[obj->tableIndex]);
     }
     return PC<instructionSize;
 }

@@ -47,9 +47,9 @@ public:
     bool addCode(QString& data);
     QString displayRegisters();
     QString displayData();
-    bool run(QTableWidget *timeline);
-    bool runStepByStep(QTableWidget *timeline);
-    void updateTable(bool branchStall, QTableWidget* timeline);
+    bool run(QTableWidget **timeline);
+    bool runStepByStep(QTableWidget **timeline);
+    void updateTable(bool branchStall, QTableWidget *timeline);
     QString getTimeLine();
     QString forConsole();
 
