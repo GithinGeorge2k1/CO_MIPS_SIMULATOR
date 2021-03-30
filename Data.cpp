@@ -10,7 +10,7 @@
 #include <cmath>
 #include <QMessageBox>
 
-Data *Data::instance=0;
+Data* Data::instance=0;
 int prevClockCycle;
 int prevSpace;
 int registerWriteBackLine=-1;

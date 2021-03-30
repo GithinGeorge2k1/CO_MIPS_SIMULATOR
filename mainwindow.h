@@ -47,6 +47,7 @@ private:
     static bool ValidCodePresent;
     About_Help* helpwindow;
     QTableWidget** timeline;
+    static MainWindow* obj;
 
 //methods
 private:

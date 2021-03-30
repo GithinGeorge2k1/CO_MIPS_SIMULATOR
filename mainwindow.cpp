@@ -11,9 +11,8 @@
 #include <QStringList>
 #include <QDebug>
 
-
+MainWindow* MainWindow::obj=NULL;
 bool MainWindow::ValidCodePresent=false;
-static MainWindow* obj=NULL;
 int noOfTables=3;
 MainWindow* MainWindow::getInstance()
 {
