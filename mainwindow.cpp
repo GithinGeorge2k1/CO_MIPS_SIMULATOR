@@ -13,12 +13,23 @@
 
 
 bool MainWindow::ValidCodePresent=false;
+MainWindow* obj=NULL;
+int noOfTables=3;
+MainWindow* MainWindow::getInstance()
+{
+    return obj;
+}
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
+    obj=this;
     ui->setupUi(this);
     //Setting widget timeline to "timeline" from form!!
-    timeline=ui->timeline;
-    //timeline->setRowCount(0);
+    isTimeLineLocked=false;
+    tableIndex=0;
+    timeline=new QTableWidget*[noOfTables];
+    timeline[tableIndex]=ui->timeline1;
+    timeline[tableIndex+1]=ui->timeline2;
+    timeline[tableIndex+2]=ui->timeline3;
     Maps::getInstance();
     Data::getInstance();
     refreshAllPanels();
@@ -37,7 +48,30 @@ void MainWindow::refreshAllPanels(){
     text=x->forConsole();
     ui->textBrowser_4->setPlainText(text);
 }
+void MainWindow::setNewTable(int clockCycle, int insCount)
+{
+    tableIndex++;
+    if(tableIndex>=noOfTables)
+    {
+        QMessageBox::warning(this, "Error", "Exceeded Table Limit. Timeline Locked");
 
+    }
+    else
+        newTable(clockCycle, insCount);
+}
+void MainWindow::newTable(int clockCycle, int insNumber)
+{
+    QString RHeading="";
+    QString CHeading="";
+    for(int i=1;i<=2500;i++)
+        RHeading.append(QString("ClockCycle %1,").arg(i+clockCycle));
+    for(int i=1;i<=500;i++)
+        CHeading.append(QString("Ins_%1,").arg(i+insNumber));
+    timeline[tableIndex]->setRowCount(500);
+    timeline[tableIndex]->setColumnCount(2500);
+    timeline[tableIndex]->setHorizontalHeaderLabels(RHeading.split(","));
+    timeline[tableIndex]->setVerticalHeaderLabels(CHeading.split(","));
+}
 int storeAllLabelsAndData(QTextStream& in){
     bool h1=false,h2=false,h3=false; //.text, .data, .globl main
     //LABEL SHOULD GET CORRECT INSTRUCTION NO(NOT TO BE CONFUSED WITH LINE NO)
@@ -103,8 +137,7 @@ int storeAllLabelsAndData(QTextStream& in){
 
 void MainWindow::on_actionReinitialize_and_Load_File_triggered()
 {
-    timeline->setRowCount(0);
-    timeline->setColumnCount(0);
+    newTable(0, 0);
     int start=-1;
     Data* x=Data::getInstance();
     initialize();
@@ -217,9 +250,7 @@ void MainWindow::on_actionRun_triggered()
             QMessageBox::warning(this,"Cannot find main","No entry point defined");
             return;
         }
-        timeline->setRowCount(0);
-        timeline->setColumnCount(0);
-        bool isExitSmooth=D->run(timeline);
+        bool isExitSmooth=D->run(timeline[tableIndex]);
         //D->updateTable(D->BRANCH_STALL, timeline);
         refreshAllPanels();
         if(!isExitSmooth){
@@ -245,7 +276,7 @@ void MainWindow::on_actionRun_Step_By_Step_triggered()
             QMessageBox::warning(this,"Cannot find main","No entry point defined");
             return;
         }
-        bool isExitSmooth=D->runStepByStep(timeline);
+        bool isExitSmooth=D->runStepByStep(timeline[tableIndex]);
         //D->updateTable(D->BRANCH_STALL, timeline);
         refreshAllPanels();
         if(!isExitSmooth){

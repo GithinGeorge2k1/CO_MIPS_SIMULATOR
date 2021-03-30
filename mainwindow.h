@@ -14,6 +14,9 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
+    bool isTimeLineLocked;
+    static MainWindow* getInstance();
+    void setNewTable(int clockCycle, int insCount);
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
@@ -39,13 +42,16 @@ private slots:
     void on_actionEnable_Forwarding_triggered();
 
 private:
+    int tableIndex;
     Ui::MainWindow *ui;
     static bool ValidCodePresent;
     About_Help* helpwindow;
-    QTableWidget *timeline;
+    QTableWidget** timeline;
+
 //methods
 private:
     void refreshAllPanels();
     void initialize();
+    void newTable(int clockCycle, int insCount);
 };
 #endif // MAINWINDOW_H
