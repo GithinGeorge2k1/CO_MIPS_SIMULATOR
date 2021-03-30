@@ -3,7 +3,6 @@
 
 #include <QApplication>
 #include <QFile>
-static MainWindow* w=NULL;
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -12,8 +11,9 @@ int main(int argc, char *argv[])
 
     QString style=styleSheet.readAll();
     a.setStyleSheet(style);
-    if(w==NULL)
-        w=new MainWindow();
+    MainWindow *w=MainWindow::getInstance();
+//    if(w==NULL)
+//        w=new MainWindow();
     w->show();
     return a.exec();
 }

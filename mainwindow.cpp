@@ -16,11 +16,12 @@ bool MainWindow::ValidCodePresent=false;
 int noOfTables=3;
 MainWindow* MainWindow::getInstance()
 {
+    if(obj==NULL)
+        return new MainWindow();
     return obj;
 }
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
-    obj=this;
     ui->setupUi(this);
     //Setting widget timeline to "timeline" from form!!
     isTimeLineLocked=false;
