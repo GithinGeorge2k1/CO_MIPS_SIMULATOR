@@ -16,6 +16,7 @@ int prevSpace;
 int registerWriteBackLine=-1;
 int rindex=0;
 int cindexPivot=0;
+
 MainWindow* obj;
 //=====================================================//
 Data* Data::getInstance(){
@@ -289,25 +290,21 @@ QString Data::displayData(){
 }
 void Data::updateTable(bool branchStall, QTableWidget* timeline)
 {
-    if(CLOCK>=400 || obj->isTimeLineLocked || CLOCK<=0) //This bound we have to change
+    if(obj->isTimeLineLocked || CLOCK<=0) //This bound we have to change
         return;
     int cindex=CLOCK+STALL-stallInInstruction-1;
     cindex-=cindexPivot;
+//    if(cindexPivot>0){
+//        qDebug()<<cindexPivot;
+//    }
     if(branchStall)
     {
         timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
         timeline->item(rindex,cindex-1)->setBackground(Qt::gray);
-        timeline->setItem(rindex, cindex, new QTableWidgetItem("ID/RF"));
-        timeline->item(rindex,cindex)->setBackground(Qt::red);
-        timeline->setItem(rindex, cindex+1, new QTableWidgetItem("Squash"));
+        timeline->setItem(rindex, cindex, new QTableWidgetItem("Squash"));
         timeline->item(rindex,cindex)->setBackground(Qt::darkRed);
-        //timeline->setRowCount(timeline->rowCount()+1);
         //IF PREVIOUS INSTRUCTION WAS BRANCH AND TAKEN, THEN THE STALL CLOCK CYCLE IS ENOUGH TO RESOLVE DATA DEPENDANCY OF CURRENT WITH PREV TO PREV
-        if(stallInInstruction!=0)
-        {
-            STALL=STALL-stallInInstruction;
-            stallInInstruction=0;
-        }
+
 
         //NextRow Update and Bound Check
         rindex++;
@@ -315,7 +312,12 @@ void Data::updateTable(bool branchStall, QTableWidget* timeline)
         {
             obj->setNewTable(rindex, cindex);
             rindex=0;
-            cindexPivot=cindex;
+            cindexPivot=cindex-1;
+        }
+        if(stallInInstruction!=0)
+        {
+            //STALL=STALL-stallInInstruction;
+            stallInInstruction=0;
         }
     }
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
@@ -348,7 +350,7 @@ void Data::updateTable(bool branchStall, QTableWidget* timeline)
     {
         obj->setNewTable(rindex, cindex);
         rindex=0;
-        cindexPivot=cindex;
+        cindexPivot=cindex-4-stallInInstruction;
     }
 }
 /*
@@ -412,7 +414,11 @@ bool Data::run(QTableWidget **timeline){
         stallInInstruction=0;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
+        if(obj->tableIndex>0){
+            qDebug()<<obj->tableIndex;
+        }
         updateTable(branch_stall,timeline[obj->tableIndex]);//additional params if req....
+
     }
     return nopOccured;
 }

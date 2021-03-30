@@ -17,7 +17,7 @@ public:
     bool isTimeLineLocked;
     int tableIndex;
     static MainWindow* getInstance();
-    QTableWidget* setNewTable(int clockCycle, int insCount);
+    void setNewTable(int clockCycle, int insCount);
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 

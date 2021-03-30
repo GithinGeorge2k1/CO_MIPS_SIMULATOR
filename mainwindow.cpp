@@ -26,10 +26,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //Setting widget timeline to "timeline" from form!!
     isTimeLineLocked=false;
     tableIndex=0;
-    timeline=new QTableWidget*[noOfTables];
+    timeline=new QTableWidget* [noOfTables];
     timeline[tableIndex]=ui->timeline1;
     timeline[tableIndex+1]=ui->timeline2;
     timeline[tableIndex+2]=ui->timeline3;
+    timeline[tableIndex]->setRowCount(1000);
+    timeline[tableIndex]->setColumnCount(3500);
+    timeline[tableIndex+1]->setRowCount(1000);
+    timeline[tableIndex+1]->setColumnCount(3500);
+    timeline[tableIndex+2]->setRowCount(1000);
+    timeline[tableIndex+2]->setColumnCount(3500);
     Maps::getInstance();
     Data::getInstance();
     refreshAllPanels();
@@ -48,19 +54,17 @@ void MainWindow::refreshAllPanels(){
     text=x->forConsole();
     ui->textBrowser_4->setPlainText(text);
 }
-QTableWidget* MainWindow::setNewTable(int clockCycle, int insCount)
+void MainWindow::setNewTable(int clockCycle, int insCount)
 {
     tableIndex++;
     if(tableIndex>=noOfTables)
     {
         QMessageBox::warning(this, "Error", "Exceeded Table Limit. Timeline Locked");
         isTimeLineLocked=true;
-        return NULL;
     }
     else
     {
         newTable(clockCycle, insCount);
-        return timeline[tableIndex];
     }
 }
 void MainWindow::newTable(int clockCycle, int insNumber)
@@ -69,10 +73,10 @@ void MainWindow::newTable(int clockCycle, int insNumber)
     QString CHeading="";
     for(int i=1;i<=2500;i++)
         RHeading.append(QString("ClockCycle %1,").arg(i+clockCycle));
-    for(int i=1;i<=500;i++)
+    for(int i=1;i<=1000;i++)
         CHeading.append(QString("Ins_%1,").arg(i+insNumber));
-    timeline[tableIndex]->setRowCount(500);
-    timeline[tableIndex]->setColumnCount(2500);
+//    timeline[tableIndex]->setRowCount(1000);
+//    timeline[tableIndex]->setColumnCount(3500);
     timeline[tableIndex]->setHorizontalHeaderLabels(RHeading.split(","));
     timeline[tableIndex]->setVerticalHeaderLabels(CHeading.split(","));
     timeline[tableIndex]->clearContents();
@@ -256,7 +260,6 @@ void MainWindow::on_actionRun_triggered()
             return;
         }
         bool isExitSmooth=D->run(timeline);
-        //D->updateTable(D->BRANCH_STALL, timeline);
         refreshAllPanels();
         if(!isExitSmooth){
             QMessageBox::information(this,"Run Error",QString("No Valid Instruction at %1").arg(D->instructionSize+1));
@@ -282,7 +285,6 @@ void MainWindow::on_actionRun_Step_By_Step_triggered()
             return;
         }
         bool isExitSmooth=D->runStepByStep(timeline);
-        //D->updateTable(D->BRANCH_STALL, timeline);
         refreshAllPanels();
         if(!isExitSmooth){
             QMessageBox::information(this,"Run Error",QString("No Valid Instruction at %1").arg(D->instructionSize+1));
