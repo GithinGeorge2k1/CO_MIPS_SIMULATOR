@@ -14,7 +14,8 @@ Data *Data::instance=0;
 int prevClockCycle;
 int prevSpace;
 int registerWriteBackLine=-1;
-int rindex;
+int rowindex;
+int noOfTables=3;
 MainWindow* obj;
 //=====================================================//
 Data* Data::getInstance(){
@@ -26,7 +27,7 @@ Data* Data::getInstance(){
 
 //Member initializer list && constructor implementation
 Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0), nopOccured(false),
-    CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false), BRANCH_STALL(false), stallInInstruction(0), timelineTable(""), space(""), rowHeading(""), timeline(":/Files/TimeLine.html")
+    CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false), BRANCH_STALL(false), stallInInstruction(0), timelineTable(""), space(""), rowHeading("")
 {
     prevClockCycle=1;
     prevSpace=1;
@@ -56,8 +57,9 @@ void Data::initialize(){
     FWD_ENABLED=false;
     BRANCH_STALL=false;
     isPrevLW=false;
-    rindex=0;
-    obj=MainWindow::getInstance();
+    rowindex=0;
+    tableIndex=-1;
+    isTimeLineLocked=false;
 }
 
 bool isRegisterValid(QString R, bool flag=false)
@@ -74,6 +76,33 @@ bool isRegisterValid(QString R, bool flag=false)
         return true;
     }
     return false;
+}
+void Data::setNewTable(QTableWidget** timeline, int clockCycle, int insCount, int start=0)
+{
+    if(start==1||tableIndex==-1)
+        tableIndex=0;
+    else
+        tableIndex++;
+    if(tableIndex>=noOfTables)
+    {
+        //QMessageBox::warning(this, "Error", "Exceeded Table Limit. Timeline Locked");
+        isTimeLineLocked=true;
+    }
+    else
+        newTable(timeline, clockCycle, insCount);
+}
+void Data::newTable(QTableWidget** timeline, int clockCycle, int insNumber)
+{
+    QString RHeading="";
+    QString CHeading="";
+    for(int i=1;i<=2500;i++)
+        RHeading.append(QString("ClockCycle %1,").arg(i+clockCycle));
+    for(int i=1;i<=500;i++)
+        CHeading.append(QString("Ins_%1,").arg(i+insNumber));
+    timeline[tableIndex]->setRowCount(500);
+    timeline[tableIndex]->setColumnCount(2500);
+    timeline[tableIndex]->setHorizontalHeaderLabels(RHeading.split(","));
+    timeline[tableIndex]->setVerticalHeaderLabels(CHeading.split(","));
 }
 
 
@@ -285,47 +314,47 @@ QString Data::displayData(){
     }
     return text;
 }
-void Data::updateTable(bool branchStall, QTableWidget* timeline)
+void Data::updateTable(bool branchStall, QTableWidget** timeline)
 {
-    if(CLOCK<=0||obj->isTimeLineLocked)
-        return;
     int cindex=CLOCK+STALL-stallInInstruction;
-    if(rindex>=timeline->rowCount())
-        obj->setNewTable(rindex, cindex);
+    if(rowindex>=timeline[tableIndex]->rowCount())
+        setNewTable(timeline, rowindex, cindex);
+    if(CLOCK<=0||isTimeLineLocked)
+        return;
     if(branchStall)
     {
-        timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
-        timeline->item(rindex,cindex-1)->setBackground(Qt::gray);
-        timeline->setItem(rindex, cindex, new QTableWidgetItem("ID/RF"));
-        timeline->item(rindex,cindex)->setBackground(Qt::red);
-        timeline->setItem(rindex, cindex+1, new QTableWidgetItem("Squash"));
-        timeline->item(rindex,cindex)->setBackground(Qt::darkRed);
+        timeline[tableIndex]->setItem(rowindex, cindex++, new QTableWidgetItem("IF"));
+        timeline[tableIndex]->item(rowindex,cindex-1)->setBackground(Qt::gray);
+        timeline[tableIndex]->setItem(rowindex, cindex, new QTableWidgetItem("ID/RF"));
+        timeline[tableIndex]->item(rowindex,cindex)->setBackground(Qt::red);
+        timeline[tableIndex]->setItem(rowindex, cindex+1, new QTableWidgetItem("Squash"));
+        timeline[tableIndex]->item(rowindex,cindex)->setBackground(Qt::darkRed);
 
-        timeline->setRowCount(timeline->rowCount()+1);
+        timeline[tableIndex]->setRowCount(timeline[tableIndex]->rowCount()+1);
     }
-    timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
-    timeline->item(rindex,cindex-1)->setBackground(Qt::gray);
-    timeline->setItem(rindex, cindex++, new QTableWidgetItem("ID/RF"));
-    timeline->item(rindex,cindex-1)->setBackground(Qt::red);
+    timeline[tableIndex]->setItem(rowindex, cindex++, new QTableWidgetItem("IF"));
+    timeline[tableIndex]->item(rowindex,cindex-1)->setBackground(Qt::gray);
+    timeline[tableIndex]->setItem(rowindex, cindex++, new QTableWidgetItem("ID/RF"));
+    timeline[tableIndex]->item(rowindex,cindex-1)->setBackground(Qt::red);
     int temp=1;
     while(stallInInstruction!=0)
     {
         if(temp==stallInInstruction)
         {
-            timeline->setItem(rindex, cindex++, new QTableWidgetItem("ID/RF"));
-            timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
+            timeline[tableIndex]->setItem(rowindex, cindex++, new QTableWidgetItem("ID/RF"));
+            timeline[tableIndex]->item(rowindex,cindex-1)->setBackground(Qt::darkGreen);
             break;
         }
-        timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
-        timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
+        timeline[tableIndex]->setItem(rowindex, cindex++, new QTableWidgetItem("Stall"));
+        timeline[tableIndex]->item(rowindex,cindex-1)->setBackground(Qt::darkGreen);
         temp++;
     }
-    timeline->setItem(rindex, cindex++, new QTableWidgetItem("EX"));
-    timeline->item(rindex,cindex-1)->setBackground(Qt::darkCyan);
-    timeline->setItem(rindex, cindex++, new QTableWidgetItem("MEM"));
-    timeline->item(rindex,cindex-1)->setBackground(Qt::magenta);
-    timeline->setItem(rindex, cindex++, new QTableWidgetItem("WB"));
-    timeline->item(rindex,cindex-1)->setBackground(Qt::red);
+    timeline[tableIndex]->setItem(rowindex, cindex++, new QTableWidgetItem("EX"));
+    timeline[tableIndex]->item(rowindex,cindex-1)->setBackground(Qt::darkCyan);
+    timeline[tableIndex]->setItem(rowindex, cindex++, new QTableWidgetItem("MEM"));
+    timeline[tableIndex]->item(rowindex,cindex-1)->setBackground(Qt::magenta);
+    timeline[tableIndex]->setItem(rowindex, cindex++, new QTableWidgetItem("WB"));
+    timeline[tableIndex]->item(rowindex,cindex-1)->setBackground(Qt::red);
 }
 /*
 QString Data::getTimeLine()
@@ -381,7 +410,7 @@ QString Data::forConsole(){
     return result;
 }
 
-bool Data::run(QTableWidget *timeline){
+bool Data::run(QTableWidget **timeline){
     while(PC<instructionSize && !nopOccured){
         CLOCK++;
         bool branch_stall=BRANCH_STALL;
@@ -393,7 +422,7 @@ bool Data::run(QTableWidget *timeline){
     return nopOccured;
 }
 
-bool Data::runStepByStep(QTableWidget *timeline){
+bool Data::runStepByStep(QTableWidget **timeline){
     if(PC<instructionSize && !nopOccured){
         CLOCK++;
         bool branch_stall=BRANCH_STALL;

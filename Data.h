@@ -1,7 +1,7 @@
 #ifndef DATA_H
 #define DATA_H
 #include <QString>
-#include<QBitArray>
+#include <QBitArray>
 #include <QStringList>
 #include <QMap>
 #include <QFile>
@@ -34,12 +34,15 @@ public:
     QString timelineTable;
     QString space;
     QString rowHeading;
-    QFile timeline;
+    //QFile timeline;
+    static Data* instance;
+    int tableIndex;
+    bool isTimeLineLocked;
     //We won't consider 3 stalls for normal data dependancy - (by making WB - half cycle)
 
 private:
-    static Data* instance;
     Data();
+    void newTable(QTableWidget** timeline, int clockCycle, int insNumber);
 
 public:
     static Data* getInstance(); 
@@ -47,11 +50,12 @@ public:
     bool addCode(QString& data);
     QString displayRegisters();
     QString displayData();
-    bool run(QTableWidget *timeline);
-    bool runStepByStep(QTableWidget *timeline);
-    void updateTable(bool branchStall, QTableWidget* timeline);
+    bool run(QTableWidget **timeline);
+    bool runStepByStep(QTableWidget **timeline);
+    void updateTable(bool branchStall, QTableWidget** timeline);
     QString getTimeLine();
     QString forConsole();
+    void setNewTable(QTableWidget** timeline, int clockCycle, int insCount, int start);
 
     int instructionFetch();
     void instructionDecodeRegisterFetch(int instruction);
