@@ -12,8 +12,6 @@ int main(int argc, char *argv[])
     QString style=styleSheet.readAll();
     a.setStyleSheet(style);
     MainWindow *w=MainWindow::getInstance();
-//    if(w==NULL)
-//        w=new MainWindow();
     w->show();
     return a.exec();
 }

@@ -287,7 +287,7 @@ QString Data::displayData(){
 }
 void Data::updateTable(bool branchStall, QTableWidget* timeline)
 {
-    if(CLOCK<=0||obj->isTimeLineLocked)
+    if(CLOCK>=500 || obj->isTimeLineLocked)
         return;
     int cindex=CLOCK+STALL-stallInInstruction-1;
     if(rindex>=timeline->rowCount())
