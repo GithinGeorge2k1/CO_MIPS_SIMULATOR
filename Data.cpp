@@ -289,7 +289,7 @@ void Data::updateTable(bool branchStall, QTableWidget* timeline)
 {
     if(CLOCK<=0||obj->isTimeLineLocked)
         return;
-    int cindex=CLOCK+STALL-stallInInstruction;
+    int cindex=CLOCK+STALL-stallInInstruction-1;
     if(rindex>=timeline->rowCount())
         obj->setNewTable(rindex, cindex);
     if(branchStall)
@@ -326,6 +326,7 @@ void Data::updateTable(bool branchStall, QTableWidget* timeline)
     timeline->item(rindex,cindex-1)->setBackground(Qt::magenta);
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("WB"));
     timeline->item(rindex,cindex-1)->setBackground(Qt::red);
+    rindex++;
 }
 /*
 QString Data::getTimeLine()

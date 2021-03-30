@@ -13,7 +13,7 @@
 
 
 bool MainWindow::ValidCodePresent=false;
-MainWindow* obj=NULL;
+static MainWindow* obj=NULL;
 int noOfTables=3;
 MainWindow* MainWindow::getInstance()
 {
@@ -48,16 +48,20 @@ void MainWindow::refreshAllPanels(){
     text=x->forConsole();
     ui->textBrowser_4->setPlainText(text);
 }
-void MainWindow::setNewTable(int clockCycle, int insCount)
+QTableWidget* MainWindow::setNewTable(int clockCycle, int insCount)
 {
     tableIndex++;
     if(tableIndex>=noOfTables)
     {
         QMessageBox::warning(this, "Error", "Exceeded Table Limit. Timeline Locked");
-
+        isTimeLineLocked=true;
+        return NULL;
     }
     else
+    {
         newTable(clockCycle, insCount);
+        return timeline[tableIndex];
+    }
 }
 void MainWindow::newTable(int clockCycle, int insNumber)
 {
@@ -71,6 +75,7 @@ void MainWindow::newTable(int clockCycle, int insNumber)
     timeline[tableIndex]->setColumnCount(2500);
     timeline[tableIndex]->setHorizontalHeaderLabels(RHeading.split(","));
     timeline[tableIndex]->setVerticalHeaderLabels(CHeading.split(","));
+    timeline[tableIndex]->clearContents();
 }
 int storeAllLabelsAndData(QTextStream& in){
     bool h1=false,h2=false,h3=false; //.text, .data, .globl main
