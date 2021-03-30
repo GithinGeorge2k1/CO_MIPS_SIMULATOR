@@ -15,7 +15,7 @@ int prevClockCycle;
 int prevSpace;
 int registerWriteBackLine=-1;
 int rindex=0;
-
+int cindexPivot=0;
 MainWindow* obj;
 //=====================================================//
 Data* Data::getInstance(){
@@ -58,6 +58,7 @@ void Data::initialize(){
     BRANCH_STALL=false;
     isPrevLW=false;
     rindex=0;
+    cindexPivot=0;
     obj=MainWindow::getInstance();
 }
 
@@ -288,14 +289,10 @@ QString Data::displayData(){
 }
 void Data::updateTable(bool branchStall, QTableWidget* timeline)
 {
-    if(CLOCK>=400 || obj->isTimeLineLocked)
+    if(CLOCK>=400 || obj->isTimeLineLocked || CLOCK<=0) //This bound we have to change
         return;
     int cindex=CLOCK+STALL-stallInInstruction-1;
-    if(rindex+1>=timeline->rowCount()){
-        obj->setNewTable(rindex, cindex);
-        rindex=0;
-        //reset cindex!! HOW?? - ONE MINOR THING!! last row of table may not be filled --- reason rindex++ in if condn below!!
-    }
+    cindex-=cindexPivot;
     if(branchStall)
     {
         timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
@@ -311,7 +308,15 @@ void Data::updateTable(bool branchStall, QTableWidget* timeline)
             STALL=STALL-stallInInstruction;
             stallInInstruction=0;
         }
+
+        //NextRow Update and Bound Check
         rindex++;
+        if(rindex>=timeline->rowCount())
+        {
+            obj->setNewTable(rindex, cindex);
+            rindex=0;
+            cindexPivot=cindex;
+        }
     }
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
     timeline->item(rindex,cindex-1)->setBackground(Qt::gray);
@@ -336,7 +341,15 @@ void Data::updateTable(bool branchStall, QTableWidget* timeline)
     timeline->item(rindex,cindex-1)->setBackground(Qt::magenta);
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("WB"));
     timeline->item(rindex,cindex-1)->setBackground(Qt::red);
+
+    //NextRow Update and Bound Check
     rindex++;
+    if(rindex>=timeline->rowCount())
+    {
+        obj->setNewTable(rindex, cindex);
+        rindex=0;
+        cindexPivot=cindex;
+    }
 }
 /*
 QString Data::getTimeLine()
