@@ -294,9 +294,6 @@ void Data::updateTable(bool branchStall, QTableWidget* timeline)
         return;
     int cindex=CLOCK+STALL-stallInInstruction-1;
     cindex-=cindexPivot;
-//    if(cindexPivot>0){
-//        qDebug()<<cindexPivot;
-//    }
     if(branchStall)
     {
         timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
@@ -310,9 +307,9 @@ void Data::updateTable(bool branchStall, QTableWidget* timeline)
         rindex++;
         if(rindex>=timeline->rowCount())
         {
-            obj->setNewTable(rindex, cindex);
-            rindex=0;
             cindexPivot=cindex-1;
+            obj->setNewTable(rindex, cindexPivot);
+            rindex=0;
         }
         if(stallInInstruction!=0)
         {
@@ -348,9 +345,9 @@ void Data::updateTable(bool branchStall, QTableWidget* timeline)
     rindex++;
     if(rindex>=timeline->rowCount())
     {
-        obj->setNewTable(rindex, cindex);
-        rindex=0;
         cindexPivot=cindex-4-stallInInstruction;
+        obj->setNewTable(rindex, cindexPivot);
+        rindex=0;
     }
 }
 /*
@@ -414,9 +411,6 @@ bool Data::run(QTableWidget **timeline){
         stallInInstruction=0;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
-        if(obj->tableIndex>0){
-            qDebug()<<obj->tableIndex;
-        }
         updateTable(branch_stall,timeline[obj->tableIndex]);//additional params if req....
 
     }

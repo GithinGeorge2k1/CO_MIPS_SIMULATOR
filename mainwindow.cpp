@@ -23,19 +23,22 @@ MainWindow* MainWindow::getInstance()
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    //Setting widget timeline to "timeline" from form!!
+
     isTimeLineLocked=false;
+
     tableIndex=0;
     timeline=new QTableWidget* [noOfTables];
     timeline[tableIndex]=ui->timeline1;
     timeline[tableIndex+1]=ui->timeline2;
     timeline[tableIndex+2]=ui->timeline3;
+
     timeline[tableIndex]->setRowCount(1000);
     timeline[tableIndex]->setColumnCount(3500);
     timeline[tableIndex+1]->setRowCount(1000);
     timeline[tableIndex+1]->setColumnCount(3500);
     timeline[tableIndex+2]->setRowCount(1000);
     timeline[tableIndex+2]->setColumnCount(3500);
+
     Maps::getInstance();
     Data::getInstance();
     refreshAllPanels();
@@ -64,6 +67,7 @@ void MainWindow::setNewTable(int clockCycle, int insCount)
     }
     else
     {
+        //qDebug()<<"Is this even called";
         newTable(clockCycle, insCount);
     }
 }
@@ -75,11 +79,19 @@ void MainWindow::newTable(int clockCycle, int insNumber)
         RHeading.append(QString("ClockCycle %1,").arg(i+clockCycle));
     for(int i=1;i<=1000;i++)
         CHeading.append(QString("Ins_%1,").arg(i+insNumber));
-//    timeline[tableIndex]->setRowCount(1000);
-//    timeline[tableIndex]->setColumnCount(3500);
-    timeline[tableIndex]->setHorizontalHeaderLabels(RHeading.split(","));
-    timeline[tableIndex]->setVerticalHeaderLabels(CHeading.split(","));
+
+    //qDebug()<<RHeading<<"\n"<<CHeading;
+
+    /*
+    //Setting the Column and Rows for the table once the app loads is causing the app to crash. Loading is now done in MainWindow constructor
+    //timeline[tableIndex]->setRowCount(1000);
+    //timeline[tableIndex]->setColumnCount(3500);
+    */
+
     timeline[tableIndex]->clearContents();
+    timeline[tableIndex]->setHorizontalHeaderLabels(RHeading.split(","));
+    //timeline[tableIndex+1]->setHorizontalHeaderLabels(RHeading.split(","));
+    timeline[tableIndex]->setVerticalHeaderLabels(CHeading.split(","));
 }
 int storeAllLabelsAndData(QTextStream& in){
     bool h1=false,h2=false,h3=false; //.text, .data, .globl main
