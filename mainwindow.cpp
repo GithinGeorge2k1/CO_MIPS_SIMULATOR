@@ -13,7 +13,7 @@
 
 MainWindow* MainWindow::obj=NULL;
 bool MainWindow::ValidCodePresent=false;
-int noOfTables=1;
+const int noOfTables=3;
 MainWindow* MainWindow::getInstance()
 {
     if(obj==NULL)

@@ -316,13 +316,13 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
         //This stallInInstruction corresponds to branch caused stall - Not data dependancy!! Therfore ID/RF comes in next Cycle after IF!!
         stallInInstruction=0;
     }
+    timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
+    timeline->item(rindex,cindex-1)->setBackground(Qt::gray);
     if(Jmp_Stall){
         timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
         timeline->item(rindex,cindex-1)->setBackground(Qt::green);
         stallInInstruction=0;
     }
-    timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
-    timeline->item(rindex,cindex-1)->setBackground(Qt::gray);
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("ID/RF"));
     timeline->item(rindex,cindex-1)->setBackground(Qt::red);
     int temp=1;
@@ -360,7 +360,11 @@ QString Data::forConsole(){
     result.append("No of instructions executed: ").append(QString::number(CLOCK));
     result.append("\nNo of Clock Cycles in total: ").append(QString::number(CLOCK+STALL+4));
     result.append("\nNo of Stalls in total: ").append(QString::number(STALL));
+    if(CLOCK!=0){
+        float x=((float)CLOCK)/((float)(CLOCK+STALL+4));
+        result.append(QString("\nInstructions Per ClockCycle(IPC): %1").arg(x));
 
+    }
     return result;
 }
 
