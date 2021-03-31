@@ -159,7 +159,7 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
 {
     newTable(0, 0);
     int start=-1;
-    Data* x=Data::getInstance();
+    Data* D=Data::getInstance();
     initialize();
     QString path=QFileDialog::getOpenFileName(this,"title");
     QFile file(path);
@@ -176,9 +176,9 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
 
 
             //MODIFYING JAL AND SHOWING THEM ON TEXT TAB
-    if(x->labelMap.contains("main")){
-        x->instructions[0]=x->instructions[0] | x->labelMap["main"];
-        ui->textBrowser_2->append(QString("0. [0x%2]  jal 0x%1").arg(x->labelMap["main"]).arg(decimalToHex(x->instructions[0])));
+    if(D->labelMap.contains("main")){
+        D->instructions[0]=D->instructions[0] | D->labelMap["main"];
+        ui->textBrowser_2->append(QString("0. [0x%2]  jal 0x%1").arg(D->labelMap["main"]).arg(decimalToHex(D->instructions[0])));
         ui->textBrowser_2->append(QString("1. [0x00000000]  nop"));
     }
     else
@@ -190,8 +190,9 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
     }
             //..............................................//
 
-    QString dataText=x->displayData();
+    QString dataText=D->displayData();
     ui->textBrowser_3->setPlainText(dataText);
+    QString tempLabel="";
     while(!in.atEnd()){
         lineNo++;
         QString text=in.readLine().simplified();
@@ -204,13 +205,20 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
             text=text.section('#',0,0);
         }
         text=text.trimmed();
-        lineValid=x->addCode(text);
+        lineValid=D->addCode(text);
         if(lineValid){
-            QString instructionHex=decimalToHex(x->instructions[x->instructionSize-1]);
-            qDebug()<<x->instructions[x->instructionSize-1];
-            qDebug()<<instructionHex;
-            ui->textBrowser_2->append(QString("%2. [0x%3]  %1").arg(text).arg(x->instructionSize-1).arg(instructionHex));
+            if(!D->isLabel)
+            {
+                QString instructionHex=decimalToHex(D->instructions[D->instructionSize-1]);
+                ui->textBrowser_2->append(QString("%2. [0x%3]  %1   %4").arg(text).arg(D->instructionSize-1).arg(instructionHex).arg(tempLabel));
+                tempLabel="";
+            }
+            else{
+                tempLabel=text.section(':',0,0);
+                tempLabel=QString("[%1]").arg(tempLabel);
+            }
             MainWindow::ValidCodePresent=true;
+
         }
         else{
             QMessageBox::warning(this,"Invalid Assembly Code",QString("Syntax error found while parsing at line %1").arg(lineNo));

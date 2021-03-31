@@ -21,6 +21,7 @@ public:
     QMap<QString,int> labelMap;
     QMap<QString,int> variableMap;
     bool nopOccured; //EXIT CONDITION
+    bool isLabel;
 
     //PHASE 2 COMPONENTS
     int CLOCK;
@@ -30,11 +31,8 @@ public:
     bool FWD_ENABLED;
     bool BRANCH_STALL; //WHETHER THE CURRENT INS WOULD CAUSE A BRANCH RELATED STALL FOR NEXT INSTRUCTION (NOT TAKEN PREDICTOR)
     bool isPrevLW;
+    bool isPrevJmp;
     int stallInInstruction;
-    QString timelineTable;
-    QString space;
-    QString rowHeading;
-    QFile timeline;
     //We won't consider 3 stalls for normal data dependancy - (by making WB - half cycle)
 
 private:
@@ -49,7 +47,7 @@ public:
     QString displayData();
     bool run(QTableWidget **timeline);
     bool runStepByStep(QTableWidget **timeline);
-    void updateTable(bool branchStall, QTableWidget *timeline);
+    void updateTable(bool branchStall,bool jumpStall, QTableWidget *timeline);
     QString getTimeLine();
     QString forConsole();
 

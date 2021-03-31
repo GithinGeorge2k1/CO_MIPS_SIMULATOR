@@ -27,11 +27,12 @@ Data* Data::getInstance(){
 }
 
 //Member initializer list && constructor implementation
-Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0), nopOccured(false),
-    CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false), BRANCH_STALL(false), stallInInstruction(0), timelineTable(""), space(""), rowHeading(""), timeline(":/Files/TimeLine.html")
+Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0), nopOccured(false), isLabel(false),
+    CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false),
+    BRANCH_STALL(false), isPrevLW(false),
+    isPrevJmp(false), stallInInstruction(0)
 {
-    prevClockCycle=1;
-    prevSpace=1;
+
 }
 
 void Data::initialize(){
@@ -47,6 +48,7 @@ void Data::initialize(){
     variableMap.clear();
     labelMap.clear();
     nopOccured=false;
+    isLabel=false;
     QString a="jal 0x2";
     addCode(a);
     QString b="nop";
@@ -58,6 +60,7 @@ void Data::initialize(){
     //FWD_ENABLED=false;
     BRANCH_STALL=false;
     isPrevLW=false;
+    isPrevJmp=false;
     rindex=0;
     cindexPivot=0;
     obj=MainWindow::getInstance();
@@ -93,6 +96,7 @@ bool isValidLabel(QString L)
 bool Data::addCode(QString& text){
     int newInstruction=0;
     int instructionTypeTemplate=8;
+    isLabel=false;
     QRegExp sep("(,| |, )");
     QStringList list=text.split(sep);
     int i=0;
@@ -100,6 +104,7 @@ bool Data::addCode(QString& text){
     if(list.at(0).contains(":") && labelMap.contains(list.at(0).section(":",0,0))){
         i++;
         if(list.length()==1){
+            isLabel=true;
             return true;
         }
     }
@@ -288,7 +293,7 @@ QString Data::displayData(){
     }
     return text;
 }
-void Data::updateTable(bool branchStall, QTableWidget* timeline)
+void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
 {
     if(obj->isTimeLineLocked || CLOCK<=0) //This bound we have to change
         return;
@@ -309,6 +314,11 @@ void Data::updateTable(bool branchStall, QTableWidget* timeline)
             rindex=0;
         }
         //This stallInInstruction corresponds to branch caused stall - Not data dependancy!! Therfore ID/RF comes in next Cycle after IF!!
+        stallInInstruction=0;
+    }
+    if(Jmp_Stall){
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::green);
         stallInInstruction=0;
     }
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
@@ -344,57 +354,13 @@ void Data::updateTable(bool branchStall, QTableWidget* timeline)
         rindex=0;
     }
 }
-/*
-QString Data::getTimeLine()
-{
-    QString result="";
-    if(CLOCK<=0)
-        return result;
 
-    for(;prevClockCycle<CLOCK+STALL+5;prevClockCycle++)
-        rowHeading.append(QString("<th>C%1</th>").arg(prevClockCycle));
-
-    result.append(rowHeading).append("</tr>").append(timelineTable).append(QString("</table>"));
-    //qDebug()<<QString(result);
-    return result;
-}
-void Data::updateTable(bool branchStall)
-{
-    if(CLOCK<=0)
-        return;
-    timelineTable.append("<tr>");
-    QString currentIns="";
-    for(;prevSpace<CLOCK+STALL-stallInInstruction;prevSpace++)
-        space.append("<td></td>");
-    if(!branchStall)
-    {
-        timelineTable.append(QString("<th>I%1</th>").arg(CLOCK));
-        currentIns.append("<td bgcolor=\"red\">IF</td>");
-        currentIns.append("<td bgcolor=\"purple\">ID/RF</td>");
-        int temp=1;
-        while(stallInInstruction!=0)
-        {
-            if(temp==stallInInstruction)
-            {
-                currentIns.append("<td bgcolor=\"black\">ID/RF</td>");
-                break;
-            }
-            currentIns.append("<td bgcolor=\"purple\">Stall</td>");
-            temp++;
-        }
-        currentIns.append("<td bgcolor=\"blue\">EX</td>");
-        currentIns.append("<td bgcolor=\"green\">MEM</td>");
-        currentIns.append("<td bgcolor=\"yellow\">WB</td>");
-    }
-    timelineTable.append(space).append(currentIns).append("</tr>");
-    //qDebug()<<timelineTable;
-}
-*/
 QString Data::forConsole(){
     QString result="";
     result.append("No of instructions executed: ").append(QString::number(CLOCK));
     result.append("\nNo of Clock Cycles in total: ").append(QString::number(CLOCK+STALL+4));
     result.append("\nNo of Stalls in total: ").append(QString::number(STALL));
+
     return result;
 }
 
@@ -402,10 +368,11 @@ bool Data::run(QTableWidget **timeline){
     while(PC<instructionSize && !nopOccured){
         CLOCK++;
         bool branch_stall=BRANCH_STALL;
+        bool Jmp_Stall=isPrevJmp;
         stallInInstruction=0;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
-        updateTable(branch_stall,timeline[obj->tableIndex]);//additional params if req....
+        updateTable(branch_stall,Jmp_Stall,timeline[obj->tableIndex]);//additional params if req....
 
     }
     return nopOccured;
@@ -415,10 +382,11 @@ bool Data::runStepByStep(QTableWidget **timeline){
     if(PC<instructionSize && !nopOccured){
         CLOCK++;
         bool branch_stall=BRANCH_STALL;
+        bool Jmp_Stall=isPrevJmp;
         stallInInstruction=0;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
-        updateTable(branch_stall,timeline[obj->tableIndex]);
+        updateTable(branch_stall,Jmp_Stall,timeline[obj->tableIndex]);
     }
     return PC<instructionSize;
 }
@@ -445,6 +413,11 @@ void Data::instructionDecodeRegisterFetch(int instruction){
             STALL++;
             stallInInstruction=1;
             BRANCH_STALL=false;
+        }
+        else if(isPrevJmp){
+            STALL++;
+            stallInInstruction=1;
+            isPrevJmp=false;
         }
         else if(FWD_ENABLED && isPrevLW && (Rs==prevRd || Rt==prevRd))
         {
@@ -475,6 +448,11 @@ void Data::instructionDecodeRegisterFetch(int instruction){
             stallInInstruction=1;
             BRANCH_STALL=false;
         }
+        else if(isPrevJmp){
+            STALL++;
+            stallInInstruction=1;
+            isPrevJmp=false;
+        }
         prevToPrevRd=prevRd;
         prevRd=-1;
         Execute(opCode,target);
@@ -494,6 +472,11 @@ void Data::instructionDecodeRegisterFetch(int instruction){
             STALL++;
             stallInInstruction=1;
             BRANCH_STALL=false;
+        }
+        else if(isPrevJmp){
+            STALL++;
+            stallInInstruction=1;
+            isPrevJmp=false;
         }
         else if(FWD_ENABLED && isPrevLW && Rs==prevRd)
         {
@@ -551,6 +534,7 @@ void Data::Execute(int funct,int Rs,int Rt,int Rd,int shamt){
     case 0x8://jr
         result=Rs;
         Rd=-1;
+        isPrevJmp=true;
         break;
 
     case 0x24://and
@@ -646,6 +630,7 @@ void Data::Execute(int opCode,int target){
     if(opCode==0x3){//jal
         Rd=31;
     }
+    isPrevJmp=true;
     MEM(opCode,Rd,target);
 }
 
