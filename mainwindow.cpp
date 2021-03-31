@@ -38,7 +38,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     timeline[tableIndex+1]->setColumnCount(3500);
     timeline[tableIndex+2]->setRowCount(1000);
     timeline[tableIndex+2]->setColumnCount(3500);
-
     Maps::getInstance();
     Data::getInstance();
     refreshAllPanels();
@@ -218,7 +217,6 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
                 tempLabel=QString("[%1]").arg(tempLabel);
             }
             MainWindow::ValidCodePresent=true;
-
         }
         else{
             QMessageBox::warning(this,"Invalid Assembly Code",QString("Syntax error found while parsing at line %1").arg(lineNo));
