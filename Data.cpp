@@ -363,7 +363,6 @@ QString Data::forConsole(){
     if(CLOCK!=0){
         float x=((float)CLOCK)/((float)(CLOCK+STALL+4));
         result.append(QString("\nInstructions Per ClockCycle(IPC): %1").arg(x));
-
     }
     return result;
 }
