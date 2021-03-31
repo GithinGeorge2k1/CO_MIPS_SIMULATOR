@@ -249,10 +249,10 @@ void MainWindow::on_actionSee_DataMap_triggered()
 }
 
 void MainWindow::initialize(){
-    Data* x=Data::getInstance();
+    Data* D=Data::getInstance();
     ui->textBrowser_2->setPlainText("");
     ui->textBrowser_3->setPlainText("");
-    x->initialize();
+    D->initialize();
     refreshAllPanels();
 }
 
@@ -278,7 +278,7 @@ void MainWindow::on_actionRun_triggered()
         }
         else{
 
-            QMessageBox::information(this,"Program Done","EXITED VIA NOP INSTRUCTION");
+            QMessageBox::information(this,"Program Done","EXECUTION COMPLETED!!");
             D->nopOccured=false;
         }
     }
@@ -293,7 +293,7 @@ void MainWindow::on_actionRun_Step_By_Step_triggered()
     if(MainWindow::ValidCodePresent){
         Data *D=Data::getInstance();
         if(!D->labelMap.contains("main")){
-            QMessageBox::warning(this,"Cannot find main","No entry point defined");
+            QMessageBox::warning(this,"Cannot find main","No entry point was defined");
             return;
         }
         bool isExitSmooth=D->runStepByStep(timeline);

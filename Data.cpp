@@ -55,7 +55,7 @@ void Data::initialize(){
     STALL=0;
     prevRd=-1;
     prevToPrevRd=-1;
-    FWD_ENABLED=false;
+    //FWD_ENABLED=false;
     BRANCH_STALL=false;
     isPrevLW=false;
     rindex=0;
@@ -300,9 +300,6 @@ void Data::updateTable(bool branchStall, QTableWidget* timeline)
         timeline->item(rindex,cindex-1)->setBackground(Qt::gray);
         timeline->setItem(rindex, cindex, new QTableWidgetItem("Squash"));
         timeline->item(rindex,cindex)->setBackground(Qt::darkRed);
-        //IF PREVIOUS INSTRUCTION WAS BRANCH AND TAKEN, THEN THE STALL CLOCK CYCLE IS ENOUGH TO RESOLVE DATA DEPENDANCY OF CURRENT WITH PREV TO PREV
-
-
         //NextRow Update and Bound Check
         rindex++;
         if(rindex>=timeline->rowCount())
@@ -311,11 +308,8 @@ void Data::updateTable(bool branchStall, QTableWidget* timeline)
             obj->setNewTable(rindex, cindexPivot);
             rindex=0;
         }
-        if(stallInInstruction!=0)
-        {
-            //STALL=STALL-stallInInstruction;
-            stallInInstruction=0;
-        }
+        //This stallInInstruction corresponds to branch caused stall - Not data dependancy!! Therfore ID/RF comes in next Cycle after IF!!
+        stallInInstruction=0;
     }
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
     timeline->item(rindex,cindex-1)->setBackground(Qt::gray);
