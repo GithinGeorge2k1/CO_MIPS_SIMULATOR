@@ -13,7 +13,7 @@
 
 MainWindow* MainWindow::obj=NULL;
 bool MainWindow::ValidCodePresent=false;
-int noOfTables=3;
+int noOfTables=1;
 MainWindow* MainWindow::getInstance()
 {
     if(obj==NULL)
@@ -67,7 +67,6 @@ void MainWindow::setNewTable(int clockCycle, int insCount)
     }
     else
     {
-        //qDebug()<<"Is this even called";
         newTable(clockCycle, insCount);
     }
 }
@@ -180,7 +179,7 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
     if(x->labelMap.contains("main")){
         x->instructions[0]=x->instructions[0] | x->labelMap["main"];
         ui->textBrowser_2->append(QString("0. [0x%2]  jal 0x%1").arg(x->labelMap["main"]).arg(decimalToHex(x->instructions[0])));
-        ui->textBrowser_2->append(QString("1. [0x0]  nop"));
+        ui->textBrowser_2->append(QString("1. [0x00000000]  nop"));
     }
     else
     {
@@ -315,13 +314,13 @@ void MainWindow::on_actionRun_Step_By_Step_triggered()
 void MainWindow::on_actionCustom_Function_triggered()
 {
     Data* x=Data::getInstance();
-        QString test="";
-        int I=x->instructions[2];
-        for(int i=31;i>=0;i--){
-            char c=(char)(((I>>i)&1)+48);
-            test.append(QChar(c));
-        }
-        qDebug()<<test;
+//        QString test="";
+//        int I=x->instructions[2];
+//        for(int i=31;i>=0;i--){
+//            char c=(char)(((I>>i)&1)+48);
+//            test.append(QChar(c));
+//        }
+        qDebug()<<x->FWD_ENABLED;
 }
 
 void MainWindow::on_actionHelp_triggered()
@@ -334,4 +333,8 @@ void MainWindow::on_actionEnable_Forwarding_triggered()
 {
     Data* D=Data::getInstance();
     D->FWD_ENABLED=!D->FWD_ENABLED;
+    if(D->FWD_ENABLED)
+        ui->textBrowser_4->append("\nForwarding is Now Enabled");
+    else
+        ui->textBrowser_4->append("\nForwarding is Now Disabled");
 }
