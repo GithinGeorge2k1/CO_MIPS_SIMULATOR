@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QTableWidget>
 #include "about_help.h"
-
+#include <QListWidget>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -18,7 +18,7 @@ public:
     int tableIndex;
     static MainWindow* getInstance();
     void setNewTable(int clockCycle, int insCount);
-    void updateUIStallList(int currentInstructionCounter);
+    //void updateUIStallList(int currentInstructionCounter);
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
@@ -49,6 +49,7 @@ private:
     static bool ValidCodePresent;
     About_Help* helpwindow;
     QTableWidget** timeline;
+    QListWidget* stallList;
     static MainWindow* obj;
 
 //methods

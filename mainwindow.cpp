@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     timeline[tableIndex+1]->setColumnCount(3500);
     timeline[tableIndex+2]->setRowCount(1000);
     timeline[tableIndex+2]->setColumnCount(3500);
+    stallList=ui->listWidget;
     Maps::getInstance();
     Data::getInstance();
     refreshAllPanels();
@@ -48,10 +49,10 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::updateUIStallList(int CurrentInstructionCounter){
-    Data *D=Data::getInstance();
-    ui->listWidget->addItem(QString("%1  -%2 Stalls ").arg(D->instructions[CurrentInstructionCounter]).arg(D->stallInInstruction));
-}
+//void MainWindow::updateUIStallList(int CurrentInstructionCounter){
+//    Data *D=Data::getInstance();
+//    ui->listWidget->addItem(QString("%1  -%2 Stalls ").arg(D->instructions[CurrentInstructionCounter]).arg(D->stallInInstruction));
+//}
 
 void MainWindow::refreshAllPanels(){
     Data* x=Data::getInstance();
@@ -279,7 +280,7 @@ void MainWindow::on_actionRun_triggered()
             QMessageBox::warning(this,"Cannot find main","No entry point defined");
             return;
         }
-        bool isExitSmooth=D->run(timeline);
+        bool isExitSmooth=D->run(timeline,stallList);
         refreshAllPanels();
         if(!isExitSmooth){
             QMessageBox::information(this,"Run Error",QString("No Valid Instruction at %1").arg(D->instructionSize+1));
@@ -304,7 +305,7 @@ void MainWindow::on_actionRun_Step_By_Step_triggered()
             QMessageBox::warning(this,"Cannot find main","No entry point was defined");
             return;
         }
-        bool isExitSmooth=D->runStepByStep(timeline);
+        bool isExitSmooth=D->runStepByStep(timeline,stallList);
         refreshAllPanels();
         if(!isExitSmooth){
             QMessageBox::information(this,"Run Error",QString("No Valid Instruction at %1").arg(D->instructionSize+1));

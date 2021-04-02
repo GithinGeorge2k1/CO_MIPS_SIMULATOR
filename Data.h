@@ -46,10 +46,10 @@ public:
     bool addCode(QString& data);
     QString displayRegisters();
     QString displayData();
-    bool run(QTableWidget **timeline);
-    bool runStepByStep(QTableWidget **timeline);
-    void updateTable(bool branchStall,bool jumpStall, QTableWidget *timeline);
-    void updateStallList(int CurrentInstructionCounter);
+    bool run(QTableWidget **timeline,QListWidget *stallList);
+    bool runStepByStep(QTableWidget **timeline,QListWidget *stallList);
+    void updateTable(bool branchStall,bool jumpStall,QTableWidget *timeline);
+    void updateStallList(int CurrentInstructionCounter,QListWidget *stallList);
     QString getTimeLine();
     QString forConsole();
 

@@ -355,9 +355,9 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
     }
 }
 
-void Data::updateStallList(int CurrentInstructionCounter){
+void Data::updateStallList(int CurrentInstructionCounter,QListWidget *stallList){
     if(stallInInstruction>0)
-        obj->updateUIStallList(CurrentInstructionCounter);
+        stallList->addItem(QString("%1  -%2 Stalls ").arg(decimalToHex(instructions[CurrentInstructionCounter])).arg(stallInInstruction));
 }
 
 QString Data::forConsole(){
@@ -372,7 +372,7 @@ QString Data::forConsole(){
     return result;
 }
 
-bool Data::run(QTableWidget **timeline){
+bool Data::run(QTableWidget **timeline,QListWidget *stallList){
     while(PC<instructionSize && !nopOccured){
         CLOCK++;
         int CIC=PC;//CURRENT INSTRUCTION COUNTER;
@@ -381,14 +381,14 @@ bool Data::run(QTableWidget **timeline){
         stallInInstruction=0;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
-        updateStallList(CIC);
+        updateStallList(CIC,stallList);
         updateTable(branch_stall,Jmp_Stall,timeline[obj->tableIndex]);//additional params if req....
 
     }
     return nopOccured;
 }
 
-bool Data::runStepByStep(QTableWidget **timeline){
+bool Data::runStepByStep(QTableWidget **timeline,QListWidget *stallList){
     if(PC<instructionSize && !nopOccured){
         CLOCK++;
         bool branch_stall=BRANCH_STALL;
@@ -397,7 +397,7 @@ bool Data::runStepByStep(QTableWidget **timeline){
         stallInInstruction=0;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
-        updateStallList(CIC);
+        updateStallList(CIC,stallList);
         updateTable(branch_stall,Jmp_Stall,timeline[obj->tableIndex]);
     }
     return PC<instructionSize;
