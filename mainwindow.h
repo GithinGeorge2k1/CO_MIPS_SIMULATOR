@@ -18,6 +18,7 @@ public:
     int tableIndex;
     static MainWindow* getInstance();
     void setNewTable(int clockCycle, int insCount);
+    void updateUIStallList(int currentInstructionCounter);
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 

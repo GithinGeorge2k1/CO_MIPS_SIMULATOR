@@ -6,6 +6,7 @@
 #include <QMap>
 #include <QFile>
 #include <QTableWidget>
+#include <QListWidget>
 
 class Data{
 public:
@@ -40,7 +41,7 @@ private:
     Data();
 
 public:
-    static Data* getInstance(); 
+    static Data* getInstance();
     void initialize();
     bool addCode(QString& data);
     QString displayRegisters();
@@ -48,6 +49,7 @@ public:
     bool run(QTableWidget **timeline);
     bool runStepByStep(QTableWidget **timeline);
     void updateTable(bool branchStall,bool jumpStall, QTableWidget *timeline);
+    void updateStallList(int CurrentInstructionCounter);
     QString getTimeLine();
     QString forConsole();
 
@@ -59,6 +61,10 @@ public:
     void Execute(int opCode,int Rs,int Rt,int immediate);
     void MEM(int opCode, int R2, int result);
     void WB(int address, int value);
+
+signals:
+    void UpdateStallList(int CurrentInstructionCounter);
+
 };
 
 

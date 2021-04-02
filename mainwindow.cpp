@@ -47,6 +47,12 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+void MainWindow::updateUIStallList(int CurrentInstructionCounter){
+    Data *D=Data::getInstance();
+    ui->listWidget->addItem(QString("%1  -%2 Stalls ").arg(D->instructions[CurrentInstructionCounter]).arg(D->stallInInstruction));
+}
+
 void MainWindow::refreshAllPanels(){
     Data* x=Data::getInstance();
     QString text=x->displayRegisters();
@@ -63,33 +69,28 @@ void MainWindow::setNewTable(int clockCycle, int insCount)
     {
         QMessageBox::warning(this, "Error", "Exceeded Table Limit. Timeline Locked");
         isTimeLineLocked=true;
+        return;
     }
-    else
-    {
-        newTable(clockCycle, insCount);
-    }
+    newTable(clockCycle, insCount);
+
 }
 void MainWindow::newTable(int clockCycle, int insNumber)
 {
-    QString RHeading="";
-    QString CHeading="";
-    for(int i=1;i<=2500;i++)
-        RHeading.append(QString("ClockCycle %1,").arg(i+clockCycle));
+    QStringList RHeading;
+    QStringList CHeading;
+    for(int i=1;i<=2500;i++){
+        //RHeading.append(QString("ClockCycle %1,").arg(i+clockCycle));
+        RHeading.push_back(QString("ClockCycle %1,").arg(i+clockCycle));
+    }
     for(int i=1;i<=1000;i++)
-        CHeading.append(QString("Ins_%1,").arg(i+insNumber));
-
-    //qDebug()<<RHeading<<"\n"<<CHeading;
-
-    /*
-    //Setting the Column and Rows for the table once the app loads is causing the app to crash. Loading is now done in MainWindow constructor
-    //timeline[tableIndex]->setRowCount(1000);
-    //timeline[tableIndex]->setColumnCount(3500);
-    */
-
+    {
+//        CHeading.append(QString("Ins_%1,").arg(i+insNumber));
+        CHeading.push_back(QString("Ins_%1,").arg(i+insNumber));
+    }
+    qDebug()<<RHeading<<CHeading;
     timeline[tableIndex]->clearContents();
-    timeline[tableIndex]->setHorizontalHeaderLabels(RHeading.split(","));
-    //timeline[tableIndex+1]->setHorizontalHeaderLabels(RHeading.split(","));
-    timeline[tableIndex]->setVerticalHeaderLabels(CHeading.split(","));
+    timeline[tableIndex]->setHorizontalHeaderLabels(RHeading);
+    timeline[tableIndex]->setVerticalHeaderLabels(CHeading);
 }
 int storeAllLabelsAndData(QTextStream& in){
     bool h1=false,h2=false,h3=false; //.text, .data, .globl main
@@ -156,7 +157,6 @@ int storeAllLabelsAndData(QTextStream& in){
 
 void MainWindow::on_actionReinitialize_and_Load_File_triggered()
 {
-    newTable(0, 0);
     int start=-1;
     Data* D=Data::getInstance();
     initialize();
@@ -258,6 +258,9 @@ void MainWindow::initialize(){
     ui->textBrowser_2->setPlainText("");
     ui->textBrowser_3->setPlainText("");
     D->initialize();
+    timeline[0]->clear();
+    timeline[1]->clear();
+    timeline[2]->clear();
     refreshAllPanels();
 }
 
