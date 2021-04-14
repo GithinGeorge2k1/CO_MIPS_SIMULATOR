@@ -19,6 +19,7 @@ public:
     int dataSize;
     int instructions[4096];
     int instructionSize;
+    QStringList assemblyInstruction;
     QMap<QString,int> labelMap;
     QMap<QString,int> variableMap;
     bool nopOccured; //EXIT CONDITION

@@ -16,6 +16,7 @@ int prevSpace;
 int registerWriteBackLine=-1;
 int rindex=0;
 int cindexPivot=0;
+int stalledInstructions=1;
 
 MainWindow* obj;
 //=====================================================//
@@ -32,7 +33,8 @@ Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, 
     BRANCH_STALL(false), isPrevLW(false),
     isPrevJmp(false), stallInInstruction(0)
 {
-
+    assemblyInstruction.push_back("jal 0x2");
+    assemblyInstruction.push_back("nop");
 }
 
 void Data::initialize(){
@@ -63,7 +65,11 @@ void Data::initialize(){
     isPrevJmp=false;
     rindex=0;
     cindexPivot=0;
+    stalledInstructions=1;
     obj=MainWindow::getInstance();
+    assemblyInstruction.clear();
+    assemblyInstruction.push_back("jal 0x2");
+    assemblyInstruction.push_back("nop");
 }
 
 bool isRegisterValid(QString R, bool flag=false)
@@ -356,8 +362,8 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
 }
 
 void Data::updateStallList(int CurrentInstructionCounter,QListWidget *stallList){
-    if(stallInInstruction>0)
-        stallList->addItem(QString("%1  -%2 Stalls ").arg(decimalToHex(instructions[CurrentInstructionCounter])).arg(stallInInstruction));
+    stallList->addItem(QString("%3. %1  -%2 Stalls ").arg(assemblyInstruction.at(CurrentInstructionCounter),-35).arg(stallInInstruction).arg(stalledInstructions));
+    stalledInstructions++;
 }
 
 QString Data::forConsole(){
@@ -381,7 +387,8 @@ bool Data::run(QTableWidget **timeline,QListWidget *stallList){
         stallInInstruction=0;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
-        updateStallList(CIC,stallList);
+        if(stallInInstruction>0 &&(CLOCK+STALL<2000))
+            updateStallList(CIC,stallList);
         updateTable(branch_stall,Jmp_Stall,timeline[obj->tableIndex]);//additional params if req....
 
     }
@@ -397,7 +404,8 @@ bool Data::runStepByStep(QTableWidget **timeline,QListWidget *stallList){
         stallInInstruction=0;
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
-        updateStallList(CIC,stallList);
+        if(stallInInstruction>0 &&(CLOCK+STALL<2000))
+            updateStallList(CIC,stallList);
         updateTable(branch_stall,Jmp_Stall,timeline[obj->tableIndex]);
     }
     return PC<instructionSize;

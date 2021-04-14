@@ -212,6 +212,7 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
                 QString instructionHex=decimalToHex(D->instructions[D->instructionSize-1]);
                 ui->textBrowser_2->append(QString("%2. [0x%3]  %1   %4").arg(text).arg(D->instructionSize-1).arg(instructionHex).arg(tempLabel));
                 tempLabel="";
+                D->assemblyInstruction.push_back(text);
             }
             else{
                 tempLabel=text.section(':',0,0);
@@ -258,11 +259,13 @@ void MainWindow::initialize(){
     Data* D=Data::getInstance();
     ui->textBrowser_2->setPlainText("");
     ui->textBrowser_3->setPlainText("");
+    ui->listWidget->clear();
     D->initialize();
     timeline[0]->clear();
     timeline[1]->clear();
     timeline[2]->clear();
     refreshAllPanels();
+
 }
 
 void MainWindow::on_actionClear_Registers_triggered()
@@ -330,7 +333,7 @@ void MainWindow::on_actionCustom_Function_triggered()
 //            char c=(char)(((I>>i)&1)+48);
 //            test.append(QChar(c));
 //        }
-        qDebug()<<x->FWD_ENABLED;
+     //qDebug()<<x->FWD_ENABLED;
 }
 
 void MainWindow::on_actionHelp_triggered()
