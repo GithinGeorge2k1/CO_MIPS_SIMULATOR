@@ -1,0 +1,4 @@
+QTextEdit p{
+    color:red;
+    background-color:green;
+}

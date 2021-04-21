@@ -1,8 +1,13 @@
 <RCC>
     <qresource prefix="/stylesheet">
         <file>StyleSheet/style.qss</file>
+        <file>StyleSheet/stylesForHtml.css</file>
+        <file>StyleSheet/new2.qss</file>
     </qresource>
     <qresource prefix="/Files">
         <file>TimeLine.html</file>
+    </qresource>
+    <qresource prefix="/Html">
+        <file>Html/index.html</file>
     </qresource>
 </RCC>
