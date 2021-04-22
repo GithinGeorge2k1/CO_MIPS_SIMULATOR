@@ -14,12 +14,6 @@ About_Help::About_Help(QWidget *parent) :
     QString text=html.readAll();
     ui->textEdit->setHtml(text);
 
-
-    QFile styleSheet(":/stylesheet/StyleSheet/new2.qss");
-    styleSheet.open(QFile::ReadOnly);
-    QString style=styleSheet.readAll();
-    ui->textEdit->setStyleSheet(style);
-
     ui->textEdit->setReadOnly(true);
 }
 
