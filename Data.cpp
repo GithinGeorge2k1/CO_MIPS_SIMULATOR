@@ -358,6 +358,7 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
         cindexPivot=cindex-4-stallInInstruction;
         obj->setNewTable(rindex, cindexPivot);
         rindex=0;
+        //timeline->setHorizontalHeaderItem(3,new QTableWidgetItem("1000"));
     }
 }
 

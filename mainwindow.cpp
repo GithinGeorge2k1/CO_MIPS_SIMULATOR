@@ -88,7 +88,6 @@ void MainWindow::newTable(int clockCycle, int insNumber)
 //        CHeading.append(QString("Ins_%1,").arg(i+insNumber));
         CHeading.push_back(QString("Ins_%1,").arg(i+insNumber));
     }
-    qDebug()<<RHeading<<CHeading;
     timeline[tableIndex]->clearContents();
     timeline[tableIndex]->setHorizontalHeaderLabels(RHeading);
     timeline[tableIndex]->setVerticalHeaderLabels(CHeading);
