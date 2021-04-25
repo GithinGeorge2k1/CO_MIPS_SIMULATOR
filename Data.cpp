@@ -31,7 +31,7 @@ Data* Data::getInstance(){
 Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0), nopOccured(false), isLabel(false),
     CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false),
     BRANCH_STALL(false), isPrevLW(false),
-    isPrevJmp(false), stallInInstruction(0)
+    isPrevJmp(false), stallInInstruction(0), cache()
 {
     assemblyInstruction.push_back("jal 0x2");
     assemblyInstruction.push_back("nop");
@@ -72,6 +72,13 @@ void Data::initialize(){
     assemblyInstruction.push_back("nop");
 }
 
+void Data::setCache(int cacheSize, int blockSize, int associativity)
+{
+    qDebug()<<cacheSize<<blockSize<<associativity;
+    qDebug()<<cacheSize+blockSize;
+    cache.setCache(cacheSize, blockSize, associativity);
+
+}
 bool isRegisterValid(QString R, bool flag=false)
 {
     if(Maps::Registers.contains(R))

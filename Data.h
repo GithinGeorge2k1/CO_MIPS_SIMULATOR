@@ -7,6 +7,7 @@
 #include <QFile>
 #include <QTableWidget>
 #include <QListWidget>
+#include "cache.h"
 
 class Data{
 public:
@@ -36,6 +37,9 @@ public:
     bool isPrevJmp;
     int stallInInstruction;
     //We won't consider 3 stalls for normal data dependancy - (by making WB - half cycle)
+
+    Cache cache;
+    void setCache(int cacheSize, int blockSize, int associativity);
 
 private:
     static Data* instance;

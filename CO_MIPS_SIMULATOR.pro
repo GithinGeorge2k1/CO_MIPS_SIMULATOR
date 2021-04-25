@@ -12,6 +12,8 @@ SOURCES += \
     Data.cpp \
     Maps.cpp \
     about_help.cpp \
+    cache.cpp \
+    cacheconfig.cpp \
     main.cpp \
     mainwindow.cpp \
     utilities.cpp
@@ -20,11 +22,14 @@ HEADERS += \
     Data.h \
     Maps.h \
     about_help.h \
+    cache.h \
+    cacheconfig.h \
     mainwindow.h \
     utilities.h
 
 FORMS += \
     about_help.ui \
+    cacheconfig.ui \
     mainwindow.ui
 
 # Default rules for deployment.

@@ -3,6 +3,7 @@
 #include "Data.h"
 #include "Maps.h"
 #include "utilities.h"
+#include "cacheconfig.h"
 
 #include <QFile>
 #include <QMessageBox>
@@ -159,6 +160,9 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
 {
     int start=-1;
     Data* D=Data::getInstance();
+    CacheConfig popup;
+    popup.setModal(true);
+    popup.exec();
     initialize();
     QString path=QFileDialog::getOpenFileName(this,"title");
     QFile file(path);
