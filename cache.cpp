@@ -71,6 +71,7 @@ bool Set::setBlock(int tag, int offset)
     Block* temp=blocks[kickOutIndex];
     blocks[kickOutIndex]=new Block(1, tag);
     delete temp;
+    return true;
 }
 
 Cache::Cache() : addressableSize(4), valid(false) //32 Bit ~ 4 Byte addressable machine - Assumption
