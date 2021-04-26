@@ -1,4 +1,4 @@
-QTextEdit p{
+.abc{
     color:red;
     background-color:green;
 }

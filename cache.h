@@ -27,6 +27,7 @@ class Cache
         int bits_index;
         int bits_tag;
     public:
+        bool valid;
     Cache();
     void setCache(int cacheSize, int blockSize, int associativity);
     bool checkHit(int address);

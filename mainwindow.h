@@ -27,10 +27,6 @@ private slots:
     void on_actionQuit_triggered();
     void on_actionInitialize_triggered();
 
-    void on_actionSee_LabelMap_triggered();
-
-    void on_actionSee_DataMap_triggered();
-
     void on_actionClear_Registers_triggered();
 
     void on_actionRun_triggered();
@@ -52,7 +48,6 @@ private:
     QListWidget* stallList;
     static MainWindow* obj;
 
-//methods
 private:
     void refreshAllPanels();
     void initialize();

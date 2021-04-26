@@ -22,14 +22,19 @@ Set::Set(int noOfBlocks)
 bool Set::checkHit(int tag, int offset)
 {
     if(offset>=0 && offset<noOfBlocks)
-        ;
+    {
+
+    }
+    return false;
 }
-Cache::Cache()
+
+Cache::Cache() : valid(false)
 {
 
 }
 void Cache::setCache(int cacheSize, int blockSize, int associativity)
 {
+    valid=true;
     int totalBlocks=(cacheSize*1024)/blockSize; // cacheSize in KB and blockSize in Bytes
     noOfSets=totalBlocks/associativity;
 

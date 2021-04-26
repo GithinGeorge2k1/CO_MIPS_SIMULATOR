@@ -39,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     timeline[tableIndex+1]->setColumnCount(3500);
     timeline[tableIndex+2]->setRowCount(1000);
     timeline[tableIndex+2]->setColumnCount(3500);
+
     stallList=ui->listWidget;
     Maps::getInstance();
     Data::getInstance();
@@ -50,11 +51,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-//void MainWindow::updateUIStallList(int CurrentInstructionCounter){
-//    Data *D=Data::getInstance();
-//    ui->listWidget->addItem(QString("%1  -%2 Stalls ").arg(D->instructions[CurrentInstructionCounter]).arg(D->stallInInstruction));
-//}
-
 void MainWindow::refreshAllPanels(){
     Data* x=Data::getInstance();
     QString text=x->displayRegisters();
@@ -64,6 +60,7 @@ void MainWindow::refreshAllPanels(){
     text=x->forConsole();
     ui->textBrowser_4->setPlainText(text);
 }
+
 void MainWindow::setNewTable(int clockCycle, int insCount)
 {
     tableIndex++;
@@ -73,26 +70,15 @@ void MainWindow::setNewTable(int clockCycle, int insCount)
         isTimeLineLocked=true;
         return;
     }
-    newTable(clockCycle, insCount);
+    timeline[tableIndex]->clearContents();
 
 }
-void MainWindow::newTable(int clockCycle, int insNumber)
-{
-    QStringList RHeading;
-    QStringList CHeading;
-    for(int i=1;i<=2500;i++){
-        //RHeading.append(QString("ClockCycle %1,").arg(i+clockCycle));
-        RHeading.push_back(QString("ClockCycle %1,").arg(i+clockCycle));
-    }
-    for(int i=1;i<=1000;i++)
-    {
-//        CHeading.append(QString("Ins_%1,").arg(i+insNumber));
-        CHeading.push_back(QString("Ins_%1,").arg(i+insNumber));
-    }
-    timeline[tableIndex]->clearContents();
-    timeline[tableIndex]->setHorizontalHeaderLabels(RHeading);
-    timeline[tableIndex]->setVerticalHeaderLabels(CHeading);
-}
+
+//void MainWindow::newTable(int clockCycle, int insNumber)
+//{
+
+//}
+
 int storeAllLabelsAndData(QTextStream& in){
     bool h1=false,h2=false,h3=false; //.text, .data, .globl main
     //LABEL SHOULD GET CORRECT INSTRUCTION NO(NOT TO BE CONFUSED WITH LINE NO)
@@ -160,15 +146,22 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
 {
     int start=-1;
     Data* D=Data::getInstance();
+    initialize();
+
     CacheConfig popup;
     popup.setModal(true);
     popup.exec();
-    initialize();
+    if(!D->cache->valid){
+        MainWindow::ValidCodePresent=false;
+        QMessageBox::warning(this,"Cache Parameter Error","Please Set Cache Parameter as per standard");
+        return;
+    }
+
     QString path=QFileDialog::getOpenFileName(this,"title");
     QFile file(path);
     if(!file.open(QFile::ReadOnly | QFile::Text)){
         MainWindow::ValidCodePresent=false;
-        QMessageBox::warning(this,"title","File not Opened");
+        QMessageBox::warning(this,"Warning","File not Opened");
         return;
     }
     QTextStream in(&file);
@@ -243,19 +236,6 @@ void MainWindow::on_actionInitialize_triggered()
 {
     MainWindow::ValidCodePresent=false;
     initialize();
-}
-
-void MainWindow::on_actionSee_LabelMap_triggered()
-{
-    Data *D=Data::getInstance();
-    qDebug()<<D->labelMap;
-
-}
-
-void MainWindow::on_actionSee_DataMap_triggered()
-{
-    Data *D=Data::getInstance();
-    qDebug()<<D->variableMap;
 }
 
 void MainWindow::initialize(){
@@ -350,7 +330,7 @@ void MainWindow::on_actionEnable_Forwarding_triggered()
     Data* D=Data::getInstance();
     D->FWD_ENABLED=!D->FWD_ENABLED;
     if(D->FWD_ENABLED)
-        ui->textBrowser_4->append("\nForwarding is Now Enabled");
+        ui->textBrowser_4->append("\n<b style=color:#ffd700 style=font-size:24px>Forwarding is Now Enabled</b>");
     else
-        ui->textBrowser_4->append("\nForwarding is Now Disabled");
+        ui->textBrowser_4->append("\n<b style=color:#ffd700 style=font-size:24px>Forwarding is Now Disabled</b>");
 }

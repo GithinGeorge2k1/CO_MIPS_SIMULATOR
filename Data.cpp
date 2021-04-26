@@ -35,6 +35,7 @@ Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, 
 {
     assemblyInstruction.push_back("jal 0x2");
     assemblyInstruction.push_back("nop");
+    cache=new Cache();
 }
 
 void Data::initialize(){
@@ -72,13 +73,6 @@ void Data::initialize(){
     assemblyInstruction.push_back("nop");
 }
 
-void Data::setCache(int cacheSize, int blockSize, int associativity)
-{
-    qDebug()<<cacheSize<<blockSize<<associativity;
-    qDebug()<<cacheSize+blockSize;
-    cache.setCache(cacheSize, blockSize, associativity);
-
-}
 bool isRegisterValid(QString R, bool flag=false)
 {
     if(Maps::Registers.contains(R))
@@ -434,9 +428,6 @@ void Data::instructionDecodeRegisterFetch(int instruction){
         int Rt=(instruction>>16) & 0x1f;
         int Rd=(instruction>>11) & 0x1f;
         int shamt=(instruction>>6) & 0x1f;
-        //add r1 r2 r3
-        //add r4 r5 r6
-        //add r7 r1 r4      ??how many stalls 2 ryt!!  Yes!!
         if(BRANCH_STALL){
             STALL++;
             stallInInstruction=1;
@@ -457,7 +448,7 @@ void Data::instructionDecodeRegisterFetch(int instruction){
         else if(!FWD_ENABLED && (Rs==prevRd || Rt==prevRd)){
             STALL+=2;
             stallInInstruction=2;
-            prevToPrevRd=-1;//safetycheck
+            prevRd=-1;
         }
         else if(!FWD_ENABLED && (Rs==prevToPrevRd || Rt==prevToPrevRd)){
             STALL+=1;
@@ -511,12 +502,12 @@ void Data::instructionDecodeRegisterFetch(int instruction){
             STALL+=1;
             stallInInstruction=1;
             isPrevLW=false;
-            prevToPrevRd=-1;//safetycheck
+            prevToPrevRd=-1;
         }
         else if(!FWD_ENABLED && Rs==prevRd){
             STALL+=2;
             stallInInstruction=2;
-            prevToPrevRd=-1;//safety check
+            prevRd=-1;
         }
         else if(!FWD_ENABLED && Rs==prevToPrevRd){
             STALL++;

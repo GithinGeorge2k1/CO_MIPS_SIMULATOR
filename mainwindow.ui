@@ -452,7 +452,6 @@
     <addaction name="actionReinitialize_and_Load_File"/>
     <addaction name="actionInitialize"/>
     <addaction name="separator"/>
-    <addaction name="actionLog_Current_Session"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -488,8 +487,6 @@
     <property name="title">
      <string>Debug Options</string>
     </property>
-    <addaction name="actionSee_LabelMap"/>
-    <addaction name="actionSee_DataMap"/>
     <addaction name="actionCustom_Function"/>
    </widget>
    <addaction name="menuFile"/>
@@ -531,10 +528,10 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionReinitialize_and_Load_File"/>
-   <addaction name="actionSee_LabelMap"/>
-   <addaction name="actionSee_DataMap"/>
    <addaction name="actionRun_Step_By_Step"/>
+   <addaction name="actionEnable_Forwarding"/>
    <addaction name="actionCustom_Function"/>
+   <addaction name="actionRun"/>
   </widget>
   <action name="actionReinitialize_and_Load_File">
    <property name="text">
@@ -544,11 +541,6 @@
   <action name="actionQuit">
    <property name="text">
     <string>Quit</string>
-   </property>
-  </action>
-  <action name="actionLog_Current_Session">
-   <property name="text">
-    <string>Log Current Session</string>
    </property>
   </action>
   <action name="actionClear_Registers">
@@ -589,16 +581,6 @@
   <action name="actionInitialize">
    <property name="text">
     <string>Initialize</string>
-   </property>
-  </action>
-  <action name="actionSee_LabelMap">
-   <property name="text">
-    <string>See LabelMap</string>
-   </property>
-  </action>
-  <action name="actionSee_DataMap">
-   <property name="text">
-    <string>See DataMap</string>
    </property>
   </action>
   <action name="actionRun_Step_By_Step">
