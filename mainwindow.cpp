@@ -153,6 +153,7 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
     popup.exec();
     if(!D->cache->valid){
         MainWindow::ValidCodePresent=false;
+        D->cache->valid=false;
         QMessageBox::warning(this,"Cache Parameter Error","Please Set Cache Parameter as per standard");
         return;
     }
@@ -161,6 +162,7 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
     QFile file(path);
     if(!file.open(QFile::ReadOnly | QFile::Text)){
         MainWindow::ValidCodePresent=false;
+        D->cache->valid=false;
         QMessageBox::warning(this,"Warning","File not Opened");
         return;
     }
