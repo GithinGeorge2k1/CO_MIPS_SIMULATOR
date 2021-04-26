@@ -61,7 +61,7 @@ void MainWindow::refreshAllPanels(){
     ui->textBrowser_4->setPlainText(text);
 }
 
-void MainWindow::setNewTable(int clockCycle, int insCount)
+void MainWindow::setNewTable()
 {
     tableIndex++;
     if(tableIndex>=noOfTables)
@@ -73,11 +73,6 @@ void MainWindow::setNewTable(int clockCycle, int insCount)
     timeline[tableIndex]->clearContents();
 
 }
-
-//void MainWindow::newTable(int clockCycle, int insNumber)
-//{
-
-//}
 
 int storeAllLabelsAndData(QTextStream& in){
     bool h1=false,h2=false,h3=false; //.text, .data, .globl main

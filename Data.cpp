@@ -17,6 +17,7 @@ int registerWriteBackLine=-1;
 int rindex=0;
 int cindexPivot=0;
 int stalledInstructions=1;
+int tableNo=0;
 
 MainWindow* obj;
 //=====================================================//
@@ -304,10 +305,14 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
 {
     if(obj->isTimeLineLocked || CLOCK<=0) //This bound we have to change
         return;
+    QString vHeader=QString("%1").arg(rindex+1+(tableNo*1000));
+    timeline->setVerticalHeaderItem(rindex,new QTableWidgetItem(vHeader));
     int cindex=CLOCK+STALL-stallInInstruction-1;
     cindex-=cindexPivot;
     if(branchStall)
     {
+        vHeader=QString("%1").arg(rindex+1+(tableNo*1000)+1);
+        timeline->setVerticalHeaderItem(rindex+1,new QTableWidgetItem(vHeader));
         timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
         timeline->item(rindex,cindex-1)->setBackground(Qt::gray);
         timeline->setItem(rindex, cindex, new QTableWidgetItem("Squash"));
@@ -317,8 +322,9 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
         if(rindex>=timeline->rowCount())
         {
             cindexPivot=cindex-1;
-            obj->setNewTable(rindex, cindexPivot);
+            obj->setNewTable();
             rindex=0;
+            tableNo++;
         }
         //This stallInInstruction corresponds to branch caused stall - Not data dependancy!! Therfore ID/RF comes in next Cycle after IF!!
         stallInInstruction=0;
@@ -357,9 +363,9 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
     if(rindex>=timeline->rowCount())
     {
         cindexPivot=cindex-4-stallInInstruction;
-        obj->setNewTable(rindex, cindexPivot);
+        obj->setNewTable();
         rindex=0;
-        //timeline->setHorizontalHeaderItem(3,new QTableWidgetItem("1000"));
+        tableNo++;
     }
 }
 
