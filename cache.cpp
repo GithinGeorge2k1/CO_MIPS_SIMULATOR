@@ -13,17 +13,22 @@ LRU::LRU()
     noOfAcceses=0;
 }
 
-Block::Block()
+Block::Block(int validBit, int tag)
 {
     dirtyBit=0;
-    validBit=0;
-    tag=-1;
+    this->validBit=validBit;
+    this->tag=tag;
 }
 int Block::getTag()
 {
     return tag;
 }
-
+bool Block::isModified()
+{
+    if(dirtyBit==1)
+        return true;
+    return false;
+}
 Set::Set(int noOfBlocks)
 {
     blocks=new Block*[noOfBlocks];
@@ -37,12 +42,35 @@ Set::Set(int noOfBlocks)
 
 bool Set::checkHit(int tag, int offset)
 {
-    if(offset<0 || offset>=noOfBlocks)
+    if(offset<0 || offset>=noOfBlocks)//Only for safety nothing important
         return false;
     for(int i=0;i<noOfBlocks;i++)
         if(tag==blocks[i]->getTag())
             return true;
     return false;
+}
+bool Set::setBlock(int tag, int offset)
+{
+    if(offset<0 || offset>=noOfBlocks)//Only for safety nothing important
+        return false;
+    int kickOutIndex=0;
+    for(int i=0;i<noOfBlocks;i++)
+    {
+        if(LRUParams[i]->lastAccessClock==-1)
+            {kickOutIndex=i;break;}//this case nothing is kicked out
+        if(LRUParams[i]->lastAccessClock<LRUParams[kickOutIndex]->lastAccessClock)
+            kickOutIndex=i;
+        else if(LRUParams[i]->lastAccessClock==LRUParams[kickOutIndex]->lastAccessClock)// I don't think this case occurs, but let it be
+            if(LRUParams[kickOutIndex]->noOfAcceses<LRUParams[i]->noOfAcceses)
+                kickOutIndex=i;
+    }
+    if(blocks[kickOutIndex]->isModified())
+    {
+        //WB policy
+    }
+    Block* temp=blocks[kickOutIndex];
+    blocks[kickOutIndex]=new Block(1, tag);
+    delete temp;
 }
 
 Cache::Cache() : addressableSize(4), valid(false) //32 Bit ~ 4 Byte addressable machine - Assumption
@@ -82,7 +110,7 @@ bool Cache::storeInCache(int address)
     int tag=(address>>(bits_index+bits_offset)) & andValue;
 
     if(index>=0 && index<noOfSets)
-        return sets[index]->checkHit(tag, offset);
+        return sets[index]->setBlock(tag, offset);
     return false;
 }
 bool Cache::checkHit(int address)

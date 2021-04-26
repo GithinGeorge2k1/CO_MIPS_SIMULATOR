@@ -14,8 +14,9 @@ class Block
     int validBit;
     int tag;
     public:
-        Block();
+        Block(int validBit=0, int tag=-1);
         int getTag();
+        bool isModified();
 };
 class Set
 {
@@ -26,6 +27,7 @@ class Set
     public:
     Set(int noOfBlocks);
     bool checkHit(int tag, int offset);
+    bool setBlock(int tag, int offset);
 };
 class Cache
 {
