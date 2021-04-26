@@ -7,17 +7,12 @@ int power(int a, int b)//a^b
     return a*power(a, b-1);
 }
 
-LRU::LRU()
+Block::Block()
 {
-    lastAccessClock=-1;
-    noOfAcceses=0;
-}
-
-Block::Block(int validBit, int tag)
-{
-    dirtyBit=0;
-    this->validBit=validBit;
-    this->tag=tag;
+    lru=-1;
+    dirtyBit=false;
+    this->validBit=false;
+    this->tag=-1;
 }
 int Block::getTag()
 {
@@ -25,18 +20,15 @@ int Block::getTag()
 }
 bool Block::isModified()
 {
-    if(dirtyBit==1)
-        return true;
-    return false;
+    return dirtyBit;
 }
 Set::Set(int noOfBlocks)
 {
+    setClock=0;
     blocks=new Block*[noOfBlocks];
-    LRUParams=new LRU*[noOfBlocks];
     for(int i=0;i<noOfBlocks;i++)
     {
         blocks[i]=new Block();
-        LRUParams[i]=new LRU();
     }
 }
 
@@ -44,9 +36,13 @@ bool Set::checkHit(int tag, int offset)
 {
     if(offset<0 || offset>=noOfBlocks)//Only for safety nothing important
         return false;
-    for(int i=0;i<noOfBlocks;i++)
-        if(tag==blocks[i]->getTag())
+    for(int i=0;i<noOfBlocks;i++){
+        if(tag==blocks[i]->getTag()){
+            noOfHits++;
             return true;
+        }
+    }
+    noOfMisses++;
     return false;
 }
 bool Set::setBlock(int tag, int offset)
@@ -56,21 +52,23 @@ bool Set::setBlock(int tag, int offset)
     int kickOutIndex=0;
     for(int i=0;i<noOfBlocks;i++)
     {
-        if(LRUParams[i]->lastAccessClock==-1)
-            {kickOutIndex=i;break;}//this case nothing is kicked out
-        if(LRUParams[i]->lastAccessClock<LRUParams[kickOutIndex]->lastAccessClock)
+        if(!blocks[i]->getValidBit()){
             kickOutIndex=i;
-        else if(LRUParams[i]->lastAccessClock==LRUParams[kickOutIndex]->lastAccessClock)// I don't think this case occurs, but let it be
-            if(LRUParams[kickOutIndex]->noOfAcceses<LRUParams[i]->noOfAcceses)
-                kickOutIndex=i;
+            break;
+        }
+        if(blocks[i]->getLru()<blocks[kickOutIndex]->getLru()){
+            kickOutIndex=i;
+        }
     }
     if(blocks[kickOutIndex]->isModified())
     {
         //WB policy
+        //Maybe Take No Of Writes
     }
-    Block* temp=blocks[kickOutIndex];
-    blocks[kickOutIndex]=new Block(1, tag);
-    delete temp;
+    blocks[kickOutIndex]->setTag(tag);
+    blocks[kickOutIndex]->setDirtyBit(false);
+    blocks[kickOutIndex]->setLru(setClock);
+    setClock++;
     return true;
 }
 

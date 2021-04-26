@@ -72,6 +72,8 @@ void Data::initialize(){
     assemblyInstruction.clear();
     assemblyInstruction.push_back("jal 0x2");
     assemblyInstruction.push_back("nop");
+    delete cache;
+    cache=new Cache();
 }
 
 bool isRegisterValid(QString R, bool flag=false)
@@ -294,10 +296,8 @@ QString Data::displayRegisters(){
 
 QString Data::displayData(){
     QString text="";
-    int DummyAddress=2000;
     for(int i=0;i<dataSize;i++){
-        text.append(QString("[%1]   %2   \n").arg(DummyAddress).arg(data[i]));
-        DummyAddress+=4;
+        text.append(QString("word %2:    %1\n").arg(data[i]).arg(i+1));
     }
     return text;
 }

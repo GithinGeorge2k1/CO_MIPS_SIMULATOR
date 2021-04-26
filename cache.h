@@ -1,29 +1,51 @@
 #ifndef CACHE_H
 #define CACHE_H
 
-struct LRU
-{
-    int lastAccessClock; //can be useful if 2 Blocks have the same noOfAccesses made
-    int noOfAcceses;
-    LRU();
-};
 class Block
 {
     private:
-    int dirtyBit;
-    int validBit;
+    bool dirtyBit;
+    bool validBit;
     int tag;
+    int lru;
     public:
-        Block(int validBit=0, int tag=-1);
+        Block();
         int getTag();
         bool isModified();
+
+        bool getValidBit() const{
+            return validBit;
+        }
+
+        bool getDirtyBit() const{
+            return dirtyBit;
+        }
+
+        int getLru() const{
+            return lru;
+        }
+
+        void setLru(int Clock){
+            lru=Clock;
+        }
+
+        void setDirtyBit(bool x) {
+            dirtyBit=x;
+        }
+
+
+        void setTag(int x) {
+            tag=x;
+        }
 };
 class Set
 {
     private:
         Block** blocks;
-        LRU** LRUParams;
         int noOfBlocks;
+        int setClock;
+        int noOfMisses;
+        int noOfHits;
     public:
     Set(int noOfBlocks);
     bool checkHit(int tag, int offset);
