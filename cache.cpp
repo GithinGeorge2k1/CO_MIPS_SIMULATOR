@@ -6,11 +6,13 @@ int power(int a, int b)//a^b
         return 1;
     return a*power(a, b-1);
 }
+
 Block::Block()
 {
     dirtyBit=0;
     tag=-1;
 }
+
 Set::Set(int noOfBlocks)
 {
     blocks=new Block*[noOfBlocks];
@@ -19,6 +21,7 @@ Set::Set(int noOfBlocks)
         blocks[i]=new Block();
     }
 }
+
 bool Set::checkHit(int tag, int offset)
 {
     if(offset>=0 && offset<noOfBlocks)
@@ -32,6 +35,7 @@ Cache::Cache() : valid(false)
 {
 
 }
+
 void Cache::setCache(int cacheSize, int blockSize, int associativity)
 {
     valid=true;
@@ -48,6 +52,7 @@ void Cache::setCache(int cacheSize, int blockSize, int associativity)
         sets[i]=new Set(associativity);
     }
 }
+
 bool Cache::checkHit(int address)
 {
     int andValue;

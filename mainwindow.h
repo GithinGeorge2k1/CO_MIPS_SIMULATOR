@@ -17,8 +17,7 @@ public:
     bool isTimeLineLocked;
     int tableIndex;
     static MainWindow* getInstance();
-    void setNewTable(int clockCycle, int insCount);
-    //void updateUIStallList(int currentInstructionCounter);
+    void setNewTable();
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
@@ -51,6 +50,5 @@ private:
 private:
     void refreshAllPanels();
     void initialize();
-    void newTable(int clockCycle, int insCount);
 };
 #endif // MAINWINDOW_H
