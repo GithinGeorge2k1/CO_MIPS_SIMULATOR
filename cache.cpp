@@ -6,6 +6,13 @@ int power(int a, int b)//a^b
         return 1;
     return a*power(a, b-1);
 }
+void Block::setNewBlock(int tag, int& setClock)
+{
+    setTag(tag);
+    setDirtyBit(false);
+    setLRU(setClock);
+    setClock++;
+}
 
 Block::Block()
 {
@@ -14,14 +21,51 @@ Block::Block()
     this->validBit=false;
     this->tag=-1;
 }
-int Block::getTag()
-{
-    return tag;
-}
 bool Block::isModified()
 {
     return dirtyBit;
 }
+
+//Tag
+int Block::getTag()
+{
+    return tag;
+}
+void Block::setTag(int x)
+{
+    tag=x;
+}
+
+//ValidBit
+bool Block::getValidBit()
+{
+    return validBit;
+}
+void Block::setValidBit(bool x)
+{
+    validBit=x;
+}
+
+//DirtyBit
+bool Block::getDirtyBit()
+{
+    return dirtyBit;
+}
+void Block::setDirtyBit(bool x)
+{
+    dirtyBit=x;
+}
+
+//LRU
+int Block::getLRU()
+{
+    return lru;
+}
+void Block::setLRU(int Clock)
+{
+    lru=Clock;
+}
+
 Set::Set(int noOfBlocks)
 {
     setClock=0;
@@ -36,8 +80,10 @@ bool Set::checkHit(int tag, int offset)
 {
     if(offset<0 || offset>=noOfBlocks)//Only for safety nothing important
         return false;
-    for(int i=0;i<noOfBlocks;i++){
-        if(tag==blocks[i]->getTag()){
+    for(int i=0;i<noOfBlocks;i++)
+    {
+        if(tag==blocks[i]->getTag())
+        {
             noOfHits++;
             return true;
         }
@@ -52,11 +98,12 @@ bool Set::setBlock(int tag, int offset)
     int kickOutIndex=0;
     for(int i=0;i<noOfBlocks;i++)
     {
-        if(!blocks[i]->getValidBit()){
+        if(!blocks[i]->getValidBit())
+        {
             kickOutIndex=i;
             break;
         }
-        if(blocks[i]->getLru()<blocks[kickOutIndex]->getLru()){
+        if(blocks[i]->getLRU()<blocks[kickOutIndex]->getLRU()){
             kickOutIndex=i;
         }
     }
@@ -65,10 +112,7 @@ bool Set::setBlock(int tag, int offset)
         //WB policy
         //Maybe Take No Of Writes
     }
-    blocks[kickOutIndex]->setTag(tag);
-    blocks[kickOutIndex]->setDirtyBit(false);
-    blocks[kickOutIndex]->setLru(setClock);
-    setClock++;
+    blocks[kickOutIndex]->setNewBlock(tag, setClock);
     return true;
 }
 

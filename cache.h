@@ -10,33 +10,16 @@ class Block
     int lru;
     public:
         Block();
-        int getTag();
         bool isModified();
-
-        bool getValidBit() const{
-            return validBit;
-        }
-
-        bool getDirtyBit() const{
-            return dirtyBit;
-        }
-
-        int getLru() const{
-            return lru;
-        }
-
-        void setLru(int Clock){
-            lru=Clock;
-        }
-
-        void setDirtyBit(bool x) {
-            dirtyBit=x;
-        }
-
-
-        void setTag(int x) {
-            tag=x;
-        }
+        int getTag();
+        void setTag(int x);
+        bool getValidBit();
+        void setValidBit(bool x);
+        bool getDirtyBit();
+        void setDirtyBit(bool x);
+        int getLRU();
+        void setLRU(int Clock);
+        void setNewBlock(int tag, int& setClock);
 };
 class Set
 {
