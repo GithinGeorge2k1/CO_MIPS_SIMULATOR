@@ -229,12 +229,6 @@ void MainWindow::on_actionQuit_triggered()
     QApplication::quit();
 }
 
-void MainWindow::on_actionInitialize_triggered()
-{
-    MainWindow::ValidCodePresent=false;
-    initialize();
-}
-
 void MainWindow::initialize(){
     Data* D=Data::getInstance();
     ui->textBrowser_2->setPlainText("");
@@ -245,6 +239,7 @@ void MainWindow::initialize(){
     timeline[1]->clear();
     timeline[2]->clear();
     refreshAllPanels();
+    MainWindow::ValidCodePresent=false;
 
 }
 

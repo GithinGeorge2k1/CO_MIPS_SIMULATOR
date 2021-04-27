@@ -32,7 +32,7 @@ Data* Data::getInstance(){
 Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0), nopOccured(false), isLabel(false),
     CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false),
     BRANCH_STALL(false), isPrevLW(false),
-    isPrevJmp(false), stallInInstruction(0), cache()
+    isPrevJmp(false), stallInInstruction(0), MEMSTALL(0), cache()
 {
     assemblyInstruction.push_back("jal 0x2");
     assemblyInstruction.push_back("nop");
@@ -72,6 +72,7 @@ void Data::initialize(){
     assemblyInstruction.clear();
     assemblyInstruction.push_back("jal 0x2");
     assemblyInstruction.push_back("nop");
+    MEMSTALL=0;
     delete cache;
     cache=new Cache();
 }
@@ -271,6 +272,7 @@ bool Data::addCode(QString& text){
     }
     return false;
 }
+
 QString Data::displayRegisters(){
     QString text="";
     text.append(QString("<edit style=\"color:#ffd700\">PC&nbsp;&nbsp;&nbsp;=&nbsp;%1\n</edit>").arg(PC));
@@ -449,7 +451,7 @@ void Data::instructionDecodeRegisterFetch(int instruction){
             STALL+=1;
             stallInInstruction=1;
             isPrevLW=false;
-            prevToPrevRd=-1;//safetycheck
+            prevRd=-1;//safetycheck
         }
         else if(!FWD_ENABLED && (Rs==prevRd || Rt==prevRd)){
             STALL+=2;

@@ -38,6 +38,7 @@ public:
     int stallInInstruction;
     //We won't consider 3 stalls for normal data dependancy - (by making WB - half cycle)
 
+    int MEMSTALL;
     Cache *cache;
     //void setCache(int cacheSize, int blockSize, int associativity);
 
@@ -58,6 +59,7 @@ public:
     QString getTimeLine();
     QString forConsole();
 
+private:
     int instructionFetch();
     void instructionDecodeRegisterFetch(int instruction);
     //OVERLOADING EXECUTE FUNCTION FOR I-TYPE, R-TYPE AND J-TYPE
@@ -66,10 +68,6 @@ public:
     void Execute(int opCode,int Rs,int Rt,int immediate);
     void MEM(int opCode, int R2, int result);
     void WB(int address, int value);
-
-signals:
-    void UpdateStallList(int CurrentInstructionCounter);
-
 };
 
 

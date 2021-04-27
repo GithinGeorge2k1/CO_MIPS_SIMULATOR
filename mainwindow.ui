@@ -450,7 +450,6 @@
      <string>File</string>
     </property>
     <addaction name="actionReinitialize_and_Load_File"/>
-    <addaction name="actionInitialize"/>
     <addaction name="separator"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
@@ -548,11 +547,6 @@
     <string>Clear Registers</string>
    </property>
   </action>
-  <action name="actionReinitialize">
-   <property name="text">
-    <string>Reinitialize</string>
-   </property>
-  </action>
   <action name="actionRun">
    <property name="text">
     <string>Run</string>
@@ -576,11 +570,6 @@
   <action name="actionConsole">
    <property name="text">
     <string>Console</string>
-   </property>
-  </action>
-  <action name="actionInitialize">
-   <property name="text">
-    <string>Initialize</string>
    </property>
   </action>
   <action name="actionRun_Step_By_Step">
