@@ -34,11 +34,14 @@ public:
     bool FWD_ENABLED;
     bool BRANCH_STALL; //WHETHER THE CURRENT INS WOULD CAUSE A BRANCH RELATED STALL FOR NEXT INSTRUCTION (NOT TAKEN PREDICTOR)
     bool isPrevLW;
+
+    int loadDegree;
     bool isPrevJmp;
     int stallInInstruction;
     //We won't consider 3 stalls for normal data dependancy - (by making WB - half cycle)
 
     int MEMSTALL;
+    int memStallInCurrentInstruction;
     Cache *cache;
     //void setCache(int cacheSize, int blockSize, int associativity);
 
@@ -68,6 +71,16 @@ private:
     void Execute(int opCode,int Rs,int Rt,int immediate);
     void MEM(int opCode, int R2, int result);
     void WB(int address, int value);
+
+
+    void incrementLoadDegree(){
+        if(loadDegree==-1 || loadDegree==2){
+            loadDegree=-1;
+        }
+        else{
+            loadDegree++;
+        }
+    }
 };
 
 

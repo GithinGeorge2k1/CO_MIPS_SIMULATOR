@@ -31,7 +31,7 @@ Data* Data::getInstance(){
 //Member initializer list && constructor implementation
 Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0), nopOccured(false), isLabel(false),
     CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false),
-    BRANCH_STALL(false), isPrevLW(false),
+    BRANCH_STALL(false),isPrevLW(false), loadDegree(-1),
     isPrevJmp(false), stallInInstruction(0), MEMSTALL(0), cache()
 {
     assemblyInstruction.push_back("jal 0x2");
@@ -64,6 +64,7 @@ void Data::initialize(){
     //FWD_ENABLED=false;
     BRANCH_STALL=false;
     isPrevLW=false;
+    loadDegree=-1;
     isPrevJmp=false;
     rindex=0;
     cindexPivot=0;
@@ -104,6 +105,7 @@ bool isValidLabel(QString L)
     Data* D=Data::getInstance();
     return (D->labelMap.contains(L));
 }
+
 bool Data::addCode(QString& text){
     int newInstruction=0;
     int instructionTypeTemplate=8;
@@ -303,6 +305,7 @@ QString Data::displayData(){
     }
     return text;
 }
+
 void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
 {
     if(obj->isTimeLineLocked || CLOCK<=0) //This bound we have to change
@@ -395,11 +398,12 @@ bool Data::run(QTableWidget **timeline,QListWidget *stallList){
         bool branch_stall=BRANCH_STALL;
         bool Jmp_Stall=isPrevJmp;
         stallInInstruction=0;
+        incrementLoadDegree();
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
         if(stallInInstruction>0 &&(CLOCK+STALL<2000))
             updateStallList(CIC,stallList);
-        updateTable(branch_stall,Jmp_Stall,timeline[obj->tableIndex]);//additional params if req....
+        updateTable(branch_stall,Jmp_Stall,timeline[obj->tableIndex]);
 
     }
     return nopOccured;
@@ -412,6 +416,7 @@ bool Data::runStepByStep(QTableWidget **timeline,QListWidget *stallList){
         bool Jmp_Stall=isPrevJmp;
         int CIC=PC;//CURRENT INSTRUCTION COUNTER;
         stallInInstruction=0;
+        incrementLoadDegree();
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
         if(stallInInstruction>0 &&(CLOCK+STALL<2000))
@@ -446,12 +451,12 @@ void Data::instructionDecodeRegisterFetch(int instruction){
             stallInInstruction=1;
             isPrevJmp=false;
         }
-        else if(FWD_ENABLED && isPrevLW && (Rs==prevRd || Rt==prevRd))
+        else if(FWD_ENABLED && isPrevLW && (Rs==prevRd || Rt==prevRd))      //dependancy cases
         {
             STALL+=1;
             stallInInstruction=1;
             isPrevLW=false;
-            prevRd=-1;//safetycheck
+            prevRd=-1;      //For 3 instructions I1 I2 I3... if I2 and I3 are dependent on I3, I2 will stall and make sure I3 can execute normally
         }
         else if(!FWD_ENABLED && (Rs==prevRd || Rt==prevRd)){
             STALL+=2;
@@ -462,7 +467,6 @@ void Data::instructionDecodeRegisterFetch(int instruction){
             STALL+=1;
             stallInInstruction=1;
         }
-        //NOT SURE WHETHER I CAN DO THIS HERE
         prevToPrevRd=prevRd;
         prevRd=Rd;
         Execute(funct,R[Rs],R[Rt],Rd,shamt);
@@ -521,7 +525,6 @@ void Data::instructionDecodeRegisterFetch(int instruction){
             STALL++;
             stallInInstruction=1;
         }
-        //NOT SURE WHETHER I CAN DO THIS HERE
         prevToPrevRd=prevRd;
         prevRd=Rt;
 
@@ -573,7 +576,6 @@ void Data::Execute(int funct,int Rs,int Rt,int Rd,int shamt){
         break;
     }
     MEM(funct,Rd,result);
-
 }
 
 //I-TYPE
@@ -637,6 +639,12 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
         int r1=R1;
         result=immediate+r1;
         isPrevLW=true;
+        loadDegree=0;
+        if(cache->checkHit(result*4)){
+            memStallInCurrentInstruction = 1;
+        }else{
+            memStallInCurrentInstruction = 101;
+        }
         break;
     }
     case 0x2b:{//sw
