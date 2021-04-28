@@ -32,7 +32,7 @@ Data* Data::getInstance(){
 Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0), nopOccured(false), isLabel(false),
     CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false),
     BRANCH_STALL(false),isPrevLW(false), loadDegree(-1),
-    isPrevJmp(false), stallInInstruction(0), MEMSTALL(0), cache()
+    isPrevJmp(false), stallInInstruction(0), MEMSTALL(0), memStallPrev(0), memStallPrevToPrev(0), doubleMem(false)
 {
     assemblyInstruction.push_back("jal 0x2");
     assemblyInstruction.push_back("nop");
@@ -76,6 +76,9 @@ void Data::initialize(){
     MEMSTALL=0;
     delete cache;
     cache=new Cache();
+    memStallPrev=0;
+    memStallPrevToPrev=0;
+    doubleMem=false;
 }
 
 bool isRegisterValid(QString R, bool flag=false)
@@ -310,8 +313,10 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
 {
     if(obj->isTimeLineLocked || CLOCK<=0) //This bound we have to change
         return;
+
     QString vHeader=QString("%1").arg(rindex+1+(tableNo*1000));
     timeline->setVerticalHeaderItem(rindex,new QTableWidgetItem(vHeader));
+
     int cindex=CLOCK+STALL-stallInInstruction-1;
     cindex-=cindexPivot;
     if(branchStall)
@@ -398,7 +403,8 @@ bool Data::run(QTableWidget **timeline,QListWidget *stallList){
         bool branch_stall=BRANCH_STALL;
         bool Jmp_Stall=isPrevJmp;
         stallInInstruction=0;
-        incrementLoadDegree();
+        //
+        incrementLoadDegree();      //0 to 1 and 1 to 2
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
         if(stallInInstruction>0 &&(CLOCK+STALL<2000))
@@ -416,6 +422,7 @@ bool Data::runStepByStep(QTableWidget **timeline,QListWidget *stallList){
         bool Jmp_Stall=isPrevJmp;
         int CIC=PC;//CURRENT INSTRUCTION COUNTER;
         stallInInstruction=0;
+        //reset to 0(if doubleLoad true)
         incrementLoadDegree();
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
@@ -635,15 +642,24 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
         break;
 
     case 0x23:{//lw
-        //result is Effective Address
         int r1=R1;
         result=immediate+r1;
         isPrevLW=true;
-        loadDegree=0;
+        if(loadDegree==1 && !doubleMem){
+            loadDegree=1;
+            doubleMem=true;
+            memStallPrevToPrev=memStallPrev;
+        }
+        else{
+            loadDegree=0;
+        }
+
         if(cache->checkHit(result*4)){
-            memStallInCurrentInstruction = 1;
+            memStallInCurrentInstruction += 1;
+            memStallPrev=memStallInCurrentInstruction;
         }else{
-            memStallInCurrentInstruction = 101;
+            memStallInCurrentInstruction += 101;
+            memStallPrevToPrev=memStallInCurrentInstruction;
         }
         break;
     }

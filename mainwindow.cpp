@@ -158,7 +158,6 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
     if(!file.open(QFile::ReadOnly | QFile::Text)){
         MainWindow::ValidCodePresent=false;
         D->cache->valid=false;
-        QMessageBox::warning(this,"Warning","File not Opened");
         return;
     }
     QTextStream in(&file);

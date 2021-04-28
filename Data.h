@@ -43,6 +43,10 @@ public:
     int MEMSTALL;
     int memStallInCurrentInstruction;
     Cache *cache;
+
+    int memStallPrev;
+    int memStallPrevToPrev;
+    bool doubleMem;
     //void setCache(int cacheSize, int blockSize, int associativity);
 
 private:
@@ -76,6 +80,8 @@ private:
     void incrementLoadDegree(){
         if(loadDegree==-1 || loadDegree==2){
             loadDegree=-1;
+            MEMSTALL+=memStallInCurrentInstruction;
+            memStallInCurrentInstruction=0;
         }
         else{
             loadDegree++;
