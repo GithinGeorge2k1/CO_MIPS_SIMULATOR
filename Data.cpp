@@ -310,13 +310,134 @@ QString Data::displayData(){
 }
 
 void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
-{
+{ 
     if(obj->isTimeLineLocked || CLOCK<=0) //This bound we have to change
         return;
 
     QString vHeader=QString("%1").arg(rindex+1+(tableNo*1000));
     timeline->setVerticalHeaderItem(rindex,new QTableWidgetItem(vHeader));
 
+    //rewriting
+    int cindex=CLOCK+STALL+MEMSTALL-stallInInstruction-1;
+    cindex-=cindexPivot;
+    if(loadDegree==0)//dependancy included ig
+    {
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::gray);
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("ID/RF"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::red);
+        int temp=1;
+        while(stallInInstruction!=0)
+        {
+            if(temp==stallInInstruction)
+            {
+                timeline->setItem(rindex, cindex++, new QTableWidgetItem("ID/RF"));
+                timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
+                break;
+            }
+            timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
+            timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
+            temp++;
+        }
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("EX"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::darkCyan);
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("MEM"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::magenta);
+        for(int i=1;i<memStallInCurrentInstruction;i++)
+        {
+            timeline->setItem(rindex, cindex++, new QTableWidgetItem("MEM"));
+            timeline->item(rindex,cindex-1)->setBackground(Qt::gray);
+        }
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("MEM"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::magenta);
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("WB"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::red);
+    }
+    else if(loadDegree==1)//dependancy not included
+    {
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::gray);
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("ID/RF"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::red);
+        int temp;
+        /*
+        if(stallInInstruction>0)
+        {
+            temp=stalledInstructions+memStallPrev;
+            while(temp>=1)
+            {
+                timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
+                timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
+                temp--;
+            }
+            timeline->setItem(rindex, cindex++, new QTableWidgetItem("ID/RF"));
+            timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
+        }
+        else
+        {
+            timeline->setItem(rindex, cindex++, new QTableWidgetItem("EX"));
+            timeline->item(rindex,cindex-1)->setBackground(Qt::darkCyan);
+            temp=memStallPrev;
+            while(temp>=1)
+            {
+                timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
+                timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
+                temp--;
+            }
+        }
+        */
+        temp=memStallPrev;
+        while(temp>=1)
+        {
+            timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
+            timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
+            temp--;
+        }
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("EX"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::darkCyan);
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("MEM"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::magenta);
+        for(int i=1;i<memStallInCurrentInstruction;i++)
+        {
+            timeline->setItem(rindex, cindex++, new QTableWidgetItem("MEM"));
+            timeline->item(rindex,cindex-1)->setBackground(Qt::gray);
+        }
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("MEM"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::magenta);
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("WB"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::red);
+    }
+    else if(loadDegree==2)//dependancy not included
+    {
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::gray);
+        for(int i=0;i<memStallPrevToPrev;i++)
+        {
+            timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
+            timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
+        }
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("ID/RF"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
+        for(int i=0;i<memStallPrev;i++)
+        {
+            timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
+            timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
+        }
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("EX"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::darkCyan);
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("MEM"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::magenta);
+        for(int i=1;i<memStallInCurrentInstruction;i++)
+        {
+            timeline->setItem(rindex, cindex++, new QTableWidgetItem("MEM"));
+            timeline->item(rindex,cindex-1)->setBackground(Qt::gray);
+        }
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("MEM"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::magenta);
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("WB"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::red);
+    }
+    /*
     int cindex=CLOCK+STALL-stallInInstruction-1;
     cindex-=cindexPivot;
     if(branchStall)
@@ -380,6 +501,7 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
         rindex=0;
         tableNo++;
     }
+    */
 }
 
 void Data::updateStallList(int CurrentInstructionCounter,QListWidget *stallList){
@@ -648,14 +770,14 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
         int r1=R1;
         result=immediate+r1;
         isPrevLW=true;
-        if(loadDegree==1 && !doubleMem){
+        if(loadDegree==1 && !doubleMem)
+        {
             loadDegree=1;
             doubleMem=true;
             memStallPrevToPrev=memStallPrev;
         }
-        else{
+        else
             loadDegree=0;
-        }
 
         if(cache->checkHit(result*4)){
             memStallInCurrentInstruction += 1;
