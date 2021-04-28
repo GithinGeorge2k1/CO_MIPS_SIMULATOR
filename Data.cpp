@@ -363,6 +363,9 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
     }
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("EX"));
     timeline->item(rindex,cindex-1)->setBackground(Qt::darkCyan);
+    for(int i=0;i<memStallInCurrentInstruction;i++){
+
+    }
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("MEM"));
     timeline->item(rindex,cindex-1)->setBackground(Qt::magenta);
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("WB"));
