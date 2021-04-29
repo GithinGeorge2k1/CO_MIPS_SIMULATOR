@@ -764,7 +764,7 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
         int r1=R1;
         result=immediate+r1;
         break;
-    }   
+    }
     }
     MEM(opCode, R2, result);
 }
