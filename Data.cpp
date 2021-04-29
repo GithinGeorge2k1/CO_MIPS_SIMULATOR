@@ -317,8 +317,12 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
     QString vHeader=QString("%1").arg(rindex+1+(tableNo*1000));
     timeline->setVerticalHeaderItem(rindex,new QTableWidgetItem(vHeader));
 
-    int cindex=CLOCK+STALL-stallInInstruction-1;
+    int cindex=CLOCK+STALL+MEMSTALL-stallInInstruction-1;
     cindex-=cindexPivot;
+
+    if(memStallPrevToPrev>0)
+        stallInInstruction=0;
+
     if(branchStall)
     {
         vHeader=QString("%1").arg(rindex+1+(tableNo*1000)+1);
@@ -341,30 +345,51 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
     }
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
     timeline->item(rindex,cindex-1)->setBackground(Qt::gray);
+    for(int i=0;i<memStallPrevToPrev;i++)
+    {
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
+    }
     if(Jmp_Stall){
         timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
         timeline->item(rindex,cindex-1)->setBackground(Qt::green);
         stallInInstruction=0;
     }
+
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("ID/RF"));
     timeline->item(rindex,cindex-1)->setBackground(Qt::red);
+    /*
     int temp=1;
-    while(stallInInstruction!=0)
+    while(stallInInstruction<=temp)
     {
-        if(temp==stallInInstruction)
-        {
-            timeline->setItem(rindex, cindex++, new QTableWidgetItem("ID/RF"));
-            timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
-            break;
-        }
+
+        //if(temp==stallInInstruction)
+        //{
+        //    timeline->setItem(rindex, cindex++, new QTableWidgetItem("ID/RF"));
+        //    timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
+        //    break;
+        //}
+
         timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
         timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
         temp++;
     }
+    */
+    for(int i=1;i<stallInInstruction;i++)
+    {
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
+    }
+    for(int i=0;i<memStallPrev;i++)
+    {
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
+    }
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("EX"));
     timeline->item(rindex,cindex-1)->setBackground(Qt::darkCyan);
     for(int i=0;i<memStallInCurrentInstruction;i++){
-
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
     }
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("MEM"));
     timeline->item(rindex,cindex-1)->setBackground(Qt::magenta);
@@ -648,21 +673,11 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
         int r1=R1;
         result=immediate+r1;
         isPrevLW=true;
-        if(loadDegree==1 && !doubleMem){
-            loadDegree=1;
-            doubleMem=true;
-            memStallPrevToPrev=memStallPrev;
-        }
-        else{
-            loadDegree=0;
-        }
 
         if(cache->checkHit(result*4)){
-            memStallInCurrentInstruction += 1;
-            memStallPrev=memStallInCurrentInstruction;
+            memStallInCurrentInstruction = 1;
         }else{
-            memStallInCurrentInstruction += 101;
-            memStallPrevToPrev=memStallInCurrentInstruction;
+            memStallInCurrentInstruction = 101;
         }
         break;
     }
