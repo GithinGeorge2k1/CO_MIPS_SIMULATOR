@@ -32,7 +32,7 @@ Data* Data::getInstance(){
 Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0), nopOccured(false), isLabel(false),
     CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false),
     BRANCH_STALL(false),isPrevLW(false),
-    isPrevJmp(false), stallInInstruction(0), MEMSTALL(0), memStallInCurrentInstruction(0), memStallPrev(0), memStallPrevToPrev(0)
+    isPrevJmp(false), stallInInstruction(0), MEMSTALL(0), memStallInCurrentInstruction(0), memStallPrev(0), memStallPrevToPrev(0), prevMEM(false), prevToPrevMEM(false)
 {
     assemblyInstruction.push_back("jal 0x2");
     assemblyInstruction.push_back("nop");
@@ -78,6 +78,9 @@ void Data::initialize(){
     cache=new Cache();
     memStallPrev=0;
     memStallPrevToPrev=0;
+
+    prevMEM=false;
+    prevToPrevMEM=false;
 }
 
 bool isRegisterValid(QString R, bool flag=false)
@@ -327,10 +330,16 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
         timeline->setVerticalHeaderItem(rindex+1,new QTableWidgetItem(vHeader));
         timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
         timeline->item(rindex,cindex-1)->setBackground(Qt::gray);
-
+        /*
         for(int i=0;i<memStallPrevToPrev;i++)
         {
             timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
+            timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
+        }
+        */
+        if(prevToPrevMEM)
+        {
+            timeline->setItem(rindex, cindex++, new QTableWidgetItem(QString("Stall x%1").arg(memStallPrevToPrev)));
             timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
         }
 
@@ -354,11 +363,19 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
     }
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
     timeline->item(rindex,cindex-1)->setBackground(Qt::gray);
+    /*
     for(int i=0;i<memStallPrevToPrev;i++)
     {
         timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
         timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
     }
+    */
+    if(prevToPrevMEM)
+    {
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem(QString("Stall x%1").arg(memStallPrevToPrev)));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
+    }
+
     if(Jmp_Stall){  //guarantees prev was a jump => memStallPrev=0;
         timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
         timeline->item(rindex,cindex-1)->setBackground(Qt::green);
@@ -368,9 +385,16 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("ID/RF"));
     timeline->item(rindex,cindex-1)->setBackground(Qt::red);
 
+    /*
     for(int i=0;i<memStallPrev;i++)
     {
         timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
+    }
+    */
+    if(prevMEM)
+    {
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem(QString("Stall x%1").arg(memStallPrev)));
         timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
     }
 
@@ -388,8 +412,15 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
 
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("EX"));
     timeline->item(rindex,cindex-1)->setBackground(Qt::darkCyan);
+    /*
     for(int i=0;i<memStallInCurrentInstruction;i++){
-        timeline->setItem(rindex, cindex++, new QTableWidgetItem("MeMStall"));
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("MEMStall"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
+    }
+    */
+    if(memStallInCurrentInstruction>0)
+    {
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem(QString("MEMStall x%1").arg(memStallInCurrentInstruction)));
         timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
     }
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("MEM"));
@@ -406,8 +437,16 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
         rindex=0;
         tableNo++;
     }
+    /*
     if(memStallPrev>0 && stallInInstruction>0){
         MEMSTALL+=memStallPrev;
+        memStallPrev=0;
+    }
+    */
+    if(prevMEM && stallInInstruction>0)
+    {
+        MEMSTALL+=1;
+        prevMEM=false;
         memStallPrev=0;
     }
 }
@@ -457,8 +496,8 @@ QString Data::forConsole(){
             text.append(QString("<br><edit style=\"color:#ffd700\">Set %1  </edit><edit style=\"color:#66ff66\">%2  </edit><edit style=\"color:#ff4d4d\">%3  </edit>%4").arg(i+1).arg(noOfHits).arg(noOfMisses).arg(averageAccessTime));
         }
         //Or Choose to not display Set Number can be Huge
-        else
-            text.append(QString("<br><edit style=\"color:#ffd700\">Set %1  </edit><edit style=\"color:#ff4d4d\">No Accesses Issued</edit>").arg(i+1));
+        //else
+        //    text.append(QString("<br><edit style=\"color:#ffd700\">Set %1  </edit><edit style=\"color:#ff4d4d\">No Accesses Issued</edit>").arg(i+1));
     }
     return text;
 }

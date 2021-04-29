@@ -46,6 +46,9 @@ public:
 
     int memStallPrev;
     int memStallPrevToPrev;
+
+    bool prevMEM;
+    bool prevToPrevMEM;
     //bool doubleMem;
     //void setCache(int cacheSize, int blockSize, int associativity);
 
@@ -78,9 +81,13 @@ private:
 
 
     void incrementLoadDegree(){
-        MEMSTALL+=memStallPrevToPrev;
+        if(prevToPrevMEM)
+            MEMSTALL+=1;
         memStallPrevToPrev=memStallPrev;
         memStallPrev=memStallInCurrentInstruction;
+
+        prevToPrevMEM=prevMEM;
+        prevMEM=(memStallInCurrentInstruction>0);
         memStallInCurrentInstruction=0;
     }
 };
