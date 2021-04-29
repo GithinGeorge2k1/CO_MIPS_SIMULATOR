@@ -46,6 +46,7 @@ bool Set::checkHit(int tag, int offset)
             return true;
         }
     }
+    qDebug()<<"cacheMiss";
     noOfMisses++;
     return false;
 }
@@ -84,13 +85,18 @@ Cache::Cache() : addressableSize(4), valid(false) //32 Bit ~ 4 Byte addressable 
 void Cache::setCache(int cacheSize, int blockSize, int associativity)
 {
     valid=true;
-    int totalBlocks=(cacheSize*1024)/blockSize; // cacheSize in KB and blockSize in Bytes
-    int noOfWords=blockSize/addressableSize; // Word per Block
+    int totalBlocks=(cacheSize*1024)/blockSize;     // cacheSize in KB and blockSize in Bytes
+    //int noOfWords=blockSize/addressableSize;        // Word per Block
     noOfSets=totalBlocks/associativity;
 
 
-    bits_offset=qFloor(qLn(noOfWords)/qLn(2));// Idk if converting real values to int can give any serious problems / otherwise can use isPowerOfTwo I changed it to return log2(x)
-    bits_index=qFloor(qLn(noOfSets)/qLn(2));
+    bits_offset=(int)log2(blockSize);// Idk if converting real values to int can give any serious problems / otherwise can use isPowerOfTwo I changed it to return log2(x)
+    bits_index=(int)log2(noOfSets);
+
+    qDebug()<<"Offset bits: "<< bits_offset<< "\n";
+    qDebug()<<"index bits: "<< bits_index;
+
+
     bits_tag=32-bits_index-bits_offset;
 
     sets=new Set*[noOfSets];
