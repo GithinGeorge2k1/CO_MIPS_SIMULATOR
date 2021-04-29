@@ -311,6 +311,7 @@ QString Data::displayData(){
 void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
 {
     qDebug()<<"ENTERED UPDATE TABLE";
+    qDebug()<<rindex<<" "<<stallInInstruction;
     if(obj->isTimeLineLocked || CLOCK<=0) //This bound we have to change
         return;
 
@@ -370,14 +371,15 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
         timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
     }
 
-    for(int i=1;i<stallInInstruction;i++)
+    for(int i=0;i<stallInInstruction;i++)
     {
-        timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
-        timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
         if(i==stallInInstruction-1){
             timeline->setItem(rindex, cindex++, new QTableWidgetItem("ID/RF"));
             timeline->item(rindex,cindex-1)->setBackground(Qt::red);
+            break;
         }
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
     }
 
 
@@ -706,8 +708,10 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
 
         if(cache->checkHit(result*4)){
             memStallInCurrentInstruction = 1;
+
         }else{
             memStallInCurrentInstruction = 101;
+            cache->storeInCache(result*4);
         }
         break;
     }
