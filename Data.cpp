@@ -334,6 +334,9 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
             timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
         }
 
+        MEMSTALL+=memStallPrevToPrev;
+        memStallPrevToPrev=0;
+
         timeline->setItem(rindex, cindex, new QTableWidgetItem("Squash"));
         timeline->item(rindex,cindex)->setBackground(Qt::darkRed);
         //NextRow Update and Bound Check
@@ -416,11 +419,13 @@ void Data::updateStallList(int CurrentInstructionCounter,QListWidget *stallList)
 
 QString Data::forConsole(){
     QString text="";
-    text.append(QString("No of instructions executed: %1").arg(QString::number(CLOCK)));
-    text.append(QString("<br>No of Clock Cycles in total: %1").arg(QString::number(CLOCK+STALL+4)));
+    int temp=MEMSTALL+memStallPrev+memStallPrevToPrev+memStallInCurrentInstruction;
+    text.append(QString("No of instructions executed: %1").arg(QString::number(rindex)));
+    text.append(QString("<br>No of Clock Cycles in total: %1").arg(QString::number(CLOCK+STALL+4+temp)));
     text.append(QString("<br>No of Stalls in total: %1").arg(QString::number(STALL)));
+    text.append(QString("<br>No of memStalls in total: %1").arg(QString::number(temp)));
     if(CLOCK!=0){
-        float x=((float)CLOCK)/((float)(CLOCK+STALL+4));
+        float x=((float)rindex)/((float)(CLOCK+STALL+4+temp));
         text.append(QString("<br>Instructions Per ClockCycle <edit style=\"color:#ffd700\">(IPC) : %1</edit>").arg(x));
     }
     text.append(QString("<br><br><edit style=\"color:#ffd700\">Cache</edit><br>"));
