@@ -24,12 +24,7 @@ bool Block::isModified()
 {
     return dirtyBit;
 }
-<<<<<<< Updated upstream
 Set::Set(int noOfBlocks)  : noOfMisses(0), noOfHits(0)
-=======
-
-Set::Set(int noOfBlocks)
->>>>>>> Stashed changes
 {
     setClock=0;
     noOfHits=0;
