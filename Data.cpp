@@ -313,15 +313,13 @@ QString Data::displayData(){
 
 void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
 {
-//    qDebug()<<"ENTERED UPDATE TABLE";
-//    qDebug()<<rindex<<" "<<stallInInstruction;
     if(obj->isTimeLineLocked || CLOCK<=0) //This bound we have to change
         return;
 
     QString vHeader=QString("%1").arg(rindex+1+(tableNo*1000));
     timeline->setVerticalHeaderItem(rindex,new QTableWidgetItem(vHeader));
 
-    int cindex=CLOCK+STALL+MEMSTALL-stallInInstruction-1;
+    int cindex=CLOCK+STALL+MEMSTALLCOUNT-stallInInstruction-1;
     cindex-=cindexPivot;
 
     if(branchStall)             //guarantees prev was Branch
@@ -341,6 +339,7 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
         {
             timeline->setItem(rindex, cindex++, new QTableWidgetItem(QString("Stall x%1").arg(memStallPrevToPrev)));
             timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
+            MEMSTALLCOUNT++;
         }
 
         MEMSTALL+=memStallPrevToPrev;
@@ -445,7 +444,8 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
     */
     if(prevMEM && stallInInstruction>0)
     {
-        MEMSTALL+=1;
+        MEMSTALLCOUNT+=1;
+        MEMSTALL+=memStallPrev;
         prevMEM=false;
         memStallPrev=0;
     }
