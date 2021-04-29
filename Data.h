@@ -40,7 +40,6 @@ public:
     int stallInInstruction;
     //We won't consider 3 stalls for normal data dependancy - (by making WB - half cycle)
 
-    int MEMSTALLCOUNT;
     int MEMSTALL;
     int memStallInCurrentInstruction;
     Cache *cache;
@@ -83,8 +82,7 @@ private:
 
     void incrementLoadDegree(){
         if(prevToPrevMEM)
-            MEMSTALLCOUNT+=1;
-        MEMSTALL+=memStallPrev;
+            MEMSTALL+=1;
         memStallPrevToPrev=memStallPrev;
         memStallPrev=memStallInCurrentInstruction;
 
