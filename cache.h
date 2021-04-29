@@ -50,6 +50,8 @@ class Set
     Set(int noOfBlocks);
     bool checkHit(int tag, int offset);
     bool setBlock(int tag, int offset);
+    int getHits();
+    int getMisses();
 };
 class Cache
 {
@@ -60,12 +62,22 @@ class Cache
         int bits_index;
         int bits_tag;
         int addressableSize;
+        int noOfHits;
+        int noOfMisses;
+        int hitTime;
+        int missPenalty;
     public:
         bool valid;
     Cache();
     void setCache(int cacheSize, int blockSize, int associativity);
     bool checkHit(int address);
     bool storeInCache(int address);
+    int getHits();
+    int getMisses();
+    Set* getSet(int i);
+    int getNoOfSets();
+    int getHitTime();
+    int getMissPenalty();
 };
 
 #endif // CACHE_H

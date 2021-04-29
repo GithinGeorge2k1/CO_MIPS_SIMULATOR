@@ -24,9 +24,16 @@ bool Block::isModified()
 {
     return dirtyBit;
 }
+<<<<<<< Updated upstream
 Set::Set(int noOfBlocks)  : noOfMisses(0), noOfHits(0)
+=======
+
+Set::Set(int noOfBlocks)
+>>>>>>> Stashed changes
 {
     setClock=0;
+    noOfHits=0;
+    noOfMisses=0;
     blocks=new Block*[noOfBlocks];
     for(int i=0;i<noOfBlocks;i++)
     {
@@ -34,7 +41,14 @@ Set::Set(int noOfBlocks)  : noOfMisses(0), noOfHits(0)
     }
     this->noOfBlocks=noOfBlocks;
 }
-
+int Set::getHits()
+{
+    return noOfHits;
+}
+int Set::getMisses()
+{
+    return noOfMisses;
+}
 bool Set::checkHit(int tag, int offset)
 {
 //    if(offset<0 || offset>=noOfBlocks)//Only for safety nothing important
@@ -77,11 +91,34 @@ bool Set::setBlock(int tag, int offset)
     return true;
 }
 
-Cache::Cache() : addressableSize(4), valid(false) //32 Bit ~ 4 Byte addressable machine - Assumption
+Cache::Cache() : addressableSize(4), noOfHits(0), noOfMisses(0),hitTime(2), missPenalty(100), valid(false)  //32 Bit ~ 4 Byte addressable machine - Assumption
 {
 
 }
-
+Set* Cache::getSet(int i)
+{
+    return sets[i];
+}
+int Cache::getNoOfSets()
+{
+    return noOfSets;
+}
+int Cache::getHits()
+{
+    return noOfHits;
+}
+int Cache::getMisses()
+{
+    return noOfMisses;
+}
+int Cache::getHitTime()
+{
+    return hitTime;
+}
+int Cache::getMissPenalty()
+{
+    return missPenalty;
+}
 void Cache::setCache(int cacheSize, int blockSize, int associativity)
 {
     valid=true;
@@ -135,6 +172,13 @@ bool Cache::checkHit(int address)
     int tag=(address>>(bits_index+bits_offset)) & andValue;
 
     if(index>=0 && index<noOfSets)
-        return sets[index]->checkHit(tag, offset);
-    return false;
+    {
+        if(sets[index]->checkHit(tag, offset))
+        {
+            noOfHits++;
+            return true;
+        }
+    }
+    noOfMisses++;
+        return false;
 }

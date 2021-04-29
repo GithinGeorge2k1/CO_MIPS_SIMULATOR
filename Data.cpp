@@ -279,7 +279,7 @@ bool Data::addCode(QString& text){
 
 QString Data::displayRegisters(){
     QString text="";
-    text.append(QString("<edit style=\"color:#ffd700\">PC&nbsp;&nbsp;&nbsp;=&nbsp;%1\n</edit>").arg(PC));
+    text.append(QString("<edit style=\"color:#ffd700\">PC&nbsp;&nbsp;&nbsp;=&nbsp;%1</edit>").arg(PC));
     QStringList regs={"zero", "at", "v0", "v1", "a0", "a1", "a2", "a3", "t0", "t1", "t2", "t3", "t4", "t5", "t6",
                       "t7", "s0", "s1", "s2", "s3", "s4", "s5", "s6",  "s7",  "t8",  "t9", "k0", "k1", "gp", "sp", "s8",
                       "ra"};
@@ -287,7 +287,7 @@ QString Data::displayRegisters(){
     {
         for(int i=0;i<registerWriteBackLine;i++)
             text.append(QString("<br>R[%1]&nbsp;&nbsp;$%3 &nbsp;=&nbsp;%2").arg(i).arg(R[i]).arg(regs.at(i)));
-        text.append(QString("<br><edit style=\"color:#ffd700\">R[%1]&nbsp;&nbsp;$%3 &nbsp;=&nbsp;%2\n</edit>").arg(registerWriteBackLine).arg(R[registerWriteBackLine]).arg(regs.at(registerWriteBackLine)));
+        text.append(QString("<br><edit style=\"color:#ffd700\">R[%1]&nbsp;&nbsp;$%3 &nbsp;=&nbsp;%2</edit>").arg(registerWriteBackLine).arg(R[registerWriteBackLine]).arg(regs.at(registerWriteBackLine)));
         for(int i=registerWriteBackLine+1;i<32;i++)
             text.append(QString("<br>R[%1]&nbsp;&nbsp;$%3 &nbsp;=&nbsp;%2").arg(i).arg(R[i]).arg(regs.at(i)));
         registerWriteBackLine=-1;
@@ -413,15 +413,47 @@ void Data::updateStallList(int CurrentInstructionCounter,QListWidget *stallList)
 }
 
 QString Data::forConsole(){
-    QString result="";
-    result.append("No of instructions executed: ").append(QString::number(CLOCK));
-    result.append("\nNo of Clock Cycles in total: ").append(QString::number(CLOCK+STALL+4));
-    result.append("\nNo of Stalls in total: ").append(QString::number(STALL));
+    QString text="";
+    text.append(QString("No of instructions executed: %1").arg(QString::number(CLOCK)));
+    text.append(QString("<br>No of Clock Cycles in total: %1").arg(QString::number(CLOCK+STALL+4)));
+    text.append(QString("<br>No of Stalls in total: %1").arg(QString::number(STALL)));
     if(CLOCK!=0){
         float x=((float)CLOCK)/((float)(CLOCK+STALL+4));
-        result.append(QString("\nInstructions Per ClockCycle(IPC): %1").arg(x));
+        text.append(QString("<br>Instructions Per ClockCycle <edit style=\"color:#ffd700\">(IPC) : %1</edit>").arg(x));
     }
-    return result;
+    text.append(QString("<br><br><edit style=\"color:#ffd700\">Cache</edit><br>"));
+    text.append(QString("(<edit style=\"color:#66ff66\">Green : No of Hits</edit>  -  <edit style=\"color:#ff4d4d\">Red : No of Misses</edit>  -  White : Average Access Time)"));
+    int noOfMisses=cache->getMisses();
+    int noOfHits=cache->getHits();
+    int noOfAccesses=noOfHits+noOfMisses;
+    if(noOfAccesses!=0)
+    {
+        float missRate=noOfMisses/(noOfAccesses*1.0);
+        float averageAccessTime=cache->getHitTime()*noOfAccesses+cache->getMissPenalty()*missRate;
+        text.append(QString("<br>Overall  : <edit style=\"color:#66ff66\">%2  </edit><edit style=\"color:#ff4d4d\">%3  </edit>%4").arg(noOfHits).arg(noOfMisses).arg(averageAccessTime));
+    }
+    else
+        text.append(QString("<br><edit style=\"color:#ff4d4d\">No Accesses Issued to Cache</edit>"));
+    if(noOfAccesses==0)
+        return text;
+    int noOfSets=cache->getNoOfSets();
+    for(int i=0;i<noOfSets;i++)
+    {
+        Set temp=*(cache->getSet(i));
+        int noOfMisses=temp.getMisses();
+        int noOfHits=temp.getHits();
+        int noOfAccesses=noOfHits+noOfMisses;
+        if(noOfAccesses!=0)
+        {
+            float missRate=noOfMisses/(noOfAccesses*1.0);
+            float averageAccessTime=cache->getHitTime()*noOfAccesses+cache->getMissPenalty()*missRate;
+            text.append(QString("<br><edit style=\"color:#ffd700\">Set %1  </edit><edit style=\"color:#66ff66\">%2  </edit><edit style=\"color:#ff4d4d\">%3  </edit>%4").arg(i+1).arg(noOfHits).arg(noOfMisses).arg(averageAccessTime));
+        }
+        //Or Choose to not display Set Number can be Huge
+        else
+            text.append(QString("<br><edit style=\"color:#ffd700\">Set %1  </edit><edit style=\"color:#ff4d4d\">No Accesses Issued</edit>").arg(i+1));
+    }
+    return text;
 }
 
 bool Data::run(QTableWidget **timeline,QListWidget *stallList){
