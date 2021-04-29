@@ -31,8 +31,8 @@ Data* Data::getInstance(){
 //Member initializer list && constructor implementation
 Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0), nopOccured(false), isLabel(false),
     CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false),
-    BRANCH_STALL(false),isPrevLW(false), loadDegree(-1),
-    isPrevJmp(false), stallInInstruction(0), MEMSTALL(0), memStallPrev(0), memStallPrevToPrev(0), doubleMem(false)
+    BRANCH_STALL(false),isPrevLW(false),
+    isPrevJmp(false), stallInInstruction(0), MEMSTALL(0), memStallInCurrentInstruction(0), memStallPrev(0), memStallPrevToPrev(0)
 {
     assemblyInstruction.push_back("jal 0x2");
     assemblyInstruction.push_back("nop");
@@ -64,7 +64,6 @@ void Data::initialize(){
     //FWD_ENABLED=false;
     BRANCH_STALL=false;
     isPrevLW=false;
-    loadDegree=-1;
     isPrevJmp=false;
     rindex=0;
     cindexPivot=0;
@@ -74,11 +73,11 @@ void Data::initialize(){
     assemblyInstruction.push_back("jal 0x2");
     assemblyInstruction.push_back("nop");
     MEMSTALL=0;
+    memStallInCurrentInstruction=0;
     delete cache;
     cache=new Cache();
     memStallPrev=0;
     memStallPrevToPrev=0;
-    doubleMem=false;
 }
 
 bool isRegisterValid(QString R, bool flag=false)
@@ -320,15 +319,19 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
     int cindex=CLOCK+STALL+MEMSTALL-stallInInstruction-1;
     cindex-=cindexPivot;
 
-    if(memStallPrevToPrev>0)
-        stallInInstruction=0;
-
-    if(branchStall)
+    if(branchStall)             //guarantees prev was Branch
     {
         vHeader=QString("%1").arg(rindex+1+(tableNo*1000)+1);
         timeline->setVerticalHeaderItem(rindex+1,new QTableWidgetItem(vHeader));
         timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
         timeline->item(rindex,cindex-1)->setBackground(Qt::gray);
+
+        for(int i=0;i<memStallPrevToPrev;i++)
+        {
+            timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
+            timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
+        }
+
         timeline->setItem(rindex, cindex, new QTableWidgetItem("Squash"));
         timeline->item(rindex,cindex)->setBackground(Qt::darkRed);
         //NextRow Update and Bound Check
@@ -342,6 +345,7 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
         }
         //This stallInInstruction corresponds to branch caused stall - Not data dependancy!! Therfore ID/RF comes in next Cycle after IF!!
         stallInInstruction=0;
+        incrementLoadDegree();
     }
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
     timeline->item(rindex,cindex-1)->setBackground(Qt::gray);
@@ -350,7 +354,7 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
         timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
         timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
     }
-    if(Jmp_Stall){
+    if(Jmp_Stall){  //guarantees prev was a jump => memStallPrev=0;
         timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
         timeline->item(rindex,cindex-1)->setBackground(Qt::green);
         stallInInstruction=0;
@@ -358,37 +362,28 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
 
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("ID/RF"));
     timeline->item(rindex,cindex-1)->setBackground(Qt::red);
-    /*
-    int temp=1;
-    while(stallInInstruction<=temp)
-    {
 
-        //if(temp==stallInInstruction)
-        //{
-        //    timeline->setItem(rindex, cindex++, new QTableWidgetItem("ID/RF"));
-        //    timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
-        //    break;
-        //}
-
-        timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
-        timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
-        temp++;
-    }
-    */
-    for(int i=1;i<stallInInstruction;i++)
-    {
-        timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
-        timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
-    }
     for(int i=0;i<memStallPrev;i++)
     {
         timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
         timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
     }
+
+    for(int i=1;i<stallInInstruction;i++)
+    {
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
+        timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
+        if(i==stallInInstruction-1){
+            timeline->setItem(rindex, cindex++, new QTableWidgetItem("ID/RF"));
+            timeline->item(rindex,cindex-1)->setBackground(Qt::red);
+        }
+    }
+
+
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("EX"));
     timeline->item(rindex,cindex-1)->setBackground(Qt::darkCyan);
     for(int i=0;i<memStallInCurrentInstruction;i++){
-        timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
+        timeline->setItem(rindex, cindex++, new QTableWidgetItem("MeMStall"));
         timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
     }
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("MEM"));
@@ -404,6 +399,10 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
         obj->setNewTable();
         rindex=0;
         tableNo++;
+    }
+    if(memStallPrev>0 && stallInInstruction>0){
+        MEMSTALL+=memStallPrev;
+        memStallPrev=0;
     }
 }
 
@@ -431,8 +430,7 @@ bool Data::run(QTableWidget **timeline,QListWidget *stallList){
         bool branch_stall=BRANCH_STALL;
         bool Jmp_Stall=isPrevJmp;
         stallInInstruction=0;
-        //
-        incrementLoadDegree();      //0 to 1 and 1 to 2
+        incrementLoadDegree();
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
         if(stallInInstruction>0 &&(CLOCK+STALL<2000))
@@ -450,7 +448,6 @@ bool Data::runStepByStep(QTableWidget **timeline,QListWidget *stallList){
         bool Jmp_Stall=isPrevJmp;
         int CIC=PC;//CURRENT INSTRUCTION COUNTER;
         stallInInstruction=0;
-        //reset to 0(if doubleLoad true)
         incrementLoadDegree();
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);

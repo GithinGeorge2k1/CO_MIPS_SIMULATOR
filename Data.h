@@ -35,7 +35,7 @@ public:
     bool BRANCH_STALL; //WHETHER THE CURRENT INS WOULD CAUSE A BRANCH RELATED STALL FOR NEXT INSTRUCTION (NOT TAKEN PREDICTOR)
     bool isPrevLW;
 
-    int loadDegree;
+    //int loadDegree;
     bool isPrevJmp;
     int stallInInstruction;
     //We won't consider 3 stalls for normal data dependancy - (by making WB - half cycle)
@@ -46,7 +46,7 @@ public:
 
     int memStallPrev;
     int memStallPrevToPrev;
-    bool doubleMem;
+    //bool doubleMem;
     //void setCache(int cacheSize, int blockSize, int associativity);
 
 private:
@@ -78,19 +78,10 @@ private:
 
 
     void incrementLoadDegree(){
-        /*
-        if(loadDegree==-1 || loadDegree==2){
-            loadDegree=-1;
-            MEMSTALL+=memStallInCurrentInstruction;
-            memStallInCurrentInstruction=0;
-        }
-        else{
-            loadDegree++;
-        }
-        */
+        MEMSTALL+=memStallPrevToPrev;
         memStallPrevToPrev=memStallPrev;
         memStallPrev=memStallInCurrentInstruction;
-        MEMSTALL+=memStallPrevToPrev;
+        memStallInCurrentInstruction=0;
     }
 };
 

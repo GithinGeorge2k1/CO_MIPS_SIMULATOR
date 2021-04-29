@@ -1,5 +1,6 @@
 #include "cache.h"
 #include<QtMath>
+
 int power(int a, int b)//a^b
 {
     if(b==0)
