@@ -1,5 +1,6 @@
 #include "cache.h"
 #include<QtMath>
+#include <QDebug>
 
 int power(int a, int b)//a^b
 {
@@ -23,7 +24,7 @@ bool Block::isModified()
 {
     return dirtyBit;
 }
-Set::Set(int noOfBlocks)
+Set::Set(int noOfBlocks)  : noOfMisses(0), noOfHits(0)
 {
     setClock=0;
     blocks=new Block*[noOfBlocks];
@@ -31,15 +32,17 @@ Set::Set(int noOfBlocks)
     {
         blocks[i]=new Block();
     }
+    this->noOfBlocks=noOfBlocks;
 }
 
 bool Set::checkHit(int tag, int offset)
 {
-    if(offset<0 || offset>=noOfBlocks)//Only for safety nothing important
-        return false;
+//    if(offset<0 || offset>=noOfBlocks)//Only for safety nothing important
+//        return false;
     for(int i=0;i<noOfBlocks;i++){
         if(tag==blocks[i]->getTag()){
             noOfHits++;
+            qDebug()<<"cacheHit";
             return true;
         }
     }
@@ -48,8 +51,8 @@ bool Set::checkHit(int tag, int offset)
 }
 bool Set::setBlock(int tag, int offset)
 {
-    if(offset<0 || offset>=noOfBlocks)//Only for safety nothing important
-        return false;
+//    if(offset<0 || offset>=noOfBlocks)//Only for safety nothing important
+//        return false;
     int kickOutIndex=0;
     for(int i=0;i<noOfBlocks;i++)
     {

@@ -310,6 +310,7 @@ QString Data::displayData(){
 
 void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
 {
+    qDebug()<<"ENTERED UPDATE TABLE";
     if(obj->isTimeLineLocked || CLOCK<=0) //This bound we have to change
         return;
 
