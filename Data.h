@@ -78,7 +78,6 @@ private:
 
 
     void incrementLoadDegree(){
-        /*
         if(loadDegree==-1 || loadDegree==2){
             loadDegree=-1;
             MEMSTALL+=memStallInCurrentInstruction;
@@ -86,17 +85,6 @@ private:
         }
         else{
             loadDegree++;
-        }
-        */
-
-        if(loadDegree==-1)
-        {
-            memStallInCurrentInstruction=0;
-        }
-        else
-        {
-            loadDegree=(loadDegree+2)%4-1;
-            MEMSTALL+=memStallPrevToPrev;
         }
     }
 };
