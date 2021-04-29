@@ -298,18 +298,6 @@ void MainWindow::on_actionRun_Step_By_Step_triggered()
     }
 }
 
-void MainWindow::on_actionCustom_Function_triggered()
-{
-    Data* x=Data::getInstance();
-//        QString test="";
-//        int I=x->instructions[2];
-//        for(int i=31;i>=0;i--){
-//            char c=(char)(((I>>i)&1)+48);
-//            test.append(QChar(c));
-//        }
-     //qDebug()<<x->FWD_ENABLED;
-}
-
 void MainWindow::on_actionHelp_triggered()
 {
     helpwindow=new About_Help(nullptr);

@@ -466,15 +466,6 @@
     <addaction name="separator"/>
     <addaction name="actionEnable_Forwarding"/>
    </widget>
-   <widget class="QMenu" name="menuWindow">
-    <property name="title">
-     <string>Window</string>
-    </property>
-    <addaction name="actionRegisters"/>
-    <addaction name="actionData"/>
-    <addaction name="actionText"/>
-    <addaction name="actionConsole"/>
-   </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="title">
      <string>About</string>
@@ -482,17 +473,9 @@
     <addaction name="separator"/>
     <addaction name="actionHelp"/>
    </widget>
-   <widget class="QMenu" name="menuDebug_Options">
-    <property name="title">
-     <string>Debug Options</string>
-    </property>
-    <addaction name="actionCustom_Function"/>
-   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSimulator"/>
-   <addaction name="menuWindow"/>
    <addaction name="menuAbout"/>
-   <addaction name="menuDebug_Options"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -529,7 +512,6 @@
    <addaction name="actionReinitialize_and_Load_File"/>
    <addaction name="actionRun_Step_By_Step"/>
    <addaction name="actionEnable_Forwarding"/>
-   <addaction name="actionCustom_Function"/>
    <addaction name="actionRun"/>
   </widget>
   <action name="actionReinitialize_and_Load_File">
@@ -552,34 +534,9 @@
     <string>Run</string>
    </property>
   </action>
-  <action name="actionRegisters">
-   <property name="text">
-    <string>Registers</string>
-   </property>
-  </action>
-  <action name="actionData">
-   <property name="text">
-    <string>Data</string>
-   </property>
-  </action>
-  <action name="actionText">
-   <property name="text">
-    <string>Text</string>
-   </property>
-  </action>
-  <action name="actionConsole">
-   <property name="text">
-    <string>Console</string>
-   </property>
-  </action>
   <action name="actionRun_Step_By_Step">
    <property name="text">
     <string>Run Step By Step</string>
-   </property>
-  </action>
-  <action name="actionCustom_Function">
-   <property name="text">
-    <string>Custom Function</string>
    </property>
   </action>
   <action name="actionHelp">

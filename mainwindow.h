@@ -24,17 +24,10 @@ public:
 private slots:
     void on_actionReinitialize_and_Load_File_triggered();
     void on_actionQuit_triggered();
-
     void on_actionClear_Registers_triggered();
-
     void on_actionRun_triggered();
-
     void on_actionRun_Step_By_Step_triggered();
-
-    void on_actionCustom_Function_triggered();
-
     void on_actionHelp_triggered();
-
     void on_actionEnable_Forwarding_triggered();
 
 private:
