@@ -86,7 +86,7 @@ bool Set::setBlock(int tag, int offset)
     return true;
 }
 
-Cache::Cache() : addressableSize(4), noOfHits(0), noOfMisses(0),hitTime(2), missPenalty(100), valid(false)  //32 Bit ~ 4 Byte addressable machine - Assumption
+Cache::Cache() : addressableSize(4), noOfHits(0), noOfMisses(0), hitTime(2), missPenalty(100), valid(false)  //32 Bit ~ 4 Byte addressable machine - Assumption
 {
 
 }

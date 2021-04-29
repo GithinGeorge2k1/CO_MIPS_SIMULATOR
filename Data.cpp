@@ -476,7 +476,7 @@ QString Data::forConsole(){
     if(noOfAccesses!=0)
     {
         float missRate=noOfMisses/(noOfAccesses*1.0);
-        float averageAccessTime=cache->getHitTime()*noOfAccesses+cache->getMissPenalty()*missRate;
+        float averageAccessTime=cache->getHitTime()+cache->getMissPenalty()*missRate;
         text.append(QString("<br>Overall  : <edit style=\"color:#66ff66\">%2  </edit><edit style=\"color:#ff4d4d\">%3  </edit>%4").arg(noOfHits).arg(noOfMisses).arg(averageAccessTime));
     }
     else
@@ -493,7 +493,7 @@ QString Data::forConsole(){
         if(noOfAccesses!=0)
         {
             float missRate=noOfMisses/(noOfAccesses*1.0);
-            float averageAccessTime=cache->getHitTime()*noOfAccesses+cache->getMissPenalty()*missRate;
+            float averageAccessTime=cache->getHitTime()+cache->getMissPenalty()*missRate;
             text.append(QString("<br><edit style=\"color:#ffd700\">Set %1  </edit><edit style=\"color:#66ff66\">%2  </edit><edit style=\"color:#ff4d4d\">%3  </edit>%4").arg(i+1).arg(noOfHits).arg(noOfMisses).arg(averageAccessTime));
         }
         //Or Choose to not display Set Number can be Huge
