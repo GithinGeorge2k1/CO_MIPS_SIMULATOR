@@ -11,8 +11,6 @@
 #include <QMessageBox>
 
 Data* Data::instance=0;
-int prevClockCycle;
-int prevSpace;
 int registerWriteBackLine=-1;
 int rindex=0;
 int cindexPivot=0;
@@ -32,7 +30,7 @@ Data* Data::getInstance(){
 Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0), nopOccured(false), isLabel(false),
     CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false),
     BRANCH_STALL(false),isPrevLW(false),
-    isPrevJmp(false), stallInInstruction(0), MEMSTALL(0), memStallInCurrentInstruction(0), memStallPrev(0), memStallPrevToPrev(0), prevMEM(false), prevToPrevMEM(false)
+    isPrevJmp(false), stallInInstruction(0), MEMSTALLCOUNT(0), MEMSTALL(0), memStallInCurrentInstruction(0), memStallPrev(0), memStallPrevToPrev(0), prevMEM(false), prevToPrevMEM(false)
 {
     assemblyInstruction.push_back("jal 0x2");
     assemblyInstruction.push_back("nop");
@@ -68,10 +66,13 @@ void Data::initialize(){
     rindex=0;
     cindexPivot=0;
     stalledInstructions=1;
+    tableNo=0;
+    registerWriteBackLine=-1;
     obj=MainWindow::getInstance();
     assemblyInstruction.clear();
     assemblyInstruction.push_back("jal 0x2");
     assemblyInstruction.push_back("nop");
+    MEMSTALLCOUNT=0;
     MEMSTALL=0;
     memStallInCurrentInstruction=0;
     delete cache;
@@ -459,7 +460,7 @@ void Data::updateStallList(int CurrentInstructionCounter,QListWidget *stallList)
 QString Data::forConsole(){
     QString text="";
     int temp=MEMSTALL+memStallPrev+memStallPrevToPrev+memStallInCurrentInstruction;
-    text.append(QString("No of instructions executed: %1").arg(QString::number(rindex)));
+    text.append(QString("No of instructions executed: %1").arg(QString::number(tableNo*1000+rindex)));
     text.append(QString("<br>No of Clock Cycles in total: %1").arg(QString::number(CLOCK+STALL+4+temp)));
     text.append(QString("<br>No of Stalls in total: %1").arg(QString::number(STALL)));
     text.append(QString("<br>No of memStalls in total: %1").arg(QString::number(temp)));

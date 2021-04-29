@@ -50,8 +50,6 @@ public:
 
     bool prevMEM;
     bool prevToPrevMEM;
-    //bool doubleMem;
-    //void setCache(int cacheSize, int blockSize, int associativity);
 
 private:
     static Data* instance;
@@ -84,7 +82,8 @@ private:
     void incrementLoadDegree(){
         if(prevToPrevMEM)
             MEMSTALLCOUNT+=1;
-        MEMSTALL+=memStallPrev;
+
+        MEMSTALL+=memStallPrevToPrev;
         memStallPrevToPrev=memStallPrev;
         memStallPrev=memStallInCurrentInstruction;
 
