@@ -32,7 +32,7 @@ Data* Data::getInstance(){
 Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, instructionSize(0), nopOccured(false), isLabel(false),
     CLOCK(0), STALL(0), prevRd(-1), prevToPrevRd(-1), FWD_ENABLED(false),
     BRANCH_STALL(false),isPrevLW(false),
-    isPrevJmp(false), stallInInstruction(0), MEMSTALL(0), memStallInCurrentInstruction(0), memStallPrev(0), memStallPrevToPrev(0), prevMEM(false), prevToPrevMEM(false)
+    isPrevJmp(false), stallInInstruction(0), MEMSTALL(0), memStallInCurrentInstruction(0), memStallPrev(0), memStallPrevToPrev(0), memStallPointer(0), prevMEM(false), prevToPrevMEM(false)
 {
     assemblyInstruction.push_back("jal 0x2");
     assemblyInstruction.push_back("nop");
@@ -76,6 +76,7 @@ void Data::initialize(){
     memStallInCurrentInstruction=0;
     delete cache;
     cache=new Cache();
+    memStallPointer=0;
     memStallPrev=0;
     memStallPrevToPrev=0;
 
@@ -321,7 +322,7 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
     QString vHeader=QString("%1").arg(rindex+1+(tableNo*1000));
     timeline->setVerticalHeaderItem(rindex,new QTableWidgetItem(vHeader));
 
-    int cindex=CLOCK+STALL+MEMSTALL-stallInInstruction-1;
+    int cindex=CLOCK+STALL+memStallPointer-stallInInstruction-1;
     cindex-=cindexPivot;
 
     if(branchStall)             //guarantees prev was Branch
@@ -343,6 +344,11 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
             timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
         }
 
+        if(prevToPrevMEM)
+        {
+            memStallPointer+=1;
+            prevToPrevMEM=false;
+        }
         MEMSTALL+=memStallPrevToPrev;
         memStallPrevToPrev=0;
 
@@ -445,7 +451,8 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
     */
     if(prevMEM && stallInInstruction>0)
     {
-        MEMSTALL+=1;
+        memStallPointer+=1;
+        MEMSTALL+=memStallPrev;
         prevMEM=false;
         memStallPrev=0;
     }

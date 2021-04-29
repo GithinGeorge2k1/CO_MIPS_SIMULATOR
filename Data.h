@@ -47,6 +47,7 @@ public:
     int memStallPrev;
     int memStallPrevToPrev;
 
+    int memStallPointer;
     bool prevMEM;
     bool prevToPrevMEM;
     //bool doubleMem;
@@ -82,7 +83,10 @@ private:
 
     void incrementLoadDegree(){
         if(prevToPrevMEM)
-            MEMSTALL+=1;
+        {
+            MEMSTALL+=memStallPrevToPrev;
+            memStallPointer+=1;
+        }
         memStallPrevToPrev=memStallPrev;
         memStallPrev=memStallInCurrentInstruction;
 
