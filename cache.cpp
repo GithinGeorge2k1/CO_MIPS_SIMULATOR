@@ -44,10 +44,8 @@ int Set::getMisses()
 {
     return noOfMisses;
 }
-bool Set::checkHit(int tag, int offset)
+bool Set::checkHit(int tag)
 {
-//    if(offset<0 || offset>=noOfBlocks)//Only for safety nothing important
-//        return false;
     for(int i=0;i<noOfBlocks;i++){
         if(tag==blocks[i]->getTag()){
             noOfHits++;
@@ -57,10 +55,8 @@ bool Set::checkHit(int tag, int offset)
     noOfMisses++;
     return false;
 }
-bool Set::setBlock(int tag, int offset)
+bool Set::setBlock(int tag)
 {
-//    if(offset<0 || offset>=noOfBlocks)//Only for safety nothing important
-//        return false;
     int kickOutIndex=0;
     for(int i=0;i<noOfBlocks;i++)
     {
@@ -133,8 +129,8 @@ void Cache::setCache(int cacheSize, int blockSize, int associativity)
 bool Cache::storeInCache(int address)
 {
     int andValue;
-    andValue=power(2, bits_offset)-1;//Not Required
-    int offset=address & andValue;//Not Required
+//    andValue=power(2, bits_offset)-1;//Not Required
+//    int offset=address & andValue;//Not Required
 
     andValue=power(2, bits_index)-1;
     int index=(address>>bits_offset) & andValue;
@@ -143,14 +139,14 @@ bool Cache::storeInCache(int address)
     int tag=(address>>(bits_index+bits_offset)) & andValue;
 
     if(index>=0 && index<noOfSets)
-        return sets[index]->setBlock(tag, offset);
+        return sets[index]->setBlock(tag);
     return false;
 }
 bool Cache::checkHit(int address)
 {
     int andValue;
-    andValue=power(2, bits_offset)-1;//Not Required
-    int offset=address & andValue;//Not Required
+//    andValue=power(2, bits_offset)-1;//Not Required
+//    int offset=address & andValue;//Not Required
 
     andValue=power(2, bits_index)-1;
     int index=(address>>bits_offset) & andValue;
@@ -160,7 +156,7 @@ bool Cache::checkHit(int address)
 
     if(index>=0 && index<noOfSets)
     {
-        if(sets[index]->checkHit(tag, offset))
+        if(sets[index]->checkHit(tag))
         {
             noOfHits++;
             return true;

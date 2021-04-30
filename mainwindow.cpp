@@ -14,7 +14,7 @@
 
 MainWindow* MainWindow::obj=NULL;
 bool MainWindow::ValidCodePresent=false;
-const int noOfTables=3;
+const int noOfTables=1;
 MainWindow* MainWindow::getInstance()
 {
     if(obj==NULL)
@@ -33,12 +33,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     timeline[tableIndex+1]=ui->timeline2;
     timeline[tableIndex+2]=ui->timeline3;
 
-    timeline[tableIndex]->setRowCount(1000);
-    timeline[tableIndex]->setColumnCount(3500);
-    timeline[tableIndex+1]->setRowCount(1000);
-    timeline[tableIndex+1]->setColumnCount(3500);
-    timeline[tableIndex+2]->setRowCount(1000);
-    timeline[tableIndex+2]->setColumnCount(3500);
+    timeline[tableIndex]->setRowCount(1500);
+    timeline[tableIndex]->setColumnCount(4500);
+//    timeline[tableIndex+1]->setRowCount(1000);
+//    timeline[tableIndex+1]->setColumnCount(3500);
+//    timeline[tableIndex+2]->setRowCount(1000);
+//    timeline[tableIndex+2]->setColumnCount(3500);
 
     stallList=ui->listWidget;
     Maps::getInstance();
