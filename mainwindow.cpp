@@ -153,7 +153,7 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
         return;
     }
 
-    QString path=QFileDialog::getOpenFileName(this,"title");
+    QString path=QFileDialog::getOpenFileName(this,"Open File");
     QFile file(path);
     if(!file.open(QFile::ReadOnly | QFile::Text)){
         MainWindow::ValidCodePresent=false;
