@@ -24,7 +24,11 @@ MainWindow* MainWindow::getInstance()
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    fowd=new QCheckBox("Data Forwarding", this);
+    fowd->setLayoutDirection(Qt::LeftToRight);
+    connect(fowd, &QCheckBox::toggled, this, &MainWindow::ForwardingEnabled);
+    ui->statusbar->addPermanentWidget(fowd);
+    isExecuting=false;
     isTimeLineLocked=false;
 
     tableIndex=0;
@@ -133,6 +137,7 @@ int storeAllLabelsAndData(QTextStream& in){
 void MainWindow::on_actionReinitialize_and_Load_File_triggered()
 {
     int start=-1;
+    isExecuting=false;
     Data* D=Data::getInstance();
     initialize();
 
@@ -243,6 +248,7 @@ void MainWindow::on_actionClear_Registers_triggered()
 void MainWindow::on_actionRun_triggered()
 {
     if(MainWindow::ValidCodePresent){
+        isExecuting=true;
         Data *D=Data::getInstance();
         if(!D->labelMap.contains("main")){
             QMessageBox::warning(this,"Cannot find main","No entry point defined");
@@ -258,6 +264,7 @@ void MainWindow::on_actionRun_triggered()
             QMessageBox::information(this,"Program Done","EXECUTION COMPLETED!!");
             D->nopOccured=false;
         }
+        isExecuting=false;
     }
     else{
         QMessageBox::warning(this,"Invalid Assembly Code","Cannot Run!! Invalid Code");
@@ -268,6 +275,7 @@ void MainWindow::on_actionRun_triggered()
 void MainWindow::on_actionRun_Step_By_Step_triggered()
 {
     if(MainWindow::ValidCodePresent){
+        isExecuting=true;
         Data *D=Data::getInstance();
         if(!D->labelMap.contains("main")){
             QMessageBox::warning(this,"Cannot find main","No entry point was defined");
@@ -277,10 +285,12 @@ void MainWindow::on_actionRun_Step_By_Step_triggered()
         refreshAllPanels();
         if(!isExitSmooth){
             QMessageBox::information(this,"Run Error",QString("No Valid Instruction at %1").arg(D->instructionSize+1));
+            isExecuting=false;
         }
         else if(D->nopOccured){
             QMessageBox::information(this,"Program Done","EXITED VIA NOP INSTRUCTION");
              D->nopOccured=false;
+             isExecuting=false;
         }
     }
     else{
@@ -295,10 +305,28 @@ void MainWindow::on_actionHelp_triggered()
     helpwindow->show();
 }
 
+void MainWindow::ForwardingEnabled()
+{
+    Data* D=Data::getInstance();
+    if(isExecuting)// To prevent Data Forwarding to be enabled in between step by step execution of the Program | This option can be changed only before execution i.e. PC=0
+    {
+        ui->statusbar->showMessage("Cannot toggle option during Execution", 5000);
+        if(D->FWD_ENABLED)
+            fowd->setCheckState(Qt::Checked);
+        else
+            fowd->setCheckState(Qt::Unchecked);
+        return;
+    }
+    D->FWD_ENABLED=!D->FWD_ENABLED;
+    if(D->FWD_ENABLED)
+        ui->statusbar->showMessage("Forwarding is Now Enabled", 5000);
+    else
+        ui->statusbar->showMessage("Forwarding is Now Disabled", 5000);
+}
 void MainWindow::on_actionEnable_Forwarding_triggered()
 {
     Data* D=Data::getInstance();
-    if(D->PC!=0)// To prevent Data Forwarding to be enabled in between step by step execution of the Program | This option can be changed only before execution i.e. PC=0
+    if(isExecuting)// To prevent Data Forwarding to be enabled in between step by step execution of the Program | This option can be changed only before execution i.e. PC=0
     {
         ui->textBrowser_4->append("\n<b style=color:#ff4d4d style=font-size:18px>Cannot toggle option during Execution</b>");
         return;

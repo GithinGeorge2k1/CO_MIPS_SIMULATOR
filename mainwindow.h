@@ -5,6 +5,7 @@
 #include <QTableWidget>
 #include "about_help.h"
 #include <QListWidget>
+#include <QCheckBox>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -29,11 +30,14 @@ private slots:
     void on_actionRun_Step_By_Step_triggered();
     void on_actionHelp_triggered();
     void on_actionEnable_Forwarding_triggered();
+    void ForwardingEnabled();
 
 private:
 
     Ui::MainWindow *ui;
     static bool ValidCodePresent;
+    QCheckBox* fowd;
+    bool isExecuting;
     About_Help* helpwindow;
     QTableWidget** timeline;
     QListWidget* stallList;
