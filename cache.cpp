@@ -51,11 +51,9 @@ bool Set::checkHit(int tag, int offset)
     for(int i=0;i<noOfBlocks;i++){
         if(tag==blocks[i]->getTag()){
             noOfHits++;
-            qDebug()<<"cacheHit";
             return true;
         }
     }
-    qDebug()<<"cacheMiss";
     noOfMisses++;
     return false;
 }
@@ -118,17 +116,11 @@ void Cache::setCache(int cacheSize, int blockSize, int associativity)
 {
     valid=true;
     int totalBlocks=(cacheSize*1024)/blockSize;     // cacheSize in KB and blockSize in Bytes
-    //int noOfWords=blockSize/addressableSize;        // Word per Block
     noOfSets=totalBlocks/associativity;
 
 
-    bits_offset=(int)log2(blockSize);// Idk if converting real values to int can give any serious problems / otherwise can use isPowerOfTwo I changed it to return log2(x)
+    bits_offset=(int)log2(blockSize);
     bits_index=(int)log2(noOfSets);
-
-    qDebug()<<"Offset bits: "<< bits_offset<< "\n";
-    qDebug()<<"index bits: "<< bits_index;
-
-
     bits_tag=32-bits_index-bits_offset;
 
     sets=new Set*[noOfSets];
