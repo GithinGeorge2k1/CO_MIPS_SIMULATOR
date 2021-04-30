@@ -124,7 +124,7 @@
             </font>
            </property>
            <property name="currentIndex">
-            <number>3</number>
+            <number>2</number>
            </property>
            <property name="iconSize">
             <size>
@@ -255,56 +255,6 @@
                  </property>
                  <item>
                   <widget class="QTableWidget" name="timeline1"/>
-                 </item>
-                </layout>
-               </widget>
-               <widget class="QWidget" name="tab2">
-                <attribute name="title">
-                 <string>Table 2</string>
-                </attribute>
-                <layout class="QVBoxLayout" name="verticalLayout_10">
-                 <property name="spacing">
-                  <number>1</number>
-                 </property>
-                 <property name="leftMargin">
-                  <number>4</number>
-                 </property>
-                 <property name="topMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="rightMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="bottomMargin">
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <widget class="QTableWidget" name="timeline2"/>
-                 </item>
-                </layout>
-               </widget>
-               <widget class="QWidget" name="tab3">
-                <attribute name="title">
-                 <string>Table 3</string>
-                </attribute>
-                <layout class="QVBoxLayout" name="verticalLayout_9">
-                 <property name="spacing">
-                  <number>1</number>
-                 </property>
-                 <property name="leftMargin">
-                  <number>4</number>
-                 </property>
-                 <property name="topMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="rightMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="bottomMargin">
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <widget class="QTableWidget" name="timeline3"/>
                  </item>
                 </layout>
                </widget>
@@ -442,7 +392,7 @@
      <x>0</x>
      <y>0</y>
      <width>905</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

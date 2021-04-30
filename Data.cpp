@@ -740,11 +740,9 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
 
         if(cache->checkHit(result*4)){
             memStallInCurrentInstruction = 1;
-            qDebug()<<"HERE1";
         }else{
             memStallInCurrentInstruction = 101;
             cache->storeInCache(result*4);
-            qDebug()<<"HERE2";
         }
         break;
     }
