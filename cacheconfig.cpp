@@ -5,7 +5,7 @@
 int isPowerOfTwo(int x)// checks if x=2^a (a>0)
 {
     if(x<=0)
-        return 0;
+        return -1;
 
     int c=0;
     while(x!=1)
@@ -36,13 +36,9 @@ void CacheConfig::on_pushButton_clicked()
     int cs=ui->lineEdit->text().toInt(&one);
     int bs=ui->lineEdit_2->text().toInt(&two);
     int assoc=ui->lineEdit_3->text().toInt(&three);
-    qDebug()<<"reached this point"<<cs<<" "<<bs<< " "<< assoc << "\n";
-    if(one && two && three && isPowerOfTwo(cs)>=0 && isPowerOfTwo(bs)>=2 && isPowerOfTwo(assoc)>=0){
+    if(one && two && three && isPowerOfTwo(cs)>=0 && isPowerOfTwo(bs)>=2 && isPowerOfTwo(assoc)>=0)
         Data::getInstance()->cache->setCache(cs, bs, assoc);
-    }
-    else{
-        qDebug()<<"reached this point B";
+    else
         Data::getInstance()->cache->valid=false;
-    }
     close();
 }
