@@ -14,7 +14,7 @@
 
 MainWindow* MainWindow::obj=NULL;
 bool MainWindow::ValidCodePresent=false;
-const int noOfTables=3;
+const int noOfTables=1;
 MainWindow* MainWindow::getInstance()
 {
     if(obj==NULL)
@@ -30,15 +30,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     tableIndex=0;
     timeline=new QTableWidget* [noOfTables];
     timeline[tableIndex]=ui->timeline1;
-    timeline[tableIndex+1]=ui->timeline2;
-    timeline[tableIndex+2]=ui->timeline3;
 
-    timeline[tableIndex]->setRowCount(1000);
-    timeline[tableIndex]->setColumnCount(3500);
-    timeline[tableIndex+1]->setRowCount(1000);
-    timeline[tableIndex+1]->setColumnCount(3500);
-    timeline[tableIndex+2]->setRowCount(1000);
-    timeline[tableIndex+2]->setColumnCount(3500);
+    timeline[tableIndex]->setRowCount(1500);
+    timeline[tableIndex]->setColumnCount(4500);
 
     stallList=ui->listWidget;
     Maps::getInstance();
@@ -66,12 +60,11 @@ void MainWindow::setNewTable()
     tableIndex++;
     if(tableIndex>=noOfTables)
     {
-        QMessageBox::warning(this, "Error", "Exceeded Table Limit. Timeline Locked");
+        QMessageBox::warning(this, "MessageBox", "Exceeded Table Limit. Timeline Locked");
         isTimeLineLocked=true;
         return;
     }
     timeline[tableIndex]->clearContents();
-
 }
 
 int storeAllLabelsAndData(QTextStream& in){
@@ -235,8 +228,6 @@ void MainWindow::initialize(){
     ui->listWidget->clear();
     D->initialize();
     timeline[0]->clear();
-    timeline[1]->clear();
-    timeline[2]->clear();
     refreshAllPanels();
     MainWindow::ValidCodePresent=false;
 

@@ -48,8 +48,8 @@ class Set
         int noOfHits;
     public:
     Set(int noOfBlocks);
-    bool checkHit(int tag, int offset);
-    bool setBlock(int tag, int offset);
+    bool checkHit(int tag);
+    bool setBlock(int tag);
     int getHits();
     int getMisses();
 };

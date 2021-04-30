@@ -315,8 +315,9 @@ QString Data::displayData(){
 void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
 {
     if(obj->isTimeLineLocked || CLOCK<=0) //This bound we have to change
+    {
         return;
-
+    }
     QString vHeader=QString("%1").arg(rindex+1+(tableNo*1000));
     timeline->setVerticalHeaderItem(rindex,new QTableWidgetItem(vHeader));
 
@@ -329,13 +330,7 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
         timeline->setVerticalHeaderItem(rindex+1,new QTableWidgetItem(vHeader));
         timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
         timeline->item(rindex,cindex-1)->setBackground(Qt::gray);
-        /*
-        for(int i=0;i<memStallPrevToPrev;i++)
-        {
-            timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
-            timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
-        }
-        */
+
         if(prevToPrevMEM)
         {
             timeline->setItem(rindex, cindex++, new QTableWidgetItem(QString("Stall x%1").arg(memStallPrevToPrev)));
@@ -363,13 +358,7 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
     }
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("IF"));
     timeline->item(rindex,cindex-1)->setBackground(Qt::gray);
-    /*
-    for(int i=0;i<memStallPrevToPrev;i++)
-    {
-        timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
-        timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
-    }
-    */
+
     if(prevToPrevMEM)
     {
         timeline->setItem(rindex, cindex++, new QTableWidgetItem(QString("Stall x%1").arg(memStallPrevToPrev)));
@@ -385,13 +374,6 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("ID/RF"));
     timeline->item(rindex,cindex-1)->setBackground(Qt::red);
 
-    /*
-    for(int i=0;i<memStallPrev;i++)
-    {
-        timeline->setItem(rindex, cindex++, new QTableWidgetItem("Stall"));
-        timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
-    }
-    */
     if(prevMEM)
     {
         timeline->setItem(rindex, cindex++, new QTableWidgetItem(QString("Stall x%1").arg(memStallPrev)));
@@ -412,12 +394,7 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
 
     timeline->setItem(rindex, cindex++, new QTableWidgetItem("EX"));
     timeline->item(rindex,cindex-1)->setBackground(Qt::darkCyan);
-    /*
-    for(int i=0;i<memStallInCurrentInstruction;i++){
-        timeline->setItem(rindex, cindex++, new QTableWidgetItem("MEMStall"));
-        timeline->item(rindex,cindex-1)->setBackground(Qt::darkGreen);
-    }
-    */
+
     if(memStallInCurrentInstruction>0)
     {
         timeline->setItem(rindex, cindex++, new QTableWidgetItem(QString("MEMStall x%1").arg(memStallInCurrentInstruction)));
@@ -437,12 +414,6 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
         rindex=0;
         tableNo++;
     }
-    /*
-    if(memStallPrev>0 && stallInInstruction>0){
-        MEMSTALL+=memStallPrev;
-        memStallPrev=0;
-    }
-    */
     if(prevMEM && stallInInstruction>0)
     {
         MEMSTALLCOUNT+=1;
@@ -453,20 +424,20 @@ void Data::updateTable(bool branchStall,bool Jmp_Stall,QTableWidget* timeline)
 }
 
 void Data::updateStallList(int CurrentInstructionCounter,QListWidget *stallList){
-    stallList->addItem(QString("%3. %1  -%2 Stalls ").arg(assemblyInstruction.at(CurrentInstructionCounter),-35).arg(stallInInstruction).arg(stalledInstructions));
+    stallList->addItem(QString("%3. %1  -%2 Stalls ").arg(assemblyInstruction.at(CurrentInstructionCounter),-35).arg(QString::number(stallInInstruction+memStallInCurrentInstruction)).arg(stalledInstructions));
     stalledInstructions++;
 }
 
 QString Data::forConsole(){
     QString text="";
     int temp=MEMSTALL+memStallPrev+memStallPrevToPrev+memStallInCurrentInstruction;
-    text.append(QString("No of instructions executed: %1").arg(QString::number(tableNo*1000+rindex)));
+    text.append(QString("No of instructions executed: %1").arg(QString::number(tableNo*1000+CLOCK)));
     text.append(QString("<br>No of Clock Cycles in total: %1").arg(QString::number(CLOCK+STALL+4+temp)));
     text.append(QString("<br>No of Stalls in total: %1").arg(QString::number(STALL)));
     text.append(QString("<br>No of memStalls in total: %1").arg(QString::number(temp)));
     if(CLOCK!=0){
-        float x=((float)rindex)/((float)(CLOCK+STALL+4+temp));
-        text.append(QString("<br>Instructions Per ClockCycle <edit style=\"color:#ffd700\">(IPC) : %1</edit>").arg(x));
+        float x=((float)CLOCK)/((float)(CLOCK+STALL+4+temp));
+        text.append(QString("<p>Instructions Per ClockCycle <b style=\"color:#ffd700\">(IPC) : %1</p>").arg(x));
     }
     text.append(QString("<br><br><edit style=\"color:#ffd700\">Cache</edit><br>"));
     text.append(QString("(<edit style=\"color:#66ff66\">Green : No of Hits</edit>  -  <edit style=\"color:#ff4d4d\">Red : No of Misses</edit>  -  White : Average Access Time)"));
@@ -513,7 +484,8 @@ bool Data::run(QTableWidget **timeline,QListWidget *stallList){
         incrementLoadDegree();
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
-        if(stallInInstruction>0 &&(CLOCK+STALL<2000))
+        int param=stallInInstruction+memStallInCurrentInstruction;
+        if(param>0 &&(CLOCK+STALL<2000))
             updateStallList(CIC,stallList);
         updateTable(branch_stall,Jmp_Stall,timeline[obj->tableIndex]);
 
@@ -531,7 +503,8 @@ bool Data::runStepByStep(QTableWidget **timeline,QListWidget *stallList){
         incrementLoadDegree();
         int instruction=instructionFetch();
         instructionDecodeRegisterFetch(instruction);
-        if(stallInInstruction>0 &&(CLOCK+STALL<2000))
+        int param=stallInInstruction+memStallInCurrentInstruction;
+        if(param>0 &&(CLOCK+STALL<2000))
             updateStallList(CIC,stallList);
         updateTable(branch_stall,Jmp_Stall,timeline[obj->tableIndex]);
     }
@@ -763,6 +736,14 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
     case 0x2b:{//sw
         int r1=R1;
         result=immediate+r1;
+
+
+        if(cache->checkHit(result*4)){
+            memStallInCurrentInstruction = 1;
+        }else{
+            memStallInCurrentInstruction = 101;
+            cache->storeInCache(result*4);
+        }
         break;
     }
     }
