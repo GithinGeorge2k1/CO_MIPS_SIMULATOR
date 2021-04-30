@@ -3,7 +3,7 @@
 <head>
     <title>Learning html</title>
 </head>
-<body>
+<body  style="color:rgb(1, 32, 44); font:20px arial">
    <div>
         <h1 class=abc style="color:#5f9ea0; font:50px arial; text-decoration: #5f9ea0 underline; text-align:center" ><b>Team Instinct Simulator</b></p>
     </div>
@@ -13,6 +13,7 @@
             Welcome Folks. 
             This Simulator is built as part of our Computer Organization Course and mimics a subset of what the mips processor can do.
             This Application was developed in 3 phases and in each phase we've added the following components of Mips processor.
+            <br>
             <ol>
                 <b> 
                 <li>A Basic Mips Simulator With a subset of the mips instructions</li>
@@ -20,12 +21,14 @@
                 <li>Single Level data Cache With LRU Replacement Policy</li>
                 </b>
             </ol>
+            <br>
             <p><span style="text-decoration: 3px underline rgb(0, 0, 0);"><b>A Quick Summary On Mips:</b></span> MIPS (Microprocessor without Interlocked Pipelined Stages)[1] is a reduced instruction set computer (RISC) instruction set architecture (ISA)[2]:A-1[3]:19 developed by MIPS Computer Systems, now MIPS Technologies, based in the United States.
                 There are multiple versions of MIPS: including MIPS I, II, III, IV, and V; as well as five releases of MIPS32/64 (for 32- and 64-bit implementations, respectively). The early MIPS architectures were 32-bit only; 64-bit versions were developed later. 
                 
                 src("Wikipedia")
             </p>
         </p>
+        <br>
     </div>
 
     <div style="color:rgb(1, 32, 44); font:20px arial">
@@ -33,10 +36,13 @@
             We Have Learned a lot Of Ideas regarding Mips Processor and Computer Organization in General. Through this application we have to tried to
             realize a few of the Mips features as correctly as possible.
         </p>
+        <br>
     </div>
+    
 
     <div style="color:rgb(1, 32, 44); font:20px arial">
         <p>Following are the instructions for using this application:<br></p>
+        <br>
         <ul>
             <li>The Functionality "Reinitialize and load File" is used to load <b>any</b> text format file containing assembly code.
                 The code is then parsed and proceeded to execute. If any errors were found then the file is not opened and "Run" function will be disabled
@@ -44,23 +50,37 @@
             <li>The "Run" and "Run Step By Step" functions correspond to their meanings. If the applications recognizes any valid code at present, 
                 the user can run the assembly code.
             </li>
-            <li>The user can enable <b>Operand Forwarding</b> by clicking on "Enable Forwarding" option. One can disable the same feature
+            <li>The user can enable <b>Operand Forwarding</b> by clicking on <b>Enable Forwarding</b> option. One can disable the same feature
                 by the clicking the same option once more. Initially Forwarding is Not Enabled.
             </li>
         </ul>
+        <br>
         <p>The Application has the following tabs: </p>
         <ol>
             <li>Registers Tab - Shows all the registers and their current Values</li>
             <li>Data Tab - Shows all global and static variables declared in the program</li>
             <li>Text Tab - Shows the formatted assembly code on screen with their corresponding machine code instructions and labels(if any) </li>
-            <li>Timeline Tab - This Tab contains 3 tables which represents the timeline of the program. There is a cutoff Limit for the table 
-                after 3000 instructions are issued.(We are pretty sure we have made some mistakes in making the timeline diagram)
+            <li>Timeline Tab - This Tab contains a table which represents the timeline of the program. There is a cutoff Limit for the table 
+                after 2000 instructions are issued.(We are not sure about the correctness of the Timeline - But it is as to our knowledge)
             </li>
             <li>Stall Tab - Lists all instructions having some stall with their corresponding No Of Stalls</li>
             <li>Console - Displays relevant insformation to the user(we have not included system calls in the pipeline, hence user can't take input)</li>
         </ol>
+        <br>
     </div>
 
-    
+    <div>
+        <p>About the processor Design:-</p>
+        <p>The Simulator is of a 5 stage pipeline with <b>Branch Not Taken</b> predictor and <b>Write Back, Write Allocate</b> Cache</p>
+        <p>There are no support for pseudo instructions and syscalls. Hence a console for taking input and printing output is not present</p>
+        <p>The machine is word addressable Only. Byte addressable instructions were not realised.
+                As a result Block Size in cache should also be a multiple of the word size(Word Size = 4 bytes)</p>
+        <p>Also the cache is realized in simulator with the assumption that there is a store queue or a buffer that writes to <b>Main Memory</b>
+        . While writing to MM, we assumed that all memory read concerning that address is taken from the store queue.</p>
+        <br>
+    </div>
+
+    <p style="text-align: center; color: black; font-size: 15px;">copyright @ Githin George, Harish Pradyot - Team Instinct,
+    IITTP 2019 batch</p>
 </body>
 </html>
