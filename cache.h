@@ -61,7 +61,6 @@ class Cache
         int bits_offset;
         int bits_index;
         int bits_tag;
-        int addressableSize;
         int noOfHits;
         int noOfMisses;
         int hitTime;

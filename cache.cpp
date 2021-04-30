@@ -84,7 +84,7 @@ bool Set::setBlock(int tag, int offset)
     return true;
 }
 
-Cache::Cache() : addressableSize(4), noOfHits(0), noOfMisses(0), hitTime(2), missPenalty(100), valid(false)  //32 Bit ~ 4 Byte addressable machine - Assumption
+Cache::Cache() : noOfHits(0), noOfMisses(0), hitTime(2), missPenalty(100), valid(false)  //32 Bit ~ 4 Byte addressable machine - Assumption
 {
 
 }
@@ -114,10 +114,15 @@ int Cache::getMissPenalty()
 }
 void Cache::setCache(int cacheSize, int blockSize, int associativity)
 {
-    valid=true;
     int totalBlocks=(cacheSize*1024)/blockSize;     // cacheSize in KB and blockSize in Bytes
     noOfSets=totalBlocks/associativity;
-
+    if(noOfSets>=1)
+        valid=true;
+    else                                            // if associativity is more than total number of blocks
+    {
+        valid=false;
+        return;
+    }
 
     bits_offset=(int)log2(blockSize);
     bits_index=(int)log2(noOfSets);
