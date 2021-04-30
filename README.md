@@ -93,18 +93,31 @@ srl | R Type | srl rd, rs, value
   The user has an option to enable/disable ***Data Forwarding*** using the ***Enable Forwarding*** Option.\
   At the end of the execution the simulator displays the Number of Stalls, the IPC (Instructions per Cycle),\
   and the Cache i.e. No of Hits, Misses and Average Access Time of the Cache in terms of Clock Cycles in the Console.\
-  There are no support for pseudo instructions and syscalls. Hence a console for taking input and printing output is not present .\
+  No support provided for pseudo instructions and syscalls therefore console has not been extended for taking input or printing output.
   ![Console](https://user-images.githubusercontent.com/70936222/116671858-128cd800-a9bf-11eb-9582-8894a4f84c73.PNG)
   It also displays the list of instructions for which there were stalls in the ***Stall List*** tab.
   ![Stalls](https://user-images.githubusercontent.com/70936222/116671863-13be0500-a9bf-11eb-8699-a4d1546f52cd.PNG)
 
 #### Design Choices:
->1.  **Cache** : The Cache configuration can be set by the user according to the requirement of the simulation.
-Cache size in KB (min of 1 KB), Block Size in Bytes, and the Associativity (cannot be more than total number of blocks).
-The Cache is **Write Back, Write Allocate Cache** .
-Also, the cache is realized in simulator with the assumption that there is a store queue or a buffer that writes to Main Memory . While writing to MM, we assumed that all memory read concerning that address is taken from the store queue.
-     Assuming the System is Word addressable(only multiples of 4) the Cache is set for use by the Program.
-     ![Cache](https://user-images.githubusercontent.com/70936222/116671854-128cd800-a9bf-11eb-843f-91fbbc5df522.PNG)
+>1.  **Cache** : The Cache configuration can be set by the user according to the requirement of the simulation.\
+    Cache size in KB (min of 1 KB), Block Size in Bytes, and the Associativity (cannot be more than total number of blocks).\
+    The Cache is **Write Back, Write Allocate Cache** .\
+    Also, the cache is realized in simulator with the assumption that there is a store queue or a buffer that writes to Main Memory. While writing to MM, we assumed that all memory read concerning that address is taken from the store queue.\
+    Assuming the System is Word addressable(only multiples of 4 Bytes) the Cache is set for use by the Program.
+    ![Cache](https://user-images.githubusercontent.com/70936222/116671854-128cd800-a9bf-11eb-843f-91fbbc5df522.PNG)
      
 >2.  **Branch Predictor** : A **Not Taken** branch predictor is used in the Simulator. Which assumes that everytime a branch statement is encountered it will not be taken.\
      And the instruction is either squashed or the Pipeline continues, based on the fact whether the Branch is taken or not taken respectively.
+     
+#### The App:
+![1](https://user-images.githubusercontent.com/70936222/116671851-10c31480-a9bf-11eb-85a3-c84064687510.PNG)
+>1. Data Segment and Text Segment:
+    ![Data](https://user-images.githubusercontent.com/70936222/116671860-13256e80-a9bf-11eb-96b9-eb0bfc16be66.PNG)
+    ![Text](https://user-images.githubusercontent.com/70936222/116671867-14569b80-a9bf-11eb-8f1c-b86088c092c0.PNG)
+>2. Timeline:
+    An interactive timeline to help you visualize how the pipeline behaves for the User's code and therefore helps in identifying bottlenecks.
+    ![Timeline](https://user-images.githubusercontent.com/70936222/116671868-14ef3200-a9bf-11eb-914a-e86cb4628768.PNG)
+>3. Data Forwarding: A toggle is provided below the console to Enable or Disable Data-Forwarding. ***EX-MEM*** to ***IDRF-EX*** and ***MEM-WB*** to ***IDRF-EX*** are the 2 types of Data-Forwarding Incorporated in our Design.
+    ![Console1](https://user-images.githubusercontent.com/70936222/116742686-5ad6e500-aa15-11eb-803a-421ae415cbb1.PNG)
+
+    
