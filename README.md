@@ -21,8 +21,8 @@ The tool was developed using QTCreator (version  4.14.0), a cross-platform IDE t
 ## Phase 1 Overview
 
 #### Progress Made:
->* **Parsing** : Instructions are loaded to the Application, and the parser runs through the code to extract each line as a token string and converts it into a 32-bit Instruction.\
-  The Syntax and Semantics of the Assembly Code are also checked, and a Warning Message is returned, and the program is aborted on encountering a parse error.
+>* **Parsing** : Instructions are loaded to the Application, and the parser runs through the code to extract each line as a token string and converts it into a 32-bit Instruction(An integer in essence).\
+  The Syntax of the Assembly Code are also checked, and a Warning Message is returned, and the program is aborted on encountering a parse error(In data Section The parser won't register wrong entries as error ->a fault with the parser).
 >* **Execution** :\
   Each Instruction is executed in 5 steps, i.e., \
   **1. Instruction Fetch (IF) stage** : Fetches the Instruction at the current PC address and sets the PC address to the next Instruction.\
@@ -86,7 +86,7 @@ Operation | Type | Syntax
 sll | R type | sll rd, rs, value
 srl | R Type | srl rd, rs, value
 
-## Phase 2 Overview
+## Phase 2 and Phase 3 Overview
 
 #### Objective:
 >* **Pipeline** : The Simulator developed in Phase 1 was extended to incorporate Pipelining.\
@@ -98,8 +98,8 @@ srl | R Type | srl rd, rs, value
   ![Stalls](https://user-images.githubusercontent.com/70936222/116671863-13be0500-a9bf-11eb-8699-a4d1546f52cd.PNG)
 
 #### Design Choices:
->1.  **Cache** : The Cache configuration can be set by the user according to the requirement of the simulation.\ Cache size in KB (min of 2 KB), Block Size in Bytes, and        the Associativity (cannot be more than total number of blocks).\
-     Assuming the System is Byte addressable the Cache is set for use by the Program.
+>1.  **Cache** : The Cache configuration can be set by the user according to the requirement of the simulation.\ Cache size in KB (min of 1 KB), Block Size in Bytes, and the Associativity (cannot be more than total number of blocks).\
+     Assuming the System is Word addressable(only multiples of 4) the Cache is set for use by the Program.
      ![Cache](https://user-images.githubusercontent.com/70936222/116671854-128cd800-a9bf-11eb-843f-91fbbc5df522.PNG)
      
 >2.  **Branch Predictor** : A **Not Taken** branch predictor is used in the Simulator. Which assumes that everytime a branch statement is encountered it will not be taken.\
