@@ -86,6 +86,16 @@ Operation | Type | Syntax
 sll | R type | sll rd, rs, value
 srl | R Type | srl rd, rs, value
 
-#### How to use the Application
+## Phase 2 Overview
 
-1. Pretty much self Explanatory (To be Updated)
+#### Objective:
+>* **Pipeline** : The Simulator developed in Phase 1 was extended to incorporate Pipelining.\
+  The user has an option to enable/disable ***Data Forwarding*** using the ***Enable Forwarding*** Option.\
+  At the end of the execution the simulator displays the Number of Stalls, the IPC (Instructions per Cycle),\
+  and the Cache i.e. No of Hits, Misses and Average Access Time of the Cache in terms of Clock Cycles in the Console.\
+  ![Console](https://user-images.githubusercontent.com/70936222/116671858-128cd800-a9bf-11eb-9582-8894a4f84c73.PNG)
+  It also displays the list of instructions for which there were stalls in the ***Stall List*** tab.
+  ![Stalls](https://user-images.githubusercontent.com/70936222/116671863-13be0500-a9bf-11eb-8699-a4d1546f52cd.PNG)
+
+#### Progress Made:
+>* **Design Choices** : 
