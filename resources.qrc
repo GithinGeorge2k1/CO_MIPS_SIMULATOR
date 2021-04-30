@@ -4,10 +4,10 @@
         <file>StyleSheet/stylesForHtml.css</file>
         <file>StyleSheet/new2.qss</file>
     </qresource>
-    <qresource prefix="/Files">
-        <file>TimeLine.html</file>
-    </qresource>
     <qresource prefix="/Html">
         <file>Html/index.html</file>
+    </qresource>
+    <qresource prefix="/Icons">
+        <file>Icons/Icon.png</file>
     </qresource>
 </RCC>

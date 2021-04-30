@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
     QString style=styleSheet.readAll();
     a.setStyleSheet(style);
     MainWindow *w=MainWindow::getInstance();
+    w->setWindowIcon(QIcon(":/Icons/Icons/Icon.png"));
     w->show();
     return a.exec();
 }
