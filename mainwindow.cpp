@@ -298,9 +298,14 @@ void MainWindow::on_actionHelp_triggered()
 void MainWindow::on_actionEnable_Forwarding_triggered()
 {
     Data* D=Data::getInstance();
+    if(D->PC!=0)// To prevent Data Forwarding to be enabled in between step by step execution of the Program | This option can be changed only before execution i.e. PC=0
+    {
+        ui->textBrowser_4->append("\n<b style=color:#ff4d4d style=font-size:18px>Cannot toggle option during Execution</b>");
+        return;
+    }
     D->FWD_ENABLED=!D->FWD_ENABLED;
     if(D->FWD_ENABLED)
-        ui->textBrowser_4->append("\n<b style=color:#ffd700 style=font-size:24px>Forwarding is Now Enabled</b>");
+        ui->textBrowser_4->append("\n<b style=color:#ffd700 style=font-size:18px>Forwarding is Now Enabled</b>");
     else
-        ui->textBrowser_4->append("\n<b style=color:#ffd700 style=font-size:24px>Forwarding is Now Disabled</b>");
+        ui->textBrowser_4->append("\n<b style=color:#ffd700 style=font-size:18px>Forwarding is Now Disabled</b>");
 }

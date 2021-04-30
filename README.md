@@ -97,5 +97,10 @@ srl | R Type | srl rd, rs, value
   It also displays the list of instructions for which there were stalls in the ***Stall List*** tab.
   ![Stalls](https://user-images.githubusercontent.com/70936222/116671863-13be0500-a9bf-11eb-8699-a4d1546f52cd.PNG)
 
-#### Progress Made:
->* **Design Choices** : 
+#### Design Choices:
+>1.  **Cache** : The Cache configuration can be set by the user according to the requirement of the simulation.\ Cache size in KB (min of 2 KB), Block Size in Bytes, and        the Associativity (cannot be more than total number of blocks).\
+     Assuming the System is Byte addressable the Cache is set for use by the Program.
+     ![Cache](https://user-images.githubusercontent.com/70936222/116671854-128cd800-a9bf-11eb-843f-91fbbc5df522.PNG)
+     
+>2.  **Branch Predictor** : A **Not Taken** branch predictor is used in the Simulator. Which assumes that everytime a branch statement is encountered it will not be taken.\
+     And the instruction is either squashed or the Pipeline continues, based on the fact whether the Branch is taken or not taken respectively.
