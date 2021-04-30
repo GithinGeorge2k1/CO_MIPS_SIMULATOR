@@ -22,7 +22,7 @@ The tool was developed using QTCreator (version  4.14.0), a cross-platform IDE t
 
 #### Progress Made:
 >* **Parsing** : Instructions are loaded to the Application, and the parser runs through the code to extract each line as a token string and converts it into a 32-bit Instruction(An integer in essence).\
-  The Syntax of the Assembly Code are also checked, and a Warning Message is returned, and the program is aborted on encountering a parse error(In data Section The parser won't register wrong entries as error ->a fault with the parser).
+  The Syntax of the Assembly Code is also checked, and a Warning Message is returned, and the program is aborted on encountering a parse error(In data Section The parser won't register wrong entries as error ->a fault with the parser).
 >* **Execution** :\
   Each Instruction is executed in 5 steps, i.e., \
   **1. Instruction Fetch (IF) stage** : Fetches the Instruction at the current PC address and sets the PC address to the next Instruction.\
@@ -93,12 +93,13 @@ srl | R Type | srl rd, rs, value
   The user has an option to enable/disable ***Data Forwarding*** using the ***Enable Forwarding*** Option.\
   At the end of the execution the simulator displays the Number of Stalls, the IPC (Instructions per Cycle),\
   and the Cache i.e. No of Hits, Misses and Average Access Time of the Cache in terms of Clock Cycles in the Console.\
+  There are no support for pseudo instructions and syscalls. Hence a console for taking input and printing output is not present .\
   ![Console](https://user-images.githubusercontent.com/70936222/116671858-128cd800-a9bf-11eb-9582-8894a4f84c73.PNG)
   It also displays the list of instructions for which there were stalls in the ***Stall List*** tab.
   ![Stalls](https://user-images.githubusercontent.com/70936222/116671863-13be0500-a9bf-11eb-8699-a4d1546f52cd.PNG)
 
 #### Design Choices:
->1.  **Cache** : The Cache configuration can be set by the user according to the requirement of the simulation.\ Cache size in KB (min of 1 KB), Block Size in Bytes, and the Associativity (cannot be more than total number of blocks).\
+>1.  **Cache** : The Cache configuration can be set by the user according to the requirement of the simulation.\ Cache size in KB (min of 1 KB), Block Size in Bytes, and the Associativity (cannot be more than total number of blocks).\ The Cache is **Write Back, Write Allocate Cache** .\Also, the cache is realized in simulator with the assumption that there is a store queue or a buffer that writes to Main Memory . While writing to MM, we assumed that all memory read concerning that address is taken from the store queue.\ 
      Assuming the System is Word addressable(only multiples of 4) the Cache is set for use by the Program.
      ![Cache](https://user-images.githubusercontent.com/70936222/116671854-128cd800-a9bf-11eb-843f-91fbbc5df522.PNG)
      
