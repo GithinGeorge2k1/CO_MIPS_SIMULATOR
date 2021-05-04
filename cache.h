@@ -33,7 +33,6 @@ class Block
             dirtyBit=x;
         }
 
-
         void setTag(int x) {
             tag=x;
         }

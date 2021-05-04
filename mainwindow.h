@@ -29,7 +29,6 @@ private slots:
     void on_actionRun_triggered();
     void on_actionRun_Step_By_Step_triggered();
     void on_actionHelp_triggered();
-    void on_actionEnable_Forwarding_triggered();
     void ForwardingEnabled();
 
 private:
