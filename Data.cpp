@@ -34,7 +34,9 @@ Data::Data() : R{}, PC(0), Stack{}, SP(0), data{}, dataSize(0), instructions{}, 
 {
     assemblyInstruction.push_back("jal 0x2");
     assemblyInstruction.push_back("nop");
-    cache=new Cache();
+    cache=new Cache*[2];
+    cache[0]=new Cache();
+    cache[1]=new Cache();
 }
 
 void Data::initialize(){
@@ -75,13 +77,16 @@ void Data::initialize(){
     MEMSTALLCOUNT=0;
     MEMSTALL=0;
     memStallInCurrentInstruction=0;
-    delete cache;
-    cache=new Cache();
     memStallPrev=0;
     memStallPrevToPrev=0;
 
     prevMEM=false;
     prevToPrevMEM=false;
+
+    delete cache[0];
+    delete cache[1];
+    cache[0]=new Cache();
+    cache[1]=new Cache();
 }
 
 bool isRegisterValid(QString R, bool flag=false)
@@ -439,39 +444,42 @@ QString Data::forConsole(){
         float x=((float)CLOCK)/((float)(CLOCK+STALL+4+temp));
         text.append(QString("<p>Instructions Per ClockCycle <b style=\"color:#ffd700\">(IPC) : %1</p>").arg(x));
     }
-    text.append(QString("<br><br><edit style=\"color:#ffd700\">Cache</edit><br>"));
-    text.append(QString("(<edit style=\"color:#66ff66\">Green : No of Hits</edit>  -  <edit style=\"color:#ff4d4d\">Red : No of Misses</edit>  -  White : Average Access Time)"));
-    int noOfMisses=cache->getMisses();
-    int noOfHits=cache->getHits();
-    int noOfAccesses=noOfHits+noOfMisses;
-    if(noOfAccesses!=0)
+    for(int i=0;i<2;i++)
     {
-        float hitRate=noOfHits/(noOfAccesses*1.0);
-        float missRate=noOfMisses/(noOfAccesses*1.0);
-        float averageAccessTime=hitRate+cache->getMissPenalty()*missRate;
-        text.append(QString("<br>Overall  : <edit style=\"color:#66ff66\">%2  </edit><edit style=\"color:#ff4d4d\">%3  </edit>%4").arg(noOfHits).arg(noOfMisses).arg(averageAccessTime));
-    }
-    else
-        text.append(QString("<br><edit style=\"color:#ff4d4d\">No Accesses Issued to Cache</edit>"));
-    if(noOfAccesses==0)
-        return text;
-    int noOfSets=cache->getNoOfSets();
-    for(int i=0;i<noOfSets;i++)
-    {
-        Set temp=*(cache->getSet(i));
-        int noOfMisses=temp.getMisses();
-        int noOfHits=temp.getHits();
+        text.append(QString("<br><br><edit style=\"color:#ffd700\">Cache</edit><br>"));
+        text.append(QString("(<edit style=\"color:#66ff66\">Green : No of Hits</edit>  -  <edit style=\"color:#ff4d4d\">Red : No of Misses</edit>  -  White : Average Access Time)"));
+        int noOfMisses=cache[i]->getMisses();
+        int noOfHits=cache[i]->getHits();
         int noOfAccesses=noOfHits+noOfMisses;
         if(noOfAccesses!=0)
         {
-//            float hitRate=noOfHits/(noOfAccesses*1.0);
-//            float missRate=noOfMisses/(noOfAccesses*1.0);
-//            float averageAccessTime=hitRate+cache->getMissPenalty()*missRate;
-            text.append(QString("<br><edit style=\"color:#ffd700\">Set %1  </edit><edit style=\"color:#66ff66\">%2  </edit><edit style=\"color:#ff4d4d\">%3  </edit>").arg(i+1).arg(noOfHits).arg(noOfMisses));
+            float hitRate=noOfHits/(noOfAccesses*1.0);
+            float missRate=noOfMisses/(noOfAccesses*1.0);
+            float averageAccessTime=hitRate+cache[i]->getMissPenalty()*missRate;
+            text.append(QString("<br>Overall  : <edit style=\"color:#66ff66\">%2  </edit><edit style=\"color:#ff4d4d\">%3  </edit>%4").arg(noOfHits).arg(noOfMisses).arg(averageAccessTime));
         }
-        //Or Choose to not display Set Number can be Huge
-        //else
-        //    text.append(QString("<br><edit style=\"color:#ffd700\">Set %1  </edit><edit style=\"color:#ff4d4d\">No Accesses Issued</edit>").arg(i+1));
+        else
+            text.append(QString("<br><edit style=\"color:#ff4d4d\">No Accesses Issued to Cache</edit>"));
+        if(noOfAccesses==0)
+            return text;
+        int noOfSets=cache[i]->getNoOfSets();
+        for(int i=0;i<noOfSets;i++)
+        {
+            Set temp=*(cache[i]->getSet(i));
+            int noOfMisses=temp.getMisses();
+            int noOfHits=temp.getHits();
+            int noOfAccesses=noOfHits+noOfMisses;
+            if(noOfAccesses!=0)
+            {
+                //float hitRate=noOfHits/(noOfAccesses*1.0);
+                //float missRate=noOfMisses/(noOfAccesses*1.0);
+                //float averageAccessTime=hitRate+cache[i]->getMissPenalty()*missRate;
+                text.append(QString("<br><edit style=\"color:#ffd700\">Set %1  </edit><edit style=\"color:#66ff66\">%2  </edit><edit style=\"color:#ff4d4d\">%3  </edit>").arg(i+1).arg(noOfHits).arg(noOfMisses));
+            }
+            //Or Choose to not display Set Number can be Huge
+            //else
+            //    text.append(QString("<br><edit style=\"color:#ffd700\">Set %1  </edit><edit style=\"color:#ff4d4d\">No Accesses Issued</edit>").arg(i+1));
+        }
     }
     return text;
 }
@@ -726,12 +734,18 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
         result=immediate+r1;
         isPrevLW=true;
 
-        if(cache->checkHit(result*4)){
-            memStallInCurrentInstruction = 1;
+        if(cache[0]->checkHit(result*4)){
+            memStallInCurrentInstruction = cache[0]->getLoadLatency()-1;
 
-        }else{
-            memStallInCurrentInstruction = 101;
-            cache->storeInCache(result*4);
+        }else if(cache[1]->checkHit(result*4)){
+            memStallInCurrentInstruction = cache[0]->getLoadLatency()+cache[1]->getLoadLatency()-1;
+            cache[0]->storeInCache(result*4);
+        }
+        else
+        {
+            memStallInCurrentInstruction = cache[0]->getLoadLatency()+cache[1]->getLoadLatency()+100-1;
+            cache[0]->storeInCache(result*4);
+            cache[1]->storeInCache(result*4);
         }
         break;
     }
@@ -740,11 +754,17 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
         result=immediate+r1;
 
 
-        if(cache->checkHit(result*4)){
-            memStallInCurrentInstruction = 1;
-        }else{
-            memStallInCurrentInstruction = 101;
-            cache->storeInCache(result*4);
+        if(cache[0]->checkHit(result*4)){
+            memStallInCurrentInstruction = cache[0]->getStoreLatency()-1;
+        }else if(cache[1]->checkHit(result*4)){
+            memStallInCurrentInstruction = cache[0]->getStoreLatency()+cache[1]->getStoreLatency()-1;
+            cache[0]->storeInCache(result*4);
+        }
+        else
+        {
+            memStallInCurrentInstruction = cache[0]->getStoreLatency()+cache[1]->getStoreLatency()+100-1;
+            cache[0]->storeInCache(result*4);
+            cache[1]->storeInCache(result*4);
         }
         break;
     }

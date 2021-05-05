@@ -62,12 +62,13 @@ class Cache
         int bits_tag;
         int noOfHits;
         int noOfMisses;
-        int hitTime;
         int missPenalty;
+        int storeLatency;
+        int loadLatency;
     public:
         bool valid;
     Cache();
-    void setCache(int cacheSize, int blockSize, int associativity);
+    void setCache(int cacheSize, int blockSize, int associativity, int loadLatency, int storeLatency);
     bool checkHit(int address);
     bool storeInCache(int address);
     int getHits();
@@ -76,6 +77,8 @@ class Cache
     int getNoOfSets();
     int getHitTime();
     int getMissPenalty();
+    int getLoadLatency();
+    int getStoreLatency();
 };
 
 #endif // CACHE_H

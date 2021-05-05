@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>458</width>
-    <height>167</height>
+    <height>250</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,13 +19,13 @@
   <property name="minimumSize">
    <size>
     <width>458</width>
-    <height>167</height>
+    <height>250</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>458</width>
-    <height>167</height>
+    <height>250</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -33,188 +33,384 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <widget class="QLabel" name="label_4">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Enter Parameters        L1-L2</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QLabel" name="label_4">
+      <widget class="QLabel" name="label">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>178</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>178</width>
+         <height>25</height>
+        </size>
+       </property>
        <property name="font">
         <font>
-         <pointsize>10</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
+         <pointsize>7</pointsize>
         </font>
        </property>
        <property name="text">
-        <string>Enter Parameters</string>
+        <string>Cache Size (in KB)</string>
        </property>
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>175</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>175</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>7</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Cache Size (in KB)</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="lineEdit">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>255</width>
-           <height>20</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>255</width>
-           <height>20</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <widget class="QLineEdit" name="lineEdit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>125</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>125</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QLabel" name="label_2">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>175</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>175</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>7</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Block Size (in Bytes)</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="lineEdit_2">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>255</width>
-           <height>20</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>255</width>
-           <height>20</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <widget class="QLineEdit" name="lineEdit_6">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>125</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>125</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>175</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>175</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>7</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Block Size (in Bytes)</string>
+       </property>
+      </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QLabel" name="label_3">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>175</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>175</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>7</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Associativity</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="lineEdit_3">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>255</width>
-           <height>20</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>255</width>
-           <height>20</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <widget class="QLineEdit" name="lineEdit_2">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>255</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>255</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="label_3">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>178</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>178</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>7</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Associativity</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit_3">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>125</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>125</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit_7">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>125</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>125</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QLabel" name="label_5">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>178</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>178</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>6</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Store Latency Cycles</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit_4">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>125</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>125</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit_8">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>125</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>125</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <widget class="QLabel" name="label_6">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>178</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>178</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>6</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Load Latency Cycles</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit_5">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>125</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>125</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit_9">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>125</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>125</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -251,9 +447,7 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>lineEdit</tabstop>
   <tabstop>lineEdit_2</tabstop>
-  <tabstop>lineEdit_3</tabstop>
  </tabstops>
  <resources/>
  <connections/>

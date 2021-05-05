@@ -80,7 +80,7 @@ bool Set::setBlock(int tag)
     return true;
 }
 
-Cache::Cache() : noOfHits(0), noOfMisses(0), hitTime(2), missPenalty(100), valid(false)  //32 Bit ~ 4 Byte addressable machine - Assumption
+Cache::Cache() : noOfHits(0), noOfMisses(0), missPenalty(100), storeLatency(0), loadLatency(0), valid(false)    //32 Bit ~ 4 Byte addressable machine - Assumption
 {
 
 }
@@ -100,15 +100,19 @@ int Cache::getMisses()
 {
     return noOfMisses;
 }
-int Cache::getHitTime()
-{
-    return hitTime;
-}
 int Cache::getMissPenalty()
 {
     return missPenalty;
 }
-void Cache::setCache(int cacheSize, int blockSize, int associativity)
+int Cache::getStoreLatency()
+{
+    return storeLatency;
+}
+int Cache::getLoadLatency()
+{
+    return loadLatency;
+}
+void Cache::setCache(int cacheSize, int blockSize, int associativity, int loadLatency, int storeLatency)
 {
     int totalBlocks=(cacheSize*1024)/blockSize;     // cacheSize in KB and blockSize in Bytes
     noOfSets=totalBlocks/associativity;
@@ -129,6 +133,8 @@ void Cache::setCache(int cacheSize, int blockSize, int associativity)
     {
         sets[i]=new Set(associativity);
     }
+    this->storeLatency=storeLatency;
+    this->loadLatency=loadLatency;
 }
 
 bool Cache::storeInCache(int address)

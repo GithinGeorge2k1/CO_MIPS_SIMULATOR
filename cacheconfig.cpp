@@ -32,13 +32,34 @@ CacheConfig::~CacheConfig()
 
 void CacheConfig::on_pushButton_clicked()
 {
-    bool one=false,two=false,three=false;
+    Data* D=Data::getInstance();
+    bool one=false,two=false,three=false,four=false,five=false;
     int cs=ui->lineEdit->text().toInt(&one);
     int bs=ui->lineEdit_2->text().toInt(&two);
     int assoc=ui->lineEdit_3->text().toInt(&three);
-    if(one && two && three && isPowerOfTwo(cs)>=0 && isPowerOfTwo(bs)>=2 && isPowerOfTwo(assoc)>=0)
-        Data::getInstance()->cache->setCache(cs, bs, assoc);
+    int sl=ui->lineEdit_4->text().toInt(&four);
+    int ll=ui->lineEdit_5->text().toInt(&five);
+    if(one && two && three && isPowerOfTwo(cs)>=0 && isPowerOfTwo(bs)>=2 && isPowerOfTwo(assoc)>=0 && sl>=0 && ll>=0)
+        D->cache[0]->setCache(cs, bs, assoc, ll, sl);
     else
-        Data::getInstance()->cache->valid=false;
+    {
+        D->cache[0]->valid=false;
+        D->cache[1]->valid=false;
+        return;
+    }
+
+    one=false;two=true;three=false;four=false;five=false;
+    cs=ui->lineEdit_6->text().toInt(&one);
+    assoc=ui->lineEdit_7->text().toInt(&three);
+    sl=ui->lineEdit_8->text().toInt(&four);
+    ll=ui->lineEdit_9->text().toInt(&five);
+    if(one && two && three && isPowerOfTwo(cs)>=0 && isPowerOfTwo(bs)>=2 && isPowerOfTwo(assoc)>=0 && sl>=0 && ll>=0)
+        D->cache[1]->setCache(cs, bs, assoc, ll, sl);
+    else
+    {
+        D->cache[0]->valid=false;
+        D->cache[1]->valid=false;
+        return;
+    }
     close();
 }

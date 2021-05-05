@@ -43,7 +43,7 @@ public:
     int MEMSTALLCOUNT;
     int MEMSTALL;
     int memStallInCurrentInstruction;
-    Cache *cache;
+    Cache **cache;
 
     int memStallPrev;
     int memStallPrevToPrev;
