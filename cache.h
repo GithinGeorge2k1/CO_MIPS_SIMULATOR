@@ -33,6 +33,10 @@ class Block
             dirtyBit=x;
         }
 
+        void setValidBit(bool x){
+            validBit=x;
+        }
+
         void setTag(int x) {
             tag=x;
         }
@@ -51,6 +55,11 @@ class Set
     bool setBlock(int tag);
     int getHits();
     int getMisses();
+
+    //For multiLevelCache
+    int lruBlock();
+    int kickedOutTag();
+    void inValidateBlock(int tag);
 };
 class Cache
 {
@@ -67,6 +76,7 @@ class Cache
         int loadLatency;
     public:
         bool valid;
+
     Cache();
     void setCache(int cacheSize, int blockSize, int associativity, int loadLatency, int storeLatency);
     bool checkHit(int address);
@@ -79,6 +89,10 @@ class Cache
     int getMissPenalty();
     int getLoadLatency();
     int getStoreLatency();
+
+    //For multiLevelCache
+    int kickedOutAddress(int addr);
+    void inValidateCacheLine(int addr);
 };
 
 #endif // CACHE_H

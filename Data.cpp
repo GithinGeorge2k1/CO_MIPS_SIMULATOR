@@ -446,7 +446,7 @@ QString Data::forConsole(){
     }
     for(int i=0;i<2;i++)
     {
-        text.append(QString("<br><br><edit style=\"color:#ffd700\">Cache</edit><br>"));
+        text.append(QString("<br><edit style=\"color:#ffd700\">Cache %1</edit>").arg(i+1));
         text.append(QString("(<edit style=\"color:#66ff66\">Green : No of Hits</edit>  -  <edit style=\"color:#ff4d4d\">Red : No of Misses</edit>  -  White : Average Access Time)"));
         int noOfMisses=cache[i]->getMisses();
         int noOfHits=cache[i]->getHits();
@@ -456,10 +456,10 @@ QString Data::forConsole(){
             float hitRate=noOfHits/(noOfAccesses*1.0);
             float missRate=noOfMisses/(noOfAccesses*1.0);
             float averageAccessTime=hitRate+cache[i]->getMissPenalty()*missRate;
-            text.append(QString("<br>Overall  : <edit style=\"color:#66ff66\">%2  </edit><edit style=\"color:#ff4d4d\">%3  </edit>%4").arg(noOfHits).arg(noOfMisses).arg(averageAccessTime));
+            text.append(QString("<br>Overall  : <edit style=\"color:#66ff66\">%2  </edit><edit style=\"color:#ff4d4d\">%3  </edit>%4<br>").arg(noOfHits).arg(noOfMisses).arg(averageAccessTime));
         }
         else{
-            text.append(QString("<br><edit style=\"color:#ff4d4d\">No Accesses Issued to Cache</edit>"));
+            text.append(QString("<br><edit style=\"color:#ff4d4d\">No Accesses Issued to Cache</edit><br>"));
             return text;
         }
 //        int noOfSets=cache[i]->getNoOfSets();
@@ -739,13 +739,18 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
 
         }else if(cache[1]->checkHit(result*4)){
             memStallInCurrentInstruction = cache[0]->getLoadLatency()+cache[1]->getLoadLatency()-1;
-            //cache[0]->storeInCache(result*4);
+            cache[0]->storeInCache(result*4);
         }
         else
         {
             memStallInCurrentInstruction = cache[0]->getLoadLatency()+cache[1]->getLoadLatency()+100-1;
+            //Figure Out Address that will get Kicked Out from L2
+            int kickedOutAddr=cache[1]->kickedOutAddress(result*4);
+            //insert new blocks into cache
             cache[0]->storeInCache(result*4);
             cache[1]->storeInCache(result*4);
+            //once insertion is done kickOut cacheBlock removed from L2 in L1(if it exists) - BackWard Signalling(to maintain inclusivity)..
+            cache[0]->inValidateCacheLine(kickedOutAddr);
         }
         break;
     }
@@ -758,14 +763,18 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
             memStallInCurrentInstruction = cache[0]->getStoreLatency()-1;
         }else if(cache[1]->checkHit(result*4)){
             memStallInCurrentInstruction = cache[0]->getStoreLatency()+cache[1]->getStoreLatency()-1;
-//            cache[0]->storeInCache(result*4);
+            cache[0]->storeInCache(result*4);
         }
         else
         {
             memStallInCurrentInstruction = cache[0]->getStoreLatency()+cache[1]->getStoreLatency()+100-1;
+            //Figure Out Address that will get Kicked Out from L2
+            int kickedOutAddr=cache[1]->kickedOutAddress(result*4);
+            //insert new blocks into cache
             cache[0]->storeInCache(result*4);
             cache[1]->storeInCache(result*4);
-            //tag+index same for both cache...
+            //once insertion is done kickOut cacheBlock removed from L2 in L1(if it exists) - BackWard Signalling(to maintain inclusivity)..
+            cache[0]->inValidateCacheLine(kickedOutAddr);
         }
         break;
     }
@@ -842,8 +851,6 @@ void Data::MEM(int opCode, int Rd, int result)
     default:
         WB(Rd,result);
     }
-
-
 }
 void Data::WB(int Rd, int result)
 {

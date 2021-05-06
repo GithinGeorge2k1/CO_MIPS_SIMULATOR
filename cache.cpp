@@ -55,8 +55,8 @@ bool Set::checkHit(int tag)
     noOfMisses++;
     return false;
 }
-bool Set::setBlock(int tag)
-{
+
+int Set::lruBlock(){
     int kickOutIndex=0;
     for(int i=0;i<noOfBlocks;i++)
     {
@@ -68,6 +68,22 @@ bool Set::setBlock(int tag)
             kickOutIndex=i;
         }
     }
+    return kickOutIndex;
+}
+
+bool Set::setBlock(int tag)
+{
+    int kickOutIndex=lruBlock();
+//    for(int i=0;i<noOfBlocks;i++)
+//    {
+//        if(!blocks[i]->getValidBit()){
+//            kickOutIndex=i;
+//            break;
+//        }
+//        if(blocks[i]->getLru()<blocks[kickOutIndex]->getLru()){
+//            kickOutIndex=i;
+//        }
+//    }
     if(blocks[kickOutIndex]->isModified())
     {
         //WB policy
@@ -78,6 +94,21 @@ bool Set::setBlock(int tag)
     blocks[kickOutIndex]->setLru(setClock);
     setClock++;
     return true;
+}
+
+int Set::kickedOutTag(){
+    int result=lruBlock();
+    return blocks[result]->getTag();
+}
+
+void Set::inValidateBlock(int tag){
+    for(int i=0;i<noOfBlocks;i++)
+    {
+        if(blocks[i]->getTag()==tag){
+            blocks[i]->setValidBit(false);
+            break;
+        }
+    }
 }
 
 Cache::Cache() : noOfHits(0), noOfMisses(0), missPenalty(100), storeLatency(0), loadLatency(0), valid(false)    //32 Bit ~ 4 Byte addressable machine - Assumption
@@ -156,8 +187,6 @@ bool Cache::storeInCache(int address)
 bool Cache::checkHit(int address)
 {
     int andValue;
-//    andValue=power(2, bits_offset)-1;//Not Required
-//    int offset=address & andValue;//Not Required
 
     andValue=power(2, bits_index)-1;
     int index=(address>>bits_offset) & andValue;
@@ -175,4 +204,36 @@ bool Cache::checkHit(int address)
     }
     noOfMisses++;
         return false;
+}
+
+int Cache::kickedOutAddress(int address)
+{
+    //need To return tag+index....
+    int andValue;
+//    andValue=power(2, bits_offset)-1;//Not Required
+//    int offset=address & andValue;//Not Required
+
+    andValue=power(2, bits_index)-1;
+    int index=(address>>bits_offset) & andValue;
+
+    if(index>=0 && index<noOfSets)
+    {
+        int tempResult=sets[index]->kickedOutTag();
+        return ((tempResult<<bits_index) | index);
+    }
+    return 0;
+}
+
+void Cache::inValidateCacheLine(int address){
+    int andValue;
+    andValue=power(2, bits_index)-1;
+    int index=(address>>bits_offset) & andValue;
+
+    andValue=power(2, bits_tag)-1;
+    int tag=(address>>(bits_index+bits_offset)) & andValue;
+
+    if(index>=0 && index<noOfSets)
+    {
+        sets[index]->inValidateBlock(tag);
+    }
 }
