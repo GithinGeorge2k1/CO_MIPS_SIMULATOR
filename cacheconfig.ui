@@ -58,13 +58,13 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>178</width>
+         <width>102</width>
          <height>25</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>178</width>
+         <width>102</width>
          <height>25</height>
         </size>
        </property>
@@ -74,8 +74,45 @@
         </font>
        </property>
        <property name="text">
-        <string>Cache Size (in KB)</string>
+        <string>Cache Size</string>
        </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>68</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>68</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <item>
+        <property name="text">
+         <string>in KB</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>in Bytes</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item>

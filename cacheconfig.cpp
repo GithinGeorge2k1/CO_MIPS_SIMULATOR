@@ -32,6 +32,9 @@ CacheConfig::~CacheConfig()
 
 void CacheConfig::on_pushButton_clicked()
 {
+    qDebug()<<ui->comboBox->currentIndex()<<" "<<ui->comboBox->currentText();
+    int isBytes=ui->comboBox->currentIndex(); //0-KB 1-Bytes
+
     Data* D=Data::getInstance();
     bool one=false,two=false,three=false,four=false,five=false;
     int cs=ui->lineEdit->text().toInt(&one);
@@ -39,27 +42,36 @@ void CacheConfig::on_pushButton_clicked()
     int assoc=ui->lineEdit_3->text().toInt(&three);
     int sl=ui->lineEdit_4->text().toInt(&four);
     int ll=ui->lineEdit_5->text().toInt(&five);
-    if(one && two && three && isPowerOfTwo(cs)>=0 && isPowerOfTwo(bs)>=2 && isPowerOfTwo(assoc)>=0 && sl>=0 && ll>=0)
+    if(one && two && three && ((isPowerOfTwo(cs)>=2 && isBytes==1)||(isPowerOfTwo(cs)>=0 && isBytes==0)) && isPowerOfTwo(bs)>=2 && isPowerOfTwo(assoc)>=0 && sl>=0 && ll>=0)
+    {
+        if(isBytes==0)
+            cs*=1024;
         D->cache[0]->setCache(cs, bs, assoc, ll, sl);
+    }
     else
     {
         D->cache[0]->valid=false;
         D->cache[1]->valid=false;
         return;
     }
-
+    qDebug()<<"Here";
     one=false;two=true;three=false;four=false;five=false;
     cs=ui->lineEdit_6->text().toInt(&one);
     assoc=ui->lineEdit_7->text().toInt(&three);
     sl=ui->lineEdit_8->text().toInt(&four);
     ll=ui->lineEdit_9->text().toInt(&five);
-    if(one && two && three && isPowerOfTwo(cs)>=0 && isPowerOfTwo(bs)>=2 && isPowerOfTwo(assoc)>=0 && sl>=0 && ll>=0)
-        D->cache[1]->setCache(cs, bs, assoc, ll, sl);
+    if(one && two && three && ((isPowerOfTwo(cs)>=2 && isBytes==1)||(isPowerOfTwo(cs)>=0 && isBytes==0)) && isPowerOfTwo(bs)>=2 && isPowerOfTwo(assoc)>=0 && sl>=0 && ll>=0)
+    {
+        if(isBytes==0)
+            cs*=1024;
+        D->cache[0]->setCache(cs, bs, assoc, ll, sl);
+    }
     else
     {
         D->cache[0]->valid=false;
         D->cache[1]->valid=false;
         return;
     }
+    qDebug()<<"Here";
     close();
 }
