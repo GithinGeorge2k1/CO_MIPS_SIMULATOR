@@ -144,7 +144,7 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
     CacheConfig popup;
     popup.setModal(true);
     popup.exec();
-    if(!D->cache[0]->valid || !D->cache[1]->valid){
+    if((!D->cache[0]->valid) || (!D->cache[1]->valid)){
         MainWindow::ValidCodePresent=false;
         D->cache[0]->valid=false;
         D->cache[1]->valid=false;

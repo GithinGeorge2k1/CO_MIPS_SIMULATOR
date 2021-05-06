@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>458</width>
-    <height>250</height>
+    <width>600</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -24,8 +24,8 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>458</width>
-    <height>250</height>
+    <width>600</width>
+    <height>300</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -451,7 +451,7 @@
      </item>
     </layout>
    </item>
-   <item alignment="Qt::AlignHCenter">
+   <item>
     <widget class="QPushButton" name="pushButton">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -473,8 +473,14 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>11</pointsize>
+       <pointsize>-1</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
       </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font:16px</string>
      </property>
      <property name="text">
       <string>Continue</string>

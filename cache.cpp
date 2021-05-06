@@ -145,10 +145,9 @@ int Cache::getLoadLatency()
 }
 void Cache::setCache(int cacheSize, int blockSize, int associativity, int loadLatency, int storeLatency)
 {
-
+    valid=true;
     int totalBlocks=cacheSize/blockSize;            // cacheSize in Bytes and blockSize in Bytes
     noOfSets=totalBlocks/associativity;
-    qDebug()<<noOfSets;
     if(noOfSets>=1)
         valid=true;
     else                                            // if associativity is more than total number of blocks
