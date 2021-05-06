@@ -55,8 +55,8 @@ void MainWindow::refreshAllPanels(){
     ui->textBrowser->setHtml(text);
     text=x->displayData();
     ui->textBrowser_3->setPlainText(text);
-//    text=x->forConsole();
-//    ui->textBrowser_4->setHtml(text);
+    text=x->forConsole();
+    ui->textBrowser_4->setHtml(text);
 }
 
 void MainWindow::setNewTable()

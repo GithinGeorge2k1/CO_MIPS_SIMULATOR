@@ -458,28 +458,28 @@ QString Data::forConsole(){
             float averageAccessTime=hitRate+cache[i]->getMissPenalty()*missRate;
             text.append(QString("<br>Overall  : <edit style=\"color:#66ff66\">%2  </edit><edit style=\"color:#ff4d4d\">%3  </edit>%4").arg(noOfHits).arg(noOfMisses).arg(averageAccessTime));
         }
-        else
+        else{
             text.append(QString("<br><edit style=\"color:#ff4d4d\">No Accesses Issued to Cache</edit>"));
-        if(noOfAccesses==0)
             return text;
-        int noOfSets=cache[i]->getNoOfSets();
-        for(int i=0;i<noOfSets;i++)
-        {
-            Set temp=*(cache[i]->getSet(i));
-            int noOfMisses=temp.getMisses();
-            int noOfHits=temp.getHits();
-            int noOfAccesses=noOfHits+noOfMisses;
-            if(noOfAccesses!=0)
-            {
-                //float hitRate=noOfHits/(noOfAccesses*1.0);
-                //float missRate=noOfMisses/(noOfAccesses*1.0);
-                //float averageAccessTime=hitRate+cache[i]->getMissPenalty()*missRate;
-                text.append(QString("<br><edit style=\"color:#ffd700\">Set %1  </edit><edit style=\"color:#66ff66\">%2  </edit><edit style=\"color:#ff4d4d\">%3  </edit>").arg(i+1).arg(noOfHits).arg(noOfMisses));
-            }
-            //Or Choose to not display Set Number can be Huge
-            //else
-            //    text.append(QString("<br><edit style=\"color:#ffd700\">Set %1  </edit><edit style=\"color:#ff4d4d\">No Accesses Issued</edit>").arg(i+1));
         }
+//        int noOfSets=cache[i]->getNoOfSets();
+//        for(int i=0;i<noOfSets;i++)
+//        {
+//            Set temp=*(cache[i]->getSet(i));
+//            int noOfMisses=temp.getMisses();
+//            int noOfHits=temp.getHits();
+//            int noOfAccesses=noOfHits+noOfMisses;
+//            if(noOfAccesses!=0)
+//            {
+//                //float hitRate=noOfHits/(noOfAccesses*1.0);
+//                //float missRate=noOfMisses/(noOfAccesses*1.0);
+//                //float averageAccessTime=hitRate+cache[i]->getMissPenalty()*missRate;
+//                text.append(QString("<br><edit style=\"color:#ffd700\">Set %1  </edit><edit style=\"color:#66ff66\">%2  </edit><edit style=\"color:#ff4d4d\">%3  </edit>").arg(i+1).arg(noOfHits).arg(noOfMisses));
+//            }
+//            //Or Choose to not display Set Number can be Huge
+//            //else
+//            //    text.append(QString("<br><edit style=\"color:#ffd700\">Set %1  </edit><edit style=\"color:#ff4d4d\">No Accesses Issued</edit>").arg(i+1));
+//        }
     }
     return text;
 }
