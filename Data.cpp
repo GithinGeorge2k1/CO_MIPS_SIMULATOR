@@ -739,7 +739,7 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
 
         }else if(cache[1]->checkHit(result*4)){
             memStallInCurrentInstruction = cache[0]->getLoadLatency()+cache[1]->getLoadLatency()-1;
-            cache[0]->storeInCache(result*4);
+            //cache[0]->storeInCache(result*4);
         }
         else
         {
@@ -758,13 +758,14 @@ void Data::Execute(int opCode,int R1,int R2,int immediate){
             memStallInCurrentInstruction = cache[0]->getStoreLatency()-1;
         }else if(cache[1]->checkHit(result*4)){
             memStallInCurrentInstruction = cache[0]->getStoreLatency()+cache[1]->getStoreLatency()-1;
-            cache[0]->storeInCache(result*4);
+//            cache[0]->storeInCache(result*4);
         }
         else
         {
             memStallInCurrentInstruction = cache[0]->getStoreLatency()+cache[1]->getStoreLatency()+100-1;
             cache[0]->storeInCache(result*4);
             cache[1]->storeInCache(result*4);
+            //tag+index same for both cache...
         }
         break;
     }
