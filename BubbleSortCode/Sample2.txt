@@ -1,0 +1,38 @@
+# Config in Bytes  CS - 64 | 128  BS - 16  Assoc - 4 | 2  
+# No hits in Cache 2 why??
+
+.data
+.text
+.globl main
+main:
+	lw $s1, 0($s0)	# Block 1 comp miss
+	lw $s2, 4($s0)	# hit
+	lw $s3, 8($s0)	# hit
+	lw $s4, 12($s0)	# hit
+	
+	lw $s1, 16($s0)	# Block 2 comp miss
+	lw $s2, 20($s0)	# hit
+	lw $s3, 24($s0)	# hit
+	lw $s4, 28($s0)	# hit
+	
+	lw $s1, 32($s0)	# Block 3 comp miss
+	lw $s2, 36($s0)	# hit	
+	lw $s3, 40($s0)	# hit
+	lw $s4, 44($s0)	# hit
+	
+	lw $s1, 48($s0)	# Block 4 comp miss
+	lw $s2, 52($s0)	# hit
+	lw $s3, 56($s0)	# hit
+	lw $s4, 60($s0)	# hit
+
+	lw $s1, 64($s0)	# kicking out LRU Block ig Block 1
+
+	lw $s1, 0($s0)	# Not a hit in L2 Cache.. did we miss something?
+	lw $s2, 4($s0)	# hit
+	lw $s3, 8($s0)	# hit
+
+	lw $s1, 80($s0)	# kicking out LRU Block ig Block 2
+
+	lw $s1, 16($s0)	# Not a hit in L2 Cache
+	lw $s2, 20($s0)	# hit
+	lw $s3, 24($s0)	# hit
