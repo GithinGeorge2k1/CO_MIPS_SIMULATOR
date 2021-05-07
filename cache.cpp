@@ -47,7 +47,7 @@ int Set::getMisses()
 bool Set::checkHit(int tag)
 {
     for(int i=0;i<noOfBlocks;i++){
-        if(tag==blocks[i]->getTag()){
+        if(blocks[i]->getValidBit() && tag==blocks[i]->getTag()){
             noOfHits++;
             return true;
         }
@@ -92,6 +92,7 @@ bool Set::setBlock(int tag)
     blocks[kickOutIndex]->setTag(tag);
     blocks[kickOutIndex]->setDirtyBit(false);
     blocks[kickOutIndex]->setLru(setClock);
+    blocks[kickOutIndex]->setValidBit(true);
     setClock++;
     return true;
 }
