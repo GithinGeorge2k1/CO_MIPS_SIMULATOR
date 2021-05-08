@@ -244,7 +244,7 @@ void MainWindow::on_actionClear_Registers_triggered()
 {
     Data* D=Data::getInstance();
     memset(D->R,0,sizeof(D->R));
-    ui->textBrowser->setPlainText(D->displayRegisters());
+    ui->textBrowser->setHtml(D->displayRegisters());
 }
 
 void MainWindow::on_actionRun_triggered()
