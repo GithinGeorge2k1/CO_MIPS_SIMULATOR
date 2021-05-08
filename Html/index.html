@@ -10,15 +10,14 @@
 
     <div style="color:rgb(1, 32, 44); font:20px arial">
         <p>
-            Welcome Folks. 
             This Simulator is built as part of our Computer Organization Course and mimics a subset of what the mips processor can do.
             This Application was developed in 3 phases and in each phase we've added the following components of Mips processor.
             <br>
             <ol>
                 <b> 
-                <li>A Basic Mips Simulator With a subset of the mips instructions</li>
+                <li>A Basic Mips Simulator With a subset of the mips instruction set</li>
                 <li>Pipeline To The Mips Processor</li>
-                <li>Single Level data Cache With LRU Replacement Policy</li>
+                <li>Two Levels of data Cache With LRU Replacement Policy - <b>(BlockSize set to same)</b></li>
                 </b>
             </ol>
             <br>
@@ -45,13 +44,14 @@
         <br>
         <ul>
             <li>The Functionality "Reinitialize and load File" is used to load <b>any</b> text format file containing assembly code.
-                The code is then parsed and proceeded to execute. If any errors were found then the file is not opened and "Run" function will be disabled
+                The code is then parsed and proceeded to execute. If any errors were found then the file is not opened and "Run" function will be disabled.
+                The Cache parameters are provided at this stage. All parameters except latency must be power of 2 and blockSize must be greater than or equal to 4.
             </li>
             <li>The "Run" and "Run Step By Step" functions correspond to their meanings. If the applications recognizes any valid code at present, 
                 the user can run the assembly code.
             </li>
-            <li>The user can enable <b>Operand Forwarding</b> by clicking on <b>Enable Forwarding</b> option. One can disable the same feature
-                by the clicking the same option once more. Initially Forwarding is Not Enabled.
+            <li>The user can enable <b>Operand Forwarding</b> by clicking on <b>Enable Forwarding</b> option in Status Bar. One can disable the same feature
+                by the clicking the same option once more.
             </li>
         </ul>
         <br>
@@ -61,7 +61,7 @@
             <li>Data Tab - Shows all global and static variables declared in the program</li>
             <li>Text Tab - Shows the formatted assembly code on screen with their corresponding machine code instructions and labels(if any) </li>
             <li>Timeline Tab - This Tab contains a table which represents the timeline of the program. There is a cutoff Limit for the table 
-                after 2000 instructions are issued.(We are not sure about the correctness of the Timeline - But it is as to our knowledge)
+                after 2000 instructions are issued.(We are not sure about the correctness of the Timeline - But it is to our knowledge)
             </li>
             <li>Stall Tab - Lists all instructions having some stall with their corresponding No Of Stalls</li>
             <li>Console - Displays relevant insformation to the user(we have not included system calls in the pipeline, hence user can't take input)</li>
@@ -70,13 +70,17 @@
     </div>
 
     <div>
-        <p>About the processor Design:-</p>
+        <p style="text-decoration: underline black 2px; font-size: 24px;"> <b>About the processor Design:-</b> </p>
         <p>The Simulator is of a 5 stage pipeline with <b>Branch Not Taken</b> predictor and <b>Write Back, Write Allocate</b> Cache</p>
+        <p>There is no support for Stack and Stack Pointer as of Yet.</p>
         <p>There are no support for pseudo instructions and syscalls. Hence a console for taking input and printing output is not present</p>
         <p>The machine is word addressable Only. Byte addressable instructions were not realised.
                 As a result Block Size in cache should also be a multiple of the word size(Word Size = 4 bytes)</p>
         <p>Also the cache is realized in simulator with the assumption that there is a store queue or a buffer that writes to <b>Main Memory</b>
         . While writing to MM, we assumed that all memory read concerning that address is taken from the store queue.</p>
+        <p>Also, keeping data into cache is not considered in the Clock Cycle Count</p>
+        <p>Latency of the two memory operations can be set for L1 and L2 cache. But For MM it is defaultly set to 100 Cycles</p>
+        <p>Inclusive Caching policy is used in our design. ie L2 is inclusive of L1</p>
         <br>
     </div>
 
