@@ -99,7 +99,7 @@ srl | R Type | srl rd, rs, value
   ![Stalls](https://user-images.githubusercontent.com/70936222/116671863-13be0500-a9bf-11eb-8699-a4d1546f52cd.PNG)
 
 #### Design Choices:
->1.  **Cache** : The Cache configuration can be set by the user according to the requirement of the simulation.\ 
+>1.  **Cache** : The Cache configuration can be set by the user according to the requirement of the simulation.
     There are 2 levels of cache following inclusive caching policy. The Block size must be same.\
     Cache size can be in KB or bytes, Block Size in Bytes, and the Associativity (cannot be more than total number of blocks).\
     The Cache is **Write Back, Write Allocate Cache** .\
