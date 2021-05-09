@@ -99,10 +99,12 @@ srl | R Type | srl rd, rs, value
   ![Stalls](https://user-images.githubusercontent.com/70936222/116671863-13be0500-a9bf-11eb-8699-a4d1546f52cd.PNG)
 
 #### Design Choices:
->1.  **Cache** : The Cache configuration can be set by the user according to the requirement of the simulation.\
-    Cache size in KB (min of 1 KB), Block Size in Bytes, and the Associativity (cannot be more than total number of blocks).\
+>1.  **Cache** : The Cache configuration can be set by the user according to the requirement of the simulation.\ 
+    There are 2 levels of cache following inclusive caching policy. The Block size must be same.\
+    Cache size can be in KB or bytes, Block Size in Bytes, and the Associativity (cannot be more than total number of blocks).\
     The Cache is **Write Back, Write Allocate Cache** .\
-    Also, the cache is realized in simulator with the assumption that there is a store queue or a buffer that writes to Main Memory. While writing to MM, we assumed that all memory read concerning that address is taken from the store queue.\
+    Also, the cache is realized in simulator with the assumption that there is a store queue or a buffer that writes to Main Memory(and from L1 cache to L2) . While       writing to MM, we assumed that all memory read concerning that address is taken from the store queue.\
+    Also Loading into Cache is assumed to be done without delay.
     Assuming the System is Word addressable(only multiples of 4 Bytes) the Cache is set for use by the Program.
     ![Cache](https://user-images.githubusercontent.com/70936222/116671854-128cd800-a9bf-11eb-843f-91fbbc5df522.PNG)
      
