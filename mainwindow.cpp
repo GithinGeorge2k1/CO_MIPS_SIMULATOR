@@ -160,6 +160,7 @@ void MainWindow::on_actionReinitialize_and_Load_File_triggered()
         D->cache[1]->valid=false;
         return;
     }
+    refreshAllPanels();
     QTextStream in(&file);
     bool lineValid;
     int lineNo=0;

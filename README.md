@@ -94,7 +94,7 @@ srl | R Type | srl rd, rs, value
   At the end of the execution the simulator displays the Number of Stalls, the IPC (Instructions per Cycle),\
   and the Cache i.e. No of Hits, Misses and Average Access Time of the Cache in terms of Clock Cycles in the Console.\
   No support provided for pseudo instructions and syscalls therefore console has not been extended for taking input or printing output.
-  ![Console](https://user-images.githubusercontent.com/70936222/116671858-128cd800-a9bf-11eb-9582-8894a4f84c73.PNG)
+  ![Console 2](https://user-images.githubusercontent.com/70936222/117581482-99a62280-b11a-11eb-923e-e313055559c5.PNG)
   It also displays the list of instructions for which there were stalls in the ***Stall List*** tab.
   ![Stalls](https://user-images.githubusercontent.com/70936222/116671863-13be0500-a9bf-11eb-8699-a4d1546f52cd.PNG)
 
@@ -106,7 +106,7 @@ srl | R Type | srl rd, rs, value
     Also, the cache is realized in simulator with the assumption that there is a store queue or a buffer that writes to Main Memory(and from L1 cache to L2) . While       writing to MM, we assumed that all memory read concerning that address is taken from the store queue.\
     Also Loading into Cache is assumed to be done without delay.
     Assuming the System is Word addressable(only multiples of 4 Bytes) the Cache is set for use by the Program.
-    ![Cache](https://user-images.githubusercontent.com/70936222/116671854-128cd800-a9bf-11eb-843f-91fbbc5df522.PNG)
+    ![Cache](https://user-images.githubusercontent.com/70936222/117579115-20550280-b10f-11eb-9a11-bbeadf9bac9e.PNG)
      
 >2.  **Branch Predictor** : A **Not Taken** branch predictor is used in the Simulator. Which assumes that everytime a branch statement is encountered it will not be taken.\
      And the instruction is either squashed or the Pipeline continues, based on the fact whether the Branch is taken or not taken respectively.

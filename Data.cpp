@@ -444,6 +444,10 @@ QString Data::forConsole(){
         float x=((float)CLOCK)/((float)(CLOCK+STALL+4+temp));
         text.append(QString("<p>Instructions Per ClockCycle <b style=\"color:#ffd700\">(IPC) : %1</p>").arg(x));
     }
+    else
+        text.append("<br>");
+    if(!cache[0]->valid)
+        return text;
     for(int i=0;i<2;i++)
     {
         text.append(QString("<br><edit style=\"color:#ffd700\">Cache %1</edit>").arg(i+1));
@@ -458,10 +462,8 @@ QString Data::forConsole(){
             float averageAccessTime=hitRate+cache[i]->getMissPenalty()*missRate;
             text.append(QString("<br>Overall  : <edit style=\"color:#66ff66\">%2  </edit><edit style=\"color:#ff4d4d\">%3  </edit>%4<br>").arg(noOfHits).arg(noOfMisses).arg(averageAccessTime));
         }
-        else{
+        else
             text.append(QString("<br><edit style=\"color:#ff4d4d\">No Accesses Issued to Cache</edit><br>"));
-            return text;
-        }
 //        int noOfSets=cache[i]->getNoOfSets();
 //        for(int i=0;i<noOfSets;i++)
 //        {
