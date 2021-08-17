@@ -1,4 +1,4 @@
-# CO MIPS SIMULATOR
+# IGH MIPS SIMULATOR
 ## Team Instinct
 
 *"You can't program fear in a Machine, but without Human Instinct it wouldn't survive long"*
